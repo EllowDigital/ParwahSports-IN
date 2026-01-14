@@ -42,8 +42,8 @@ export function Header() {
                 loading="eager"
               />
             </div>
-            <div className="leading-tight">
-              <span className="font-serif font-bold text-base sm:text-lg lg:text-xl text-foreground">Parwah Sports</span>
+            <div className="leading-tight max-w-[170px] sm:max-w-none">
+              <span className="font-serif font-bold text-sm sm:text-lg lg:text-xl text-foreground truncate">Parwah Sports</span>
               <span className="block text-[10px] sm:text-xs text-muted-foreground">Charitable Trust</span>
             </div>
           </Link>
