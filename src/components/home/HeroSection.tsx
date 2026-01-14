@@ -54,7 +54,7 @@ export function HeroSection() {
   }, [api]);
 
   return (
-    <section className="relative flex items-center overflow-hidden py-10 sm:py-14 lg:py-20">
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Carousel
@@ -86,42 +86,39 @@ export function HeroSection() {
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="max-w-3xl">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm text-secondary px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-medium mb-5 sm:mb-6 animate-fade-in">
+          <div className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
             <Trophy className="h-4 w-4" />
             Empowering Athletes Since 2015
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-5 sm:mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             Empowering Athletes.{" "}
             <span className="text-secondary">Transforming Dreams</span> into Champions.
           </h1>
 
           {/* Subtext */}
-          <p className="text-base sm:text-lg md:text-xl text-background/80 leading-relaxed mb-7 sm:mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
+          <p className="text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
             We support young and underprivileged athletes across India with world-class training, 
             financial assistance, and mentorship to help them shine on the national and international stage.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-8 sm:mb-10 lg:mb-12 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-10 lg:mb-12 animate-fade-in" style={{ animationDelay: "0.3s" }}>
             <Button asChild size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8">
               <Link to="/get-involved">
                 <Heart className="h-5 w-5" />
                 Donate Now
               </Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background gap-2 text-base px-8"
-            >
+
+            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background gap-2 text-base px-8">
               <Link to="/get-involved">
                 <Users className="h-5 w-5" />
                 Become a Volunteer
               </Link>
             </Button>
+
             <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto text-background hover:bg-background/10 gap-2 text-base">
               <Link to="/what-we-do">
                 Explore Our Work
@@ -132,7 +129,7 @@ export function HeroSection() {
 
           {/* Quick Stats */}
           <div
-            className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:gap-6 rounded-2xl bg-foreground/35 backdrop-blur-sm border border-background/10 px-4 py-4 animate-fade-in"
+            className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:gap-8 rounded-2xl bg-background/5 backdrop-blur-sm border border-background/10 px-4 py-4 animate-fade-in"
             style={{ animationDelay: "0.4s" }}
           >
             {[
@@ -149,24 +146,8 @@ export function HeroSection() {
         </div>
       </div>
 
-      {/* Slide Dots */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 hidden sm:flex items-center gap-2">
-        {sliderImages.map((_, index) => (
-          <button
-            key={index}
-            type="button"
-            aria-label={`Go to slide ${index + 1}`}
-            onClick={() => api?.scrollTo(index)}
-            className={
-              "h-2.5 w-2.5 rounded-full transition-all bg-background/40 hover:bg-background/70 " +
-              (activeIndex === index ? "w-7 bg-secondary" : "")
-            }
-          />
-        ))}
-      </div>
-
       {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-0 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-0 pointer-events-none" />
     </section>
   );
 }
