@@ -54,7 +54,7 @@ export function HeroSection() {
   }, [api]);
 
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
+    <section className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-5rem)] flex items-start lg:items-center overflow-hidden py-10 lg:py-0">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <Carousel
@@ -92,7 +92,7 @@ export function HeroSection() {
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
+          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
             Empowering Athletes.{" "}
             <span className="text-secondary">Transforming Dreams</span> into Champions.
           </h1>
@@ -129,7 +129,7 @@ export function HeroSection() {
 
           {/* Quick Stats */}
           <div
-            className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:gap-8 rounded-2xl bg-background/5 backdrop-blur-sm border border-background/10 px-4 py-4 animate-fade-in"
+            className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:gap-8 rounded-2xl bg-background/80 backdrop-blur-sm border border-border/60 shadow-md px-4 py-4 animate-fade-in"
             style={{ animationDelay: "0.4s" }}
           >
             {[
@@ -137,9 +137,9 @@ export function HeroSection() {
               { value: "25+", label: "Partner Schools" },
               { value: "10+", label: "Districts Reached" },
             ].map((stat, i) => (
-              <div key={i} className={i === 2 ? "text-background col-span-2 sm:col-span-1" : "text-background"}>
+              <div key={i} className={i === 2 ? "text-foreground col-span-2 sm:col-span-1" : "text-foreground"}>
                 <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">{stat.value}</div>
-                <div className="text-sm text-background/80">{stat.label}</div>
+                <div className="text-sm text-muted-foreground">{stat.label}</div>
               </div>
             ))}
           </div>
