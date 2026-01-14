@@ -32,18 +32,27 @@ export function CTASection() {
           </h2>
 
           <p className="text-lg text-primary-foreground/80 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Your contribution can transform the life of a young athlete. Help us provide training, 
+            Your contribution can transform the life of a young athlete. Help us provide training,
             equipment, and opportunities to talented youth who deserve a chance to shine.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
-            <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8">
+            <Button
+              asChild
+              size="lg"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8"
+            >
               <Link to="/get-involved">
                 <Heart className="h-5 w-5" />
                 Donate Now
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 gap-2 text-base">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 gap-2 text-base"
+            >
               <Link to="/get-involved">
                 Learn How to Help
                 <ArrowRight className="h-5 w-5" />

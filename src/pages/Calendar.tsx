@@ -88,12 +88,19 @@ const events = [
   },
 ];
 
-const eventTypes = ["All", "Competition", "Training Camp", "Workshop", "Talent Trial", "Community Event"];
+const eventTypes = [
+  "All",
+  "Competition",
+  "Training Camp",
+  "Workshop",
+  "Talent Trial",
+  "Community Event",
+];
 
 const typeColors: Record<string, string> = {
-  "Competition": "bg-secondary/10 text-secondary border-secondary/30",
+  Competition: "bg-secondary/10 text-secondary border-secondary/30",
   "Training Camp": "bg-primary/10 text-primary border-primary/30",
-  "Workshop": "bg-accent/10 text-accent border-accent/30",
+  Workshop: "bg-accent/10 text-accent border-accent/30",
   "Talent Trial": "bg-chart-4/20 text-chart-4 border-chart-4/30",
   "Community Event": "bg-chart-5/20 text-chart-5 border-chart-5/30",
 };
@@ -101,17 +108,16 @@ const typeColors: Record<string, string> = {
 const Calendar = () => {
   const [selectedType, setSelectedType] = useState("All");
 
-  const filteredEvents = selectedType === "All" 
-    ? events 
-    : events.filter(event => event.type === selectedType);
+  const filteredEvents =
+    selectedType === "All" ? events : events.filter((event) => event.type === selectedType);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString('en-IN', { 
-      weekday: 'short',
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
+    return date.toLocaleDateString("en-IN", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   };
 
@@ -162,7 +168,10 @@ const Calendar = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto space-y-6">
             {filteredEvents.map((event) => (
-              <Card key={event.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden">
+              <Card
+                key={event.id}
+                className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+              >
                 <div className="flex flex-col md:flex-row">
                   {/* Date Badge */}
                   <div className="bg-primary text-primary-foreground p-6 flex flex-col items-center justify-center md:w-32 shrink-0">
@@ -170,7 +179,7 @@ const Calendar = () => {
                     <div className="text-center">
                       <div className="text-2xl font-bold">{new Date(event.date).getDate()}</div>
                       <div className="text-sm opacity-80">
-                        {new Date(event.date).toLocaleDateString('en-IN', { month: 'short' })}
+                        {new Date(event.date).toLocaleDateString("en-IN", { month: "short" })}
                       </div>
                     </div>
                   </div>
@@ -181,7 +190,9 @@ const Calendar = () => {
                       <Badge variant="outline" className={typeColors[event.type]}>
                         {event.type}
                       </Badge>
-                      <span className="text-sm text-muted-foreground">{formatDate(event.date)}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {formatDate(event.date)}
+                      </span>
                     </div>
                     <CardTitle className="text-xl mb-2">{event.title}</CardTitle>
                     <p className="text-muted-foreground mb-4">{event.description}</p>

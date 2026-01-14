@@ -57,7 +57,8 @@ export function Footer() {
               </div>
             </Link>
             <p className="text-sm opacity-80 leading-relaxed mb-6">
-              Empowering young athletes across India with training, resources, and opportunities to achieve their dreams.
+              Empowering young athletes across India with training, resources, and opportunities to
+              achieve their dreams.
             </p>
             <div className="flex gap-3">
               {socialLinks.map(({ name, href, Icon }) => (
@@ -117,20 +118,28 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 shrink-0 mt-0.5 text-secondary" />
                 <span className="text-sm opacity-80">
-                  Mahak Complex<br />
-                  Delhi Road, Rampur Maniharan<br />
+                  Mahak Complex
+                  <br />
+                  Delhi Road, Rampur Maniharan
+                  <br />
                   Saharanpur 247451
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 shrink-0 text-secondary" />
-                <a href="tel:+919557960056" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
+                <a
+                  href="tel:+919557960056"
+                  className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors"
+                >
                   9557960056
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 shrink-0 text-secondary" />
-                <a href="mailto:ParwahSports@gmail.com" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
+                <a
+                  href="mailto:ParwahSports@gmail.com"
+                  className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors"
+                >
                   ParwahSports@gmail.com
                 </a>
               </li>
@@ -147,7 +156,8 @@ export function Footer() {
               © 2024 Parwah Sports Charitable Trust. All rights reserved.
             </p>
             <p className="text-sm opacity-60 flex items-center gap-1">
-              Made with <Heart className="h-4 w-4 text-secondary fill-secondary" /> for Indian Athletes
+              Made with <Heart className="h-4 w-4 text-secondary fill-secondary" /> for Indian
+              Athletes
             </p>
           </div>
         </div>

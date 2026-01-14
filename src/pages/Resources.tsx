@@ -54,7 +54,8 @@ const categories = [
 const publications = [
   {
     title: "Annual Impact Report 2023",
-    description: "Comprehensive overview of our achievements, financials, and impact throughout the year.",
+    description:
+      "Comprehensive overview of our achievements, financials, and impact throughout the year.",
     date: "December 2023",
     featured: true,
   },
@@ -86,8 +87,8 @@ const Resources = () => {
               Training Materials & Publications
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Access our comprehensive library of training guides, coaching materials, 
-              and publications to support your athletic journey.
+              Access our comprehensive library of training guides, coaching materials, and
+              publications to support your athletic journey.
             </p>
           </div>
         </div>
@@ -121,7 +122,9 @@ const Resources = () => {
                           <FileText className="h-5 w-5 text-muted-foreground" />
                           <div>
                             <p className="font-medium text-foreground text-sm">{resource.name}</p>
-                            <p className="text-xs text-muted-foreground">{resource.type} • {resource.size}</p>
+                            <p className="text-xs text-muted-foreground">
+                              {resource.type} • {resource.size}
+                            </p>
                           </div>
                         </div>
                         <Button variant="ghost" size="sm" className="gap-2">
@@ -152,10 +155,16 @@ const Resources = () => {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {publications.map((pub, index) => (
-              <Card key={index} className={`border-0 shadow-lg ${pub.featured ? "ring-2 ring-secondary" : ""}`}>
+              <Card
+                key={index}
+                className={`border-0 shadow-lg ${pub.featured ? "ring-2 ring-secondary" : ""}`}
+              >
                 <CardHeader>
                   <div className="flex items-center justify-between mb-2">
-                    <Badge variant={pub.featured ? "default" : "secondary"} className={pub.featured ? "bg-secondary text-secondary-foreground" : ""}>
+                    <Badge
+                      variant={pub.featured ? "default" : "secondary"}
+                      className={pub.featured ? "bg-secondary text-secondary-foreground" : ""}
+                    >
                       {pub.featured ? "Featured" : "Report"}
                     </Badge>
                     <span className="text-sm text-muted-foreground">{pub.date}</span>
@@ -186,8 +195,8 @@ const Resources = () => {
               Need More Resources?
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Our complete resource library is available to registered athletes and coaches. 
-              Contact us to get access to exclusive training materials and development programs.
+              Our complete resource library is available to registered athletes and coaches. Contact
+              us to get access to exclusive training materials and development programs.
             </p>
             <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
               Request Access

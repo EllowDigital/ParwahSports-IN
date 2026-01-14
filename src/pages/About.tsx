@@ -5,19 +5,60 @@ import trainingImage from "@/assets/training-session.jpg";
 import communityImage from "@/assets/community-event.jpg";
 
 const values = [
-  { icon: Award, title: "Discipline", description: "Building strong character through rigorous training and commitment." },
-  { icon: Shield, title: "Fair Play", description: "Promoting sportsmanship, integrity, and ethical conduct in all activities." },
-  { icon: Users, title: "Inclusivity", description: "Ensuring equal opportunities regardless of background or circumstances." },
-  { icon: Target, title: "Excellence", description: "Striving for the highest standards in everything we do." },
+  {
+    icon: Award,
+    title: "Discipline",
+    description: "Building strong character through rigorous training and commitment.",
+  },
+  {
+    icon: Shield,
+    title: "Fair Play",
+    description: "Promoting sportsmanship, integrity, and ethical conduct in all activities.",
+  },
+  {
+    icon: Users,
+    title: "Inclusivity",
+    description: "Ensuring equal opportunities regardless of background or circumstances.",
+  },
+  {
+    icon: Target,
+    title: "Excellence",
+    description: "Striving for the highest standards in everything we do.",
+  },
 ];
 
 const milestones = [
-  { year: "2015", title: "Trust Established", description: "Parwah Sports Charitable Trust was registered with a vision to support young athletes." },
-  { year: "2016", title: "First Training Camp", description: "Organized our first sports camp with 30 athletes from rural areas." },
-  { year: "2018", title: "School Partnerships", description: "Partnered with 10 schools to establish structured sports programs." },
-  { year: "2020", title: "National Recognition", description: "Athletes trained by us won medals at national-level competitions." },
-  { year: "2022", title: "Expanded Reach", description: "Extended programs to 10+ districts across Uttarakhand." },
-  { year: "2024", title: "Digital Initiative", description: "Launched online training resources and virtual mentorship programs." },
+  {
+    year: "2015",
+    title: "Trust Established",
+    description:
+      "Parwah Sports Charitable Trust was registered with a vision to support young athletes.",
+  },
+  {
+    year: "2016",
+    title: "First Training Camp",
+    description: "Organized our first sports camp with 30 athletes from rural areas.",
+  },
+  {
+    year: "2018",
+    title: "School Partnerships",
+    description: "Partnered with 10 schools to establish structured sports programs.",
+  },
+  {
+    year: "2020",
+    title: "National Recognition",
+    description: "Athletes trained by us won medals at national-level competitions.",
+  },
+  {
+    year: "2022",
+    title: "Expanded Reach",
+    description: "Extended programs to 10+ districts across Uttarakhand.",
+  },
+  {
+    year: "2024",
+    title: "Digital Initiative",
+    description: "Launched online training resources and virtual mentorship programs.",
+  },
 ];
 
 const About = () => {
@@ -34,8 +75,8 @@ const About = () => {
               Nurturing Champions, <span className="text-primary">Building Futures</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Parwah Sports Charitable Trust is a non-profit organization dedicated to empowering 
-              young and underprivileged athletes across India through comprehensive support, 
+              Parwah Sports Charitable Trust is a non-profit organization dedicated to empowering
+              young and underprivileged athletes across India through comprehensive support,
               training, and opportunities.
             </p>
           </div>
@@ -53,12 +94,14 @@ const About = () => {
                 <div className="w-14 h-14 bg-secondary rounded-xl flex items-center justify-center mb-6">
                   <Target className="h-7 w-7 text-secondary-foreground" />
                 </div>
-                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">Our Mission</h2>
+                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                  Our Mission
+                </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  To support young and underprivileged athletes emotionally, financially, and 
-                  professionally. We provide world-class training, mentorship, and resources 
-                  to help them achieve their full potential and represent India on national 
-                  and international stages.
+                  To support young and underprivileged athletes emotionally, financially, and
+                  professionally. We provide world-class training, mentorship, and resources to help
+                  them achieve their full potential and represent India on national and
+                  international stages.
                 </p>
               </div>
             </div>
@@ -70,11 +113,13 @@ const About = () => {
                 <div className="w-14 h-14 bg-primary rounded-xl flex items-center justify-center mb-6">
                   <Eye className="h-7 w-7 text-primary-foreground" />
                 </div>
-                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">Our Vision</h2>
+                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                  Our Vision
+                </h2>
                 <p className="text-muted-foreground leading-relaxed">
-                  To create a world where every talented athlete, regardless of their background, 
-                  has equal opportunities to shine at district, state, national, and international 
-                  levels. We envision sports as a powerful tool for social transformation and 
+                  To create a world where every talented athlete, regardless of their background,
+                  has equal opportunities to shine at district, state, national, and international
+                  levels. We envision sports as a powerful tool for social transformation and
                   individual empowerment.
                 </p>
               </div>
@@ -123,24 +168,32 @@ const About = () => {
                 A Decade of Transforming Lives Through Sports
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                Founded in 2015 by a group of passionate sports enthusiasts and former athletes, 
-                Khel Shakti Foundation began with a simple vision: no talented athlete should be 
+                Founded in 2015 by a group of passionate sports enthusiasts and former athletes,
+                Khel Shakti Foundation began with a simple vision: no talented athlete should be
                 left behind due to lack of resources.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                What started as a small initiative in Dehradun has now grown into a comprehensive 
-                support system reaching over 10 districts across Uttarakhand and neighboring states. 
-                We have trained more than 150 athletes, many of whom have gone on to compete at 
+                What started as a small initiative in Dehradun has now grown into a comprehensive
+                support system reaching over 10 districts across Uttarakhand and neighboring states.
+                We have trained more than 150 athletes, many of whom have gone on to compete at
                 national and international levels.
               </p>
               <p className="text-muted-foreground leading-relaxed">
-                Our commitment to transparency, accountability, and excellence has earned us the 
+                Our commitment to transparency, accountability, and excellence has earned us the
                 trust of athletes, parents, schools, and partner organizations alike.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <img src={trainingImage} alt="Training session" className="rounded-xl shadow-lg h-48 lg:h-64 object-cover w-full" />
-              <img src={communityImage} alt="Community event" className="rounded-xl shadow-lg h-48 lg:h-64 object-cover w-full mt-8" />
+              <img
+                src={trainingImage}
+                alt="Training session"
+                className="rounded-xl shadow-lg h-48 lg:h-64 object-cover w-full"
+              />
+              <img
+                src={communityImage}
+                alt="Community event"
+                className="rounded-xl shadow-lg h-48 lg:h-64 object-cover w-full mt-8"
+              />
             </div>
           </div>
         </div>
@@ -175,7 +228,9 @@ const About = () => {
                   <div className="absolute left-4 md:left-1/2 w-4 h-4 bg-secondary rounded-full border-4 border-background shadow -translate-x-1/2" />
 
                   {/* Content */}
-                  <div className={`ml-12 md:ml-0 md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12"}`}>
+                  <div
+                    className={`ml-12 md:ml-0 md:w-1/2 ${index % 2 === 0 ? "md:pr-12 md:text-right" : "md:pl-12"}`}
+                  >
                     <span className="text-sm font-bold text-secondary">{milestone.year}</span>
                     <h3 className="font-semibold text-lg text-foreground">{milestone.title}</h3>
                     <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
@@ -198,9 +253,9 @@ const About = () => {
               Trust & Transparency
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-8">
-              Parwah Sports Charitable Trust is a registered charitable trust operating under the 
-              Indian Trusts Act. We maintain complete transparency in our operations, finances, 
-              and impact. All donations are eligible for tax exemption under Section 80G.
+              Parwah Sports Charitable Trust is a registered charitable trust operating under the
+              Indian Trusts Act. We maintain complete transparency in our operations, finances, and
+              impact. All donations are eligible for tax exemption under Section 80G.
             </p>
             <div className="grid sm:grid-cols-3 gap-6 text-left">
               <div className="p-4 bg-muted/50 rounded-lg">

@@ -2,10 +2,30 @@ import { Users, School, MapPin, Trophy, Calendar } from "lucide-react";
 import trainingImage from "@/assets/training-session.jpg";
 
 const stats = [
-  { icon: Users, value: "150+", label: "Athletes Supported", description: "Young athletes receiving training & support" },
-  { icon: School, value: "25+", label: "Schools & Academies", description: "Partner institutions across regions" },
-  { icon: MapPin, value: "10+", label: "Districts Reached", description: "In Uttarakhand & nearby states" },
-  { icon: Trophy, value: "50+", label: "National Athletes", description: "Competing at national level" },
+  {
+    icon: Users,
+    value: "150+",
+    label: "Athletes Supported",
+    description: "Young athletes receiving training & support",
+  },
+  {
+    icon: School,
+    value: "25+",
+    label: "Schools & Academies",
+    description: "Partner institutions across regions",
+  },
+  {
+    icon: MapPin,
+    value: "10+",
+    label: "Districts Reached",
+    description: "In Uttarakhand & nearby states",
+  },
+  {
+    icon: Trophy,
+    value: "50+",
+    label: "National Athletes",
+    description: "Competing at national level",
+  },
   { icon: Calendar, value: "15+", label: "Annual Events", description: "Sports camps & workshops" },
 ];
 
@@ -46,23 +66,22 @@ export function ImpactSection() {
               Building Champions Across India
             </h2>
             <p className="text-lg text-muted-foreground mb-10 leading-relaxed">
-              Since 2015, we have been on a mission to identify, nurture, and support talented 
-              athletes from underprivileged backgrounds. Our impact spans across districts, 
+              Since 2015, we have been on a mission to identify, nurture, and support talented
+              athletes from underprivileged backgrounds. Our impact spans across districts,
               transforming lives through the power of sports.
             </p>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
               {stats.slice(0, 6).map((stat, index) => (
-                <div
-                  key={index}
-                  className="group"
-                >
+                <div key={index} className="group">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                       <stat.icon className="h-5 w-5" />
                     </div>
-                    <span className="text-2xl lg:text-3xl font-bold text-foreground">{stat.value}</span>
+                    <span className="text-2xl lg:text-3xl font-bold text-foreground">
+                      {stat.value}
+                    </span>
                   </div>
                   <p className="text-sm font-medium text-foreground">{stat.label}</p>
                   <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>

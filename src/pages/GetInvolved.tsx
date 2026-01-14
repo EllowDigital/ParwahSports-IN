@@ -1,6 +1,16 @@
 import { Layout } from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
-import { Heart, Clock, Handshake, Share2, Gift, Users, Award, ArrowRight, QrCode } from "lucide-react";
+import {
+  Heart,
+  Clock,
+  Handshake,
+  Share2,
+  Gift,
+  Users,
+  Award,
+  ArrowRight,
+  QrCode,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import victoryImage from "@/assets/victory-moment.jpg";
@@ -71,11 +81,7 @@ const GetInvolved = () => {
       {/* Hero Section */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img
-            src={victoryImage}
-            alt="Victory moment"
-            className="w-full h-full object-cover"
-          />
+          <img src={victoryImage} alt="Victory moment" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/80 to-foreground/60" />
         </div>
 
@@ -89,10 +95,14 @@ const GetInvolved = () => {
               Be the Reason Someone <span className="text-secondary">Never Gives Up</span>
             </h1>
             <p className="text-xl text-background/80 leading-relaxed mb-8">
-              Your support can transform the life of a young athlete. Join us in building 
-              champions and changing lives through the power of sports.
+              Your support can transform the life of a young athlete. Join us in building champions
+              and changing lives through the power of sports.
             </p>
-            <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+            <Button
+              asChild
+              size="lg"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+            >
               <a href="#donate">
                 <Heart className="h-5 w-5" />
                 Donate Now
@@ -134,7 +144,10 @@ const GetInvolved = () => {
                 <CardContent>
                   <ul className="space-y-3 mb-6">
                     {way.details.map((detail, detailIndex) => (
-                      <li key={detailIndex} className="flex items-start gap-3 text-muted-foreground">
+                      <li
+                        key={detailIndex}
+                        className="flex items-start gap-3 text-muted-foreground"
+                      >
                         <div className="w-1.5 h-1.5 bg-secondary rounded-full mt-2 shrink-0" />
                         {detail}
                       </li>
@@ -164,8 +177,8 @@ const GetInvolved = () => {
                 Support a Dream Today
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
-                Every contribution, big or small, helps us support more athletes. 
-                Choose an amount that works for you.
+                Every contribution, big or small, helps us support more athletes. Choose an amount
+                that works for you.
               </p>
 
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
@@ -193,7 +206,9 @@ const GetInvolved = () => {
             {/* QR Code & Info */}
             <div className="bg-card rounded-2xl p-8 shadow-lg">
               <div className="text-center mb-8">
-                <h3 className="font-semibold text-xl text-foreground mb-2">Quick Donation via UPI</h3>
+                <h3 className="font-semibold text-xl text-foreground mb-2">
+                  Quick Donation via UPI
+                </h3>
                 <p className="text-muted-foreground">Scan the QR code with any UPI app</p>
               </div>
 
@@ -210,7 +225,9 @@ const GetInvolved = () => {
                 </div>
                 <div className="flex justify-between p-3 bg-muted/50 rounded-lg">
                   <span className="text-muted-foreground">Account Name</span>
-                  <span className="font-medium text-foreground">Parwah Sports Charitable Trust</span>
+                  <span className="font-medium text-foreground">
+                    Parwah Sports Charitable Trust
+                  </span>
                 </div>
               </div>
 
@@ -234,14 +251,23 @@ const GetInvolved = () => {
               Join Our Volunteer Network
             </h2>
             <p className="text-lg opacity-80 mb-8 max-w-2xl mx-auto">
-              Share your skills, time, and passion to make a difference in the lives of young athletes. 
-              We welcome volunteers from all backgrounds.
+              Share your skills, time, and passion to make a difference in the lives of young
+              athletes. We welcome volunteers from all backgrounds.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild size="lg" className="bg-secondary text-secondary-foreground hover:bg-secondary/90">
+              <Button
+                asChild
+                size="lg"
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              >
                 <Link to="/contact">Apply as Volunteer</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
+              <Button
+                asChild
+                size="lg"
+                variant="outline"
+                className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10"
+              >
                 <Link to="/team">Meet Our Team</Link>
               </Button>
             </div>

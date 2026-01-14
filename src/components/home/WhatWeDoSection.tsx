@@ -7,19 +7,22 @@ const programs = [
   {
     icon: Medal,
     title: "Athlete Development",
-    description: "Comprehensive training programs, scholarships, mentorship, and long-term athlete support to nurture champions.",
+    description:
+      "Comprehensive training programs, scholarships, mentorship, and long-term athlete support to nurture champions.",
     color: "bg-primary",
   },
   {
     icon: Calendar,
     title: "Event Organization",
-    description: "National & international tournaments, championships, exhibition matches, and talent trials across India.",
+    description:
+      "National & international tournaments, championships, exhibition matches, and talent trials across India.",
     color: "bg-secondary",
   },
   {
     icon: Users,
     title: "Community Programs",
-    description: "Grassroots initiatives, youth engagement, and sports-for-development programs in underserved communities.",
+    description:
+      "Grassroots initiatives, youth engagement, and sports-for-development programs in underserved communities.",
     color: "bg-accent",
   },
 ];
@@ -37,7 +40,8 @@ export function WhatWeDoSection() {
             What We Do
           </h2>
           <p className="text-lg text-muted-foreground">
-            We provide holistic support to athletes through training, events, and community engagement.
+            We provide holistic support to athletes through training, events, and community
+            engagement.
           </p>
         </div>
 
@@ -50,7 +54,9 @@ export function WhatWeDoSection() {
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <CardHeader className="pb-4">
-                <div className={`w-14 h-14 rounded-xl ${program.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                <div
+                  className={`w-14 h-14 rounded-xl ${program.color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}
+                >
                   <program.icon className="h-7 w-7 text-primary-foreground" />
                 </div>
                 <CardTitle className="text-xl font-semibold">{program.title}</CardTitle>

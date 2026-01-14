@@ -10,25 +10,29 @@ const teamCategories = [
         name: "Dr. Rajesh Kumar",
         role: "Chairman",
         bio: "Former national-level athlete with 25+ years of experience in sports administration.",
-        image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Mrs. Sunita Sharma",
         role: "Vice Chairperson",
         bio: "Sports educator and advocate for women in sports with extensive NGO experience.",
-        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Mr. Vikram Singh",
         role: "Secretary",
         bio: "Certified sports coach and program management expert.",
-        image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Ms. Priya Nair",
         role: "Treasurer",
         bio: "Chartered accountant with expertise in non-profit financial management.",
-        image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&fit=crop&crop=face",
       },
     ],
   },
@@ -39,19 +43,22 @@ const teamCategories = [
         name: "Mr. Arun Gupta",
         role: "Board Member",
         bio: "Entrepreneur and sports enthusiast supporting grassroots development.",
-        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Dr. Meera Patel",
         role: "Board Member",
         bio: "Sports medicine specialist and wellness consultant.",
-        image: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Mr. Suresh Rawat",
         role: "Board Member",
         bio: "Former government official with expertise in sports policy.",
-        image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=400&h=400&fit=crop&crop=face",
       },
     ],
   },
@@ -62,19 +69,22 @@ const teamCategories = [
         name: "Coach Amit Thapa",
         role: "Head Coach",
         bio: "National-level Taekwondo coach with international training certifications.",
-        image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Ms. Neha Bisht",
         role: "Youth Coordinator",
         bio: "Sports management graduate passionate about youth development.",
-        image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Mr. Rohit Negi",
         role: "Fitness Trainer",
         bio: "Certified strength and conditioning specialist for young athletes.",
-        image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=400&fit=crop&crop=face",
       },
     ],
   },
@@ -85,13 +95,15 @@ const teamCategories = [
         name: "Dr. Kavita Joshi",
         role: "Sports Physician",
         bio: "Specialized in sports injuries and athlete rehabilitation.",
-        image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&h=400&fit=crop&crop=face",
       },
       {
         name: "Mr. Deepak Sharma",
         role: "Physiotherapist",
         bio: "Expert in sports physiotherapy and injury prevention.",
-        image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&h=400&fit=crop&crop=face",
+        image:
+          "https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400&h=400&fit=crop&crop=face",
       },
     ],
   },
@@ -111,8 +123,8 @@ const Team = () => {
               Meet the People Behind Our Mission
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Our dedicated team of professionals, coaches, and volunteers work tirelessly 
-              to support athletes across India.
+              Our dedicated team of professionals, coaches, and volunteers work tirelessly to
+              support athletes across India.
             </p>
           </div>
         </div>
@@ -128,13 +140,15 @@ const Team = () => {
             <h2 className="font-serif text-2xl md:text-3xl font-bold text-foreground text-center mb-12">
               {category.title}
             </h2>
-            <div className={`grid gap-8 ${
-              category.members.length === 2 
-                ? "md:grid-cols-2 max-w-2xl mx-auto" 
-                : category.members.length === 3 
-                  ? "md:grid-cols-3 max-w-4xl mx-auto"
-                  : "md:grid-cols-2 lg:grid-cols-4"
-            }`}>
+            <div
+              className={`grid gap-8 ${
+                category.members.length === 2
+                  ? "md:grid-cols-2 max-w-2xl mx-auto"
+                  : category.members.length === 3
+                    ? "md:grid-cols-3 max-w-4xl mx-auto"
+                    : "md:grid-cols-2 lg:grid-cols-4"
+              }`}
+            >
               {category.members.map((member, memberIndex) => (
                 <Card
                   key={memberIndex}
@@ -179,12 +193,10 @@ const Team = () => {
       <section className="py-16 lg:py-24 bg-primary">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto text-center text-primary-foreground">
-            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">
-              Join Our Team
-            </h2>
+            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-6">Join Our Team</h2>
             <p className="text-lg opacity-80 mb-8">
-              We're always looking for passionate individuals to join our mission. 
-              Whether as a coach, volunteer, or professional, there's a place for you.
+              We're always looking for passionate individuals to join our mission. Whether as a
+              coach, volunteer, or professional, there's a place for you.
             </p>
             <a
               href="/get-involved"

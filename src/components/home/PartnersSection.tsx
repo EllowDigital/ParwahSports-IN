@@ -33,7 +33,9 @@ export function PartnersSection() {
               <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-4 group-hover:bg-primary/10 transition-colors">
                 <partner.icon className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
-              <span className="text-sm font-medium text-foreground text-center">{partner.name}</span>
+              <span className="text-sm font-medium text-foreground text-center">
+                {partner.name}
+              </span>
               <span className="text-xs text-muted-foreground mt-1">{partner.role}</span>
             </div>
           ))}

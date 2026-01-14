@@ -1,8 +1,18 @@
 import { Layout } from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
-import { 
-  Wallet, Heart, Users, GraduationCap, MapPin, School, 
-  Target, Globe, Megaphone, Dumbbell, ArrowRight, CheckCircle 
+import {
+  Wallet,
+  Heart,
+  Users,
+  GraduationCap,
+  MapPin,
+  School,
+  Target,
+  Globe,
+  Megaphone,
+  Dumbbell,
+  ArrowRight,
+  CheckCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,9 +26,21 @@ const programs = [
     description: "Comprehensive assistance for athletes at every stage of their journey.",
     color: "bg-secondary",
     features: [
-      { icon: Wallet, title: "Financial Assistance", description: "Scholarships, equipment funding, travel support for competitions" },
-      { icon: Heart, title: "Emotional Support", description: "Counseling, mental health resources, peer support networks" },
-      { icon: Users, title: "Mentorship Programs", description: "One-on-one guidance from experienced athletes and coaches" },
+      {
+        icon: Wallet,
+        title: "Financial Assistance",
+        description: "Scholarships, equipment funding, travel support for competitions",
+      },
+      {
+        icon: Heart,
+        title: "Emotional Support",
+        description: "Counseling, mental health resources, peer support networks",
+      },
+      {
+        icon: Users,
+        title: "Mentorship Programs",
+        description: "One-on-one guidance from experienced athletes and coaches",
+      },
     ],
   },
   {
@@ -28,9 +50,21 @@ const programs = [
     description: "World-class training programs designed to develop champions.",
     color: "bg-primary",
     features: [
-      { icon: Users, title: "Certified Coaches", description: "Access to nationally certified and experienced coaching staff" },
-      { icon: Target, title: "Individual Training Plans", description: "Customized programs based on athlete's goals and capabilities" },
-      { icon: Dumbbell, title: "Professional Facilities", description: "State-of-the-art training infrastructure and equipment" },
+      {
+        icon: Users,
+        title: "Certified Coaches",
+        description: "Access to nationally certified and experienced coaching staff",
+      },
+      {
+        icon: Target,
+        title: "Individual Training Plans",
+        description: "Customized programs based on athlete's goals and capabilities",
+      },
+      {
+        icon: Dumbbell,
+        title: "Professional Facilities",
+        description: "State-of-the-art training infrastructure and equipment",
+      },
     ],
   },
   {
@@ -40,9 +74,21 @@ const programs = [
     description: "Building sports culture in educational institutions.",
     color: "bg-accent",
     features: [
-      { icon: School, title: "School Partnerships", description: "Long-term collaborations with schools and academies" },
-      { icon: GraduationCap, title: "Structured Programs", description: "Curriculum-integrated sports education programs" },
-      { icon: Users, title: "Coach Deployment", description: "Placing trained coaches in partner institutions" },
+      {
+        icon: School,
+        title: "School Partnerships",
+        description: "Long-term collaborations with schools and academies",
+      },
+      {
+        icon: GraduationCap,
+        title: "Structured Programs",
+        description: "Curriculum-integrated sports education programs",
+      },
+      {
+        icon: Users,
+        title: "Coach Deployment",
+        description: "Placing trained coaches in partner institutions",
+      },
     ],
   },
   {
@@ -52,9 +98,21 @@ const programs = [
     description: "Identifying and nurturing sporting talent from grassroots to global.",
     color: "bg-secondary",
     features: [
-      { icon: Target, title: "Talent Identification", description: "Systematic scouting and assessment programs" },
-      { icon: MapPin, title: "Local Competitions", description: "District and regional level tournaments" },
-      { icon: Globe, title: "Global Pathways", description: "Support for national and international competitions" },
+      {
+        icon: Target,
+        title: "Talent Identification",
+        description: "Systematic scouting and assessment programs",
+      },
+      {
+        icon: MapPin,
+        title: "Local Competitions",
+        description: "District and regional level tournaments",
+      },
+      {
+        icon: Globe,
+        title: "Global Pathways",
+        description: "Support for national and international competitions",
+      },
     ],
   },
   {
@@ -64,9 +122,21 @@ const programs = [
     description: "Spreading the message of sports and fitness across communities.",
     color: "bg-primary",
     features: [
-      { icon: Megaphone, title: "Seminars & Workshops", description: "Educational sessions on sports science and wellness" },
-      { icon: Users, title: "Awareness Programs", description: "Campaigns promoting sports participation" },
-      { icon: Dumbbell, title: "Fitness Campaigns", description: "Community fitness drives and health initiatives" },
+      {
+        icon: Megaphone,
+        title: "Seminars & Workshops",
+        description: "Educational sessions on sports science and wellness",
+      },
+      {
+        icon: Users,
+        title: "Awareness Programs",
+        description: "Campaigns promoting sports participation",
+      },
+      {
+        icon: Dumbbell,
+        title: "Fitness Campaigns",
+        description: "Community fitness drives and health initiatives",
+      },
     ],
   },
 ];
@@ -86,11 +156,14 @@ const WhatWeDo = () => {
                 Comprehensive Support for <span className="text-primary">Every Athlete</span>
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed mb-8">
-                From financial assistance to world-class training, we provide holistic support 
-                to help athletes achieve their dreams. Our programs are designed to address 
-                every aspect of an athlete's journey.
+                From financial assistance to world-class training, we provide holistic support to
+                help athletes achieve their dreams. Our programs are designed to address every
+                aspect of an athlete's journey.
               </p>
-              <Button asChild className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+              <Button
+                asChild
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+              >
                 <Link to="/get-involved">
                   <Heart className="h-5 w-5" />
                   Support an Athlete
@@ -123,7 +196,9 @@ const WhatWeDo = () => {
             <div className="max-w-5xl mx-auto">
               {/* Header */}
               <div className="flex items-start gap-6 mb-10">
-                <div className={`w-16 h-16 ${program.color} rounded-2xl flex items-center justify-center shrink-0`}>
+                <div
+                  className={`w-16 h-16 ${program.color} rounded-2xl flex items-center justify-center shrink-0`}
+                >
                   <program.icon className="h-8 w-8 text-primary-foreground" />
                 </div>
                 <div>
@@ -137,7 +212,10 @@ const WhatWeDo = () => {
               {/* Features Grid */}
               <div className="grid md:grid-cols-3 gap-6">
                 {program.features.map((feature, featureIndex) => (
-                  <Card key={featureIndex} className="border-0 shadow-md hover:shadow-lg transition-shadow">
+                  <Card
+                    key={featureIndex}
+                    className="border-0 shadow-md hover:shadow-lg transition-shadow"
+                  >
                     <CardHeader>
                       <div className="w-12 h-12 bg-muted rounded-xl flex items-center justify-center mb-4">
                         <feature.icon className="h-6 w-6 text-primary" />
@@ -168,14 +246,32 @@ const WhatWeDo = () => {
 
             <div className="grid md:grid-cols-4 gap-8">
               {[
-                { step: "01", title: "Identification", description: "Talent scouts identify promising athletes" },
-                { step: "02", title: "Assessment", description: "Comprehensive evaluation of skills and potential" },
-                { step: "03", title: "Enrollment", description: "Athletes join our support programs" },
-                { step: "04", title: "Achievement", description: "Compete and succeed at all levels" },
+                {
+                  step: "01",
+                  title: "Identification",
+                  description: "Talent scouts identify promising athletes",
+                },
+                {
+                  step: "02",
+                  title: "Assessment",
+                  description: "Comprehensive evaluation of skills and potential",
+                },
+                {
+                  step: "03",
+                  title: "Enrollment",
+                  description: "Athletes join our support programs",
+                },
+                {
+                  step: "04",
+                  title: "Achievement",
+                  description: "Compete and succeed at all levels",
+                },
               ].map((item, index) => (
                 <div key={index} className="relative">
                   <div className="text-5xl font-bold text-secondary mb-4">{item.step}</div>
-                  <h3 className="font-semibold text-lg text-primary-foreground mb-2">{item.title}</h3>
+                  <h3 className="font-semibold text-lg text-primary-foreground mb-2">
+                    {item.title}
+                  </h3>
                   <p className="text-sm text-primary-foreground/70">{item.description}</p>
                   {index < 3 && (
                     <ArrowRight className="hidden md:block absolute top-6 -right-4 h-6 w-6 text-secondary" />
@@ -198,7 +294,10 @@ const WhatWeDo = () => {
               Join us in our mission to empower young athletes across India.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+              <Button
+                asChild
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+              >
                 <Link to="/get-involved">
                   <Heart className="h-5 w-5" />
                   Donate Now

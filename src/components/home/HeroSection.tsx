@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Heart, Users, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  type CarouselApi,
+} from "@/components/ui/carousel";
 
 const sliderImages = [
   "/images/slider/C1.jpeg",
@@ -92,34 +97,58 @@ export function HeroSection() {
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in" style={{ animationDelay: "0.1s" }}>
-            Empowering Athletes.{" "}
-            <span className="text-secondary">Transforming Dreams</span> into Champions.
+          <h1
+            className="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in"
+            style={{ animationDelay: "0.1s" }}
+          >
+            Empowering Athletes. <span className="text-secondary">Transforming Dreams</span> into
+            Champions.
           </h1>
 
           {/* Subtext */}
-          <p className="text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: "0.2s" }}>
-            We support young and underprivileged athletes across India with world-class training, 
-            financial assistance, and mentorship to help them shine on the national and international stage.
+          <p
+            className="text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl animate-fade-in"
+            style={{ animationDelay: "0.2s" }}
+          >
+            We support young and underprivileged athletes across India with world-class training,
+            financial assistance, and mentorship to help them shine on the national and
+            international stage.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-10 lg:mb-12 animate-fade-in" style={{ animationDelay: "0.3s" }}>
-            <Button asChild size="lg" className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8">
+          <div
+            className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-10 lg:mb-12 animate-fade-in"
+            style={{ animationDelay: "0.3s" }}
+          >
+            <Button
+              asChild
+              size="lg"
+              className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8"
+            >
               <Link to="/get-involved">
                 <Heart className="h-5 w-5" />
                 Donate Now
               </Link>
             </Button>
 
-            <Button asChild size="lg" variant="outline" className="w-full sm:w-auto border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background gap-2 text-base px-8">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background gap-2 text-base px-8"
+            >
               <Link to="/get-involved">
                 <Users className="h-5 w-5" />
                 Become a Volunteer
               </Link>
             </Button>
 
-            <Button asChild size="lg" variant="ghost" className="w-full sm:w-auto text-background hover:bg-background/10 gap-2 text-base">
+            <Button
+              asChild
+              size="lg"
+              variant="ghost"
+              className="w-full sm:w-auto text-background hover:bg-background/10 gap-2 text-base"
+            >
               <Link to="/what-we-do">
                 Explore Our Work
                 <ArrowRight className="h-5 w-5" />
@@ -137,8 +166,13 @@ export function HeroSection() {
               { value: "25+", label: "Partner Schools" },
               { value: "10+", label: "Districts Reached" },
             ].map((stat, i) => (
-              <div key={i} className={i === 2 ? "text-foreground col-span-2 sm:col-span-1" : "text-foreground"}>
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">{stat.value}</div>
+              <div
+                key={i}
+                className={i === 2 ? "text-foreground col-span-2 sm:col-span-1" : "text-foreground"}
+              >
+                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">
+                  {stat.value}
+                </div>
                 <div className="text-sm text-muted-foreground">{stat.label}</div>
               </div>
             ))}

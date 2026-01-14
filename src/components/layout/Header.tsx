@@ -43,8 +43,12 @@ export function Header() {
               />
             </div>
             <div className="leading-tight max-w-[170px] sm:max-w-none">
-              <span className="font-serif font-bold text-sm sm:text-lg lg:text-xl text-foreground truncate">Parwah Sports</span>
-              <span className="block text-[10px] sm:text-xs text-muted-foreground">Charitable Trust</span>
+              <span className="font-serif font-bold text-sm sm:text-lg lg:text-xl text-foreground truncate">
+                Parwah Sports
+              </span>
+              <span className="block text-[10px] sm:text-xs text-muted-foreground">
+                Charitable Trust
+              </span>
             </div>
           </Link>
 
@@ -70,10 +74,7 @@ export function Header() {
               <DropdownMenuContent align="end" className="w-48">
                 {navigation.slice(5).map((item) => (
                   <DropdownMenuItem key={item.name} asChild>
-                    <Link
-                      to={item.href}
-                      className={isActive(item.href) ? "text-primary" : ""}
-                    >
+                    <Link to={item.href} className={isActive(item.href) ? "text-primary" : ""}>
                       {item.name}
                     </Link>
                   </DropdownMenuItem>
@@ -84,7 +85,11 @@ export function Header() {
 
           {/* CTA Button */}
           <div className="hidden lg:flex items-center gap-3">
-            <Button asChild variant="default" className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+            <Button
+              asChild
+              variant="default"
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+            >
               <Link to="/get-involved">
                 <Heart className="h-4 w-4" />
                 Donate Now
@@ -120,7 +125,11 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
-              <Button asChild variant="default" className="mt-4 bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+              <Button
+                asChild
+                variant="default"
+                className="mt-4 bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+              >
                 <Link to="/get-involved" onClick={() => setMobileMenuOpen(false)}>
                   <Heart className="h-4 w-4" />
                   Donate Now

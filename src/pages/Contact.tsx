@@ -14,9 +14,15 @@ const Contact = () => {
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-12">
-            <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-4">Contact Us</span>
-            <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">Get in Touch</h1>
-            <p className="text-lg text-muted-foreground">Have questions? We'd love to hear from you.</p>
+            <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-4">
+              Contact Us
+            </span>
+            <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
+              Get in Touch
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              Have questions? We'd love to hear from you.
+            </p>
           </div>
         </div>
       </section>
@@ -25,14 +31,32 @@ const Contact = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12">
             <div>
-              <h2 className="font-serif text-2xl font-bold text-foreground mb-6">Send us a Message</h2>
+              <h2 className="font-serif text-2xl font-bold text-foreground mb-6">
+                Send us a Message
+              </h2>
               <form className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
-                  <input type="text" placeholder="Your Name" className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
-                  <input type="email" placeholder="Email Address" className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
                 </div>
-                <input type="text" placeholder="Subject" className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring" />
-                <textarea placeholder="Your Message" rows={5} className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring resize-none" />
+                <input
+                  type="text"
+                  placeholder="Subject"
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                <textarea
+                  placeholder="Your Message"
+                  rows={5}
+                  className="w-full px-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                />
                 <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
                   <Send className="h-4 w-4" /> Send Message
                 </Button>
@@ -40,11 +64,23 @@ const Contact = () => {
             </div>
 
             <div className="space-y-6">
-              <h2 className="font-serif text-2xl font-bold text-foreground mb-6">Contact Information</h2>
+              <h2 className="font-serif text-2xl font-bold text-foreground mb-6">
+                Contact Information
+              </h2>
               {[
                 { icon: MapPin, title: "Headquarters", content: headquartersAddress },
-                { icon: Phone, title: "Phone", content: `Main: ${phoneDisplay}`, href: `tel:${phoneHref}` },
-                { icon: Mail, title: "Email", content: `General: ${email}`, href: `mailto:${email}` },
+                {
+                  icon: Phone,
+                  title: "Phone",
+                  content: `Main: ${phoneDisplay}`,
+                  href: `tel:${phoneHref}`,
+                },
+                {
+                  icon: Mail,
+                  title: "Email",
+                  content: `General: ${email}`,
+                  href: `mailto:${email}`,
+                },
               ].map((item, i) => (
                 <Card key={i} className="border-0 shadow-md">
                   <CardContent className="flex items-start gap-4 p-6">
@@ -71,7 +107,11 @@ const Contact = () => {
               <div className="rounded-xl overflow-hidden h-64 bg-muted">
                 <iframe
                   src={`https://www.google.com/maps?q=${encodeURIComponent(headquartersAddress)}&output=embed`}
-                  width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
                 />
               </div>
             </div>

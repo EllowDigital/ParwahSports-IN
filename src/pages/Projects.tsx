@@ -12,7 +12,8 @@ import heroImage from "@/assets/hero-athletes.jpg";
 const projects = [
   {
     title: "Inter-School Taekwondo Championship 2024",
-    description: "Annual championship bringing together schools from across Uttarakhand for competitive martial arts events.",
+    description:
+      "Annual championship bringing together schools from across Uttarakhand for competitive martial arts events.",
     image: communityImage,
     location: "Dehradun, Uttarakhand",
     year: "2024",
@@ -22,7 +23,8 @@ const projects = [
   },
   {
     title: "Summer Sports Camp",
-    description: "Intensive 30-day training camp for talented young athletes covering multiple sports disciplines.",
+    description:
+      "Intensive 30-day training camp for talented young athletes covering multiple sports disciplines.",
     image: trainingImage,
     location: "Rishikesh",
     year: "2024",
@@ -32,7 +34,8 @@ const projects = [
   },
   {
     title: "State-Level Talent Trials",
-    description: "Talent identification program to scout promising athletes from rural and underserved areas.",
+    description:
+      "Talent identification program to scout promising athletes from rural and underserved areas.",
     image: heroImage,
     location: "Multiple Districts",
     year: "2024",
@@ -42,7 +45,8 @@ const projects = [
   },
   {
     title: "National Sports Day Celebration",
-    description: "Community event celebrating sports with exhibitions, workshops, and awareness programs.",
+    description:
+      "Community event celebrating sports with exhibitions, workshops, and awareness programs.",
     image: victoryImage,
     location: "Haridwar",
     year: "2023",
@@ -52,7 +56,8 @@ const projects = [
   },
   {
     title: "Youth Fitness Workshop Series",
-    description: "Monthly workshops teaching fitness fundamentals, nutrition, and healthy lifestyle habits to youth.",
+    description:
+      "Monthly workshops teaching fitness fundamentals, nutrition, and healthy lifestyle habits to youth.",
     image: trainingImage,
     location: "Dehradun Schools",
     year: "2024",
@@ -62,7 +67,8 @@ const projects = [
   },
   {
     title: "Rural Sports Outreach Program",
-    description: "Taking sports equipment and training to remote villages to promote sports participation.",
+    description:
+      "Taking sports equipment and training to remote villages to promote sports participation.",
     image: communityImage,
     location: "Tehri, Pauri, Chamoli",
     year: "2024",
@@ -73,9 +79,9 @@ const projects = [
 ];
 
 const statusColors = {
-  "Upcoming": "bg-secondary/10 text-secondary border-secondary/30",
-  "Ongoing": "bg-accent/10 text-accent border-accent/30",
-  "Completed": "bg-primary/10 text-primary border-primary/30",
+  Upcoming: "bg-secondary/10 text-secondary border-secondary/30",
+  Ongoing: "bg-accent/10 text-accent border-accent/30",
+  Completed: "bg-primary/10 text-primary border-primary/30",
 };
 
 const Projects = () => {
@@ -92,8 +98,8 @@ const Projects = () => {
               Events & Initiatives
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              From championships to community outreach, explore our diverse range of 
-              projects designed to nurture sporting talent across India.
+              From championships to community outreach, explore our diverse range of projects
+              designed to nurture sporting talent across India.
             </p>
           </div>
         </div>
@@ -124,7 +130,10 @@ const Projects = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {projects.map((project, index) => (
-              <Card key={index} className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Card
+                key={index}
+                className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+              >
                 <div className="relative h-48 overflow-hidden">
                   <img
                     src={project.image}
@@ -132,7 +141,10 @@ const Projects = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute top-4 left-4">
-                    <Badge variant="outline" className={`${statusColors[project.status as keyof typeof statusColors]} backdrop-blur-sm`}>
+                    <Badge
+                      variant="outline"
+                      className={`${statusColors[project.status as keyof typeof statusColors]} backdrop-blur-sm`}
+                    >
                       {project.status}
                     </Badge>
                   </div>
@@ -183,16 +195,17 @@ const Projects = () => {
               Get involved in our upcoming events as a participant, volunteer, or sponsor.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
-              <Button asChild className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+              <Button
+                asChild
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+              >
                 <Link to="/contact">
                   Get in Touch
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild variant="outline" className="gap-2">
-                <Link to="/calendar">
-                  View Calendar
-                </Link>
+                <Link to="/calendar">View Calendar</Link>
               </Button>
             </div>
           </div>
