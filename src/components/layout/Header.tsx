@@ -35,11 +35,11 @@ export function Header() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <span className="text-primary-foreground font-bold text-lg lg:text-xl">KS</span>
+              <span className="text-primary-foreground font-bold text-lg lg:text-xl">PS</span>
             </div>
             <div className="hidden sm:block">
-              <span className="font-serif font-bold text-lg lg:text-xl text-foreground">Khel Shakti</span>
-              <span className="block text-xs text-muted-foreground">Foundation</span>
+              <span className="font-serif font-bold text-lg lg:text-xl text-foreground">Parwah Sports</span>
+              <span className="block text-xs text-muted-foreground">Charitable Trust</span>
             </div>
           </Link>
 

@@ -39,7 +39,7 @@ const Contact = () => {
               {[
                 { icon: MapPin, title: "Address", content: "Sports Complex, Sector 7, Dehradun, Uttarakhand 248001" },
                 { icon: Phone, title: "Phone", content: "+91 123 456 7890" },
-                { icon: Mail, title: "Email", content: "info@khelshakti.org" },
+                { icon: Mail, title: "Email", content: "info@parwahsports.org" },
                 { icon: Clock, title: "Office Hours", content: "Mon - Sat: 9:00 AM - 6:00 PM" },
               ].map((item, i) => (
                 <Card key={i} className="border-0 shadow-md">

@@ -12,7 +12,7 @@ const values = [
 ];
 
 const milestones = [
-  { year: "2015", title: "Foundation Established", description: "Khel Shakti Foundation was registered with a vision to support young athletes." },
+  { year: "2015", title: "Trust Established", description: "Parwah Sports Charitable Trust was registered with a vision to support young athletes." },
   { year: "2016", title: "First Training Camp", description: "Organized our first sports camp with 30 athletes from rural areas." },
   { year: "2018", title: "School Partnerships", description: "Partnered with 10 schools to establish structured sports programs." },
   { year: "2020", title: "National Recognition", description: "Athletes trained by us won medals at national-level competitions." },
@@ -34,7 +34,7 @@ const About = () => {
               Nurturing Champions, <span className="text-primary">Building Futures</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Khel Shakti Foundation is a non-profit organization dedicated to empowering 
+              Parwah Sports Charitable Trust is a non-profit organization dedicated to empowering 
               young and underprivileged athletes across India through comprehensive support, 
               training, and opportunities.
             </p>
@@ -198,7 +198,7 @@ const About = () => {
               Trust & Transparency
             </h2>
             <p className="text-muted-foreground leading-relaxed mb-8">
-              Khel Shakti Foundation is a registered charitable trust operating under the 
+              Parwah Sports Charitable Trust is a registered charitable trust operating under the 
               Indian Trusts Act. We maintain complete transparency in our operations, finances, 
               and impact. All donations are eligible for tax exemption under Section 80G.
             </p>
