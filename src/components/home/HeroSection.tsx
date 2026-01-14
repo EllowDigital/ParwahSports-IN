@@ -131,7 +131,10 @@ export function HeroSection() {
           </div>
 
           {/* Quick Stats */}
-          <div className="flex flex-wrap gap-6 sm:gap-8 animate-fade-in" style={{ animationDelay: "0.4s" }}>
+          <div
+            className="inline-flex flex-wrap gap-6 sm:gap-8 rounded-2xl bg-foreground/35 backdrop-blur-sm border border-background/10 px-4 py-4 animate-fade-in"
+            style={{ animationDelay: "0.4s" }}
+          >
             {[
               { value: "150+", label: "Athletes Supported" },
               { value: "25+", label: "Partner Schools" },
@@ -139,7 +142,7 @@ export function HeroSection() {
             ].map((stat, i) => (
               <div key={i} className="text-background">
                 <div className="text-3xl md:text-4xl font-bold text-secondary">{stat.value}</div>
-                <div className="text-sm opacity-80">{stat.label}</div>
+                <div className="text-sm text-background/80">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -147,7 +150,7 @@ export function HeroSection() {
       </div>
 
       {/* Slide Dots */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
         {sliderImages.map((_, index) => (
           <button
             key={index}
@@ -163,7 +166,7 @@ export function HeroSection() {
       </div>
 
       {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-0 pointer-events-none" />
     </section>
   );
 }

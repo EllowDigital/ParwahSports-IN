@@ -42,9 +42,9 @@ export function Header() {
                 loading="eager"
               />
             </div>
-            <div className="hidden sm:block">
-              <span className="font-serif font-bold text-lg lg:text-xl text-foreground">Parwah Sports</span>
-              <span className="block text-xs text-muted-foreground">Charitable Trust</span>
+            <div className="leading-tight">
+              <span className="font-serif font-bold text-base sm:text-lg lg:text-xl text-foreground">Parwah Sports</span>
+              <span className="block text-[10px] sm:text-xs text-muted-foreground">Charitable Trust</span>
             </div>
           </Link>
 

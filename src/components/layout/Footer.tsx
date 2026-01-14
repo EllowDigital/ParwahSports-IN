@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, Heart } from "lucide-react";
+import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Heart } from "lucide-react";
 
 const quickLinks = [
   { name: "About Us", href: "/about" },
@@ -16,6 +16,24 @@ const resources = [
 ];
 
 export function Footer() {
+  const socialLinks = [
+    {
+      name: "Instagram",
+      href: "https://www.instagram.com/parwahsports/?igsh=dGI4N2s2OHBqOHVw#",
+      Icon: Instagram,
+    },
+    {
+      name: "Facebook",
+      href: "https://www.facebook.com/ParwahSports?rdid=ZHkulrdsvnTRb12C&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F18r2xWUuhF%2F#",
+      Icon: Facebook,
+    },
+    {
+      name: "YouTube",
+      href: "https://www.youtube.com/@parwahsports",
+      Icon: Youtube,
+    },
+  ];
+
   return (
     <footer className="bg-foreground text-background">
       {/* Main Footer */}
@@ -36,10 +54,14 @@ export function Footer() {
               Empowering young athletes across India with training, resources, and opportunities to achieve their dreams.
             </p>
             <div className="flex gap-3">
-              {[Facebook, Twitter, Instagram, Youtube].map((Icon, i) => (
+              {socialLinks.map(({ name, href, Icon }) => (
                 <a
-                  key={i}
-                  href="#"
+                  key={name}
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={name}
+                  title={name}
                   className="w-10 h-10 rounded-full bg-background/10 hover:bg-secondary hover:text-secondary-foreground flex items-center justify-center transition-colors"
                 >
                   <Icon className="h-5 w-5" />
