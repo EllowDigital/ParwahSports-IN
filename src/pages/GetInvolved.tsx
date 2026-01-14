@@ -206,11 +206,11 @@ const GetInvolved = () => {
               <div className="space-y-4">
                 <div className="flex justify-between p-3 bg-muted/50 rounded-lg">
                   <span className="text-muted-foreground">UPI ID</span>
-                  <span className="font-medium text-foreground">khelshakti@upi</span>
+                  <span className="font-medium text-foreground">parwahsports@upi</span>
                 </div>
                 <div className="flex justify-between p-3 bg-muted/50 rounded-lg">
                   <span className="text-muted-foreground">Account Name</span>
-                  <span className="font-medium text-foreground">Khel Shakti Foundation</span>
+                  <span className="font-medium text-foreground">Parwah Sports Charitable Trust</span>
                 </div>
               </div>
 

@@ -71,7 +71,7 @@ const events = [
     title: "Coaching Certification Program",
     date: "2024-06-15",
     time: "9:00 AM - 5:00 PM",
-    location: "KSF Training Center",
+    location: "PSCT Training Center",
     type: "Training Camp",
     participants: "Aspiring Coaches",
     description: "5-day certification course for sports coaches.",

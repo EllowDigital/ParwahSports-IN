@@ -25,11 +25,11 @@ export function Footer() {
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-                <span className="text-secondary-foreground font-bold text-xl">KS</span>
+                <span className="text-secondary-foreground font-bold text-xl">PS</span>
               </div>
               <div>
-                <span className="font-serif font-bold text-xl">Khel Shakti</span>
-                <span className="block text-xs opacity-80">Foundation</span>
+                <span className="font-serif font-bold text-xl">Parwah Sports</span>
+                <span className="block text-xs opacity-80">Charitable Trust</span>
               </div>
             </Link>
             <p className="text-sm opacity-80 leading-relaxed mb-6">
@@ -101,8 +101,8 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 shrink-0 text-secondary" />
-                <a href="mailto:info@khelshakti.org" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
-                  info@khelshakti.org
+                <a href="mailto:info@parwahsports.org" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
+                  info@parwahsports.org
                 </a>
               </li>
             </ul>
@@ -115,7 +115,7 @@ export function Footer() {
         <div className="container mx-auto px-4 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sm opacity-60">
-              © 2024 Khel Shakti Foundation. All rights reserved.
+              © 2024 Parwah Sports Charitable Trust. All rights reserved.
             </p>
             <p className="text-sm opacity-60 flex items-center gap-1">
               Made with <Heart className="h-4 w-4 text-secondary fill-secondary" /> for Indian Athletes
