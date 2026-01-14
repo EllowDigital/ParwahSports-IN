@@ -4,6 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
 const Contact = () => {
+  const headquartersAddress = "Mahak Complex, Delhi Road, Rampur Maniharan, Saharanpur 247451";
+  const phoneDisplay = "9557960056";
+  const phoneHref = "+919557960056";
+  const email = "ParwahSports@gmail.com";
+
   return (
     <Layout>
       <section className="py-16 lg:py-24 bg-muted/30">
@@ -37,10 +42,9 @@ const Contact = () => {
             <div className="space-y-6">
               <h2 className="font-serif text-2xl font-bold text-foreground mb-6">Contact Information</h2>
               {[
-                { icon: MapPin, title: "Address", content: "Sports Complex, Sector 7, Dehradun, Uttarakhand 248001" },
-                { icon: Phone, title: "Phone", content: "+91 123 456 7890" },
-                { icon: Mail, title: "Email", content: "info@parwahsports.org" },
-                { icon: Clock, title: "Office Hours", content: "Mon - Sat: 9:00 AM - 6:00 PM" },
+                { icon: MapPin, title: "Headquarters", content: headquartersAddress },
+                { icon: Phone, title: "Phone", content: `Main: ${phoneDisplay}`, href: `tel:${phoneHref}` },
+                { icon: Mail, title: "Email", content: `General: ${email}`, href: `mailto:${email}` },
               ].map((item, i) => (
                 <Card key={i} className="border-0 shadow-md">
                   <CardContent className="flex items-start gap-4 p-6">
@@ -49,7 +53,16 @@ const Contact = () => {
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground">{item.title}</h3>
-                      <p className="text-muted-foreground">{item.content}</p>
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          className="text-muted-foreground hover:text-primary transition-colors"
+                        >
+                          {item.content}
+                        </a>
+                      ) : (
+                        <p className="text-muted-foreground">{item.content}</p>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -57,7 +70,7 @@ const Contact = () => {
 
               <div className="rounded-xl overflow-hidden h-64 bg-muted">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d110502.76686498942!2d77.94856454179688!3d30.32379570000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390929c356c888af%3A0x4c3562c032518799!2sDehradun%2C%20Uttarakhand!5e0!3m2!1sen!2sin!4v1704105600000!5m2!1sen!2sin"
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(headquartersAddress)}&output=embed`}
                   width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy"
                 />
               </div>

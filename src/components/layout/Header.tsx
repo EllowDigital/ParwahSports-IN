@@ -34,8 +34,13 @@ export function Header() {
         <div className="flex h-16 lg:h-20 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <span className="text-primary-foreground font-bold text-lg lg:text-xl">PS</span>
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-card flex items-center justify-center overflow-hidden border border-border shadow-sm transition-transform group-hover:scale-105">
+              <img
+                src="/logo.png"
+                alt="Parwah Sports"
+                className="w-full h-full object-contain p-1"
+                loading="eager"
+              />
             </div>
             <div className="hidden sm:block">
               <span className="font-serif font-bold text-lg lg:text-xl text-foreground">Parwah Sports</span>

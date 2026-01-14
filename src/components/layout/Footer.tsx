@@ -89,20 +89,21 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="h-5 w-5 shrink-0 mt-0.5 text-secondary" />
                 <span className="text-sm opacity-80">
-                  Sports Complex, Sector 7<br />
-                  Dehradun, Uttarakhand 248001
+                  Mahak Complex<br />
+                  Delhi Road, Rampur Maniharan<br />
+                  Saharanpur 247451
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="h-5 w-5 shrink-0 text-secondary" />
-                <a href="tel:+911234567890" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
-                  +91 123 456 7890
+                <a href="tel:+919557960056" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
+                  9557960056
                 </a>
               </li>
               <li className="flex items-center gap-3">
                 <Mail className="h-5 w-5 shrink-0 text-secondary" />
-                <a href="mailto:info@parwahsports.org" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
-                  info@parwahsports.org
+                <a href="mailto:ParwahSports@gmail.com" className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors">
+                  ParwahSports@gmail.com
                 </a>
               </li>
             </ul>
