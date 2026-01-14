@@ -42,8 +42,14 @@ export function Footer() {
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center">
-                <span className="text-secondary-foreground font-bold text-xl">PS</span>
+              <div className="w-12 h-12 rounded-full bg-background flex items-center justify-center overflow-hidden border border-background/20 shadow-sm">
+                <img
+                  src="/logo.png"
+                  alt="Parwah Sports"
+                  className="w-full h-full object-contain p-1"
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <div>
                 <span className="font-serif font-bold text-xl">Parwah Sports</span>
