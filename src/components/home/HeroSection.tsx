@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Heart, Users, Trophy } from "lucide-react";
+import { ArrowRight, Heart, Users, Trophy, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -26,14 +26,31 @@ const sliderImages = [
   "/images/slider/P9.jpeg",
 ];
 
+const stats = [
+  { value: "150+", label: "Athletes Supported" },
+  { value: "25+", label: "Partner Schools" },
+  { value: "10+", label: "Districts Reached" },
+];
+
 export function HeroSection() {
   const [api, setApi] = useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const scrollPrev = useCallback(() => {
+    api?.scrollPrev();
+  }, [api]);
+
+  const scrollNext = useCallback(() => {
+    api?.scrollNext();
+  }, [api]);
+
+  const scrollTo = useCallback((index: number) => {
+    api?.scrollTo(index);
+  }, [api]);
 
   useEffect(() => {
-    if (!api) {
-      return;
-    }
+    if (!api) return;
 
     const onSelect = () => setActiveIndex(api.selectedScrollSnap());
     api.on("select", onSelect);
@@ -45,22 +62,22 @@ export function HeroSection() {
   }, [api]);
 
   useEffect(() => {
-    if (!api) {
-      return;
-    }
+    if (!api || isPaused) return;
 
     const intervalId = setInterval(() => {
       api.scrollNext();
     }, 5000);
 
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [api]);
+    return () => clearInterval(intervalId);
+  }, [api, isPaused]);
 
   return (
-    <section className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-5rem)] flex items-start lg:items-center overflow-hidden py-10 lg:py-0">
-      {/* Background Image */}
+    <section 
+      className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-5rem)] flex items-center overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Background Image Carousel */}
       <div className="absolute inset-0 z-0">
         <Carousel
           setApi={setApi}
@@ -70,11 +87,14 @@ export function HeroSection() {
         >
           <CarouselContent className="h-full ml-0">
             {sliderImages.map((src, index) => (
-              <CarouselItem key={src} className="h-full pl-0">
+              <CarouselItem key={src} className="h-full pl-0 relative">
+                <div className="absolute inset-0 bg-foreground/20" />
                 <img
                   src={src}
                   alt={`Parwah Sports highlight ${index + 1}`}
-                  className="w-full h-full object-cover"
+                  className={`w-full h-full object-cover transition-transform duration-[8000ms] ease-out ${
+                    activeIndex === index ? "scale-110" : "scale-100"
+                  }`}
                   loading={index === 0 ? "eager" : "lazy"}
                   decoding="async"
                 />
@@ -83,17 +103,53 @@ export function HeroSection() {
           </CarouselContent>
         </Carousel>
 
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/20 via-transparent to-background" />
+        {/* Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/75 to-foreground/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-foreground/20" />
+      </div>
+
+      {/* Navigation Arrows */}
+      <button
+        onClick={scrollPrev}
+        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-background/20 backdrop-blur-sm border border-background/30 text-background flex items-center justify-center transition-all duration-300 hover:bg-background/30 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-secondary"
+        aria-label="Previous slide"
+      >
+        <ChevronLeft className="h-6 w-6" />
+      </button>
+      <button
+        onClick={scrollNext}
+        className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-background/20 backdrop-blur-sm border border-background/30 text-background flex items-center justify-center transition-all duration-300 hover:bg-background/30 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-secondary"
+        aria-label="Next slide"
+      >
+        <ChevronRight className="h-6 w-6" />
+      </button>
+
+      {/* Slide Indicators */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+        {sliderImages.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => scrollTo(index)}
+            className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary ${
+              activeIndex === index
+                ? "w-8 h-2 bg-secondary"
+                : "w-2 h-2 bg-background/50 hover:bg-background/80"
+            }`}
+            aria-label={`Go to slide ${index + 1}`}
+            aria-current={activeIndex === index ? "true" : undefined}
+          />
+        ))}
       </div>
 
       {/* Content */}
-      <div className="container mx-auto px-4 lg:px-8 relative z-10">
+      <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-0">
         <div className="max-w-3xl">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in">
+          <div 
+            className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in border border-secondary/30"
+          >
             <Trophy className="h-4 w-4" />
-            Empowering Athletes Since 2015
+            <span>Empowering Athletes Since 2015</span>
           </div>
 
           {/* Headline */}
@@ -101,13 +157,29 @@ export function HeroSection() {
             className="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in"
             style={{ animationDelay: "0.1s" }}
           >
-            Empowering Athletes. <span className="text-secondary">Transforming Dreams</span> into
-            Champions.
+            Empowering Athletes.{" "}
+            <span className="text-secondary relative">
+              Transforming Dreams
+              <svg 
+                className="absolute -bottom-2 left-0 w-full h-3 text-secondary/50" 
+                viewBox="0 0 200 12" 
+                fill="none"
+                preserveAspectRatio="none"
+              >
+                <path 
+                  d="M1 8.5C30 3 70 1 100 4C130 7 170 9 199 5" 
+                  stroke="currentColor" 
+                  strokeWidth="3" 
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>{" "}
+            into Champions.
           </h1>
 
           {/* Subtext */}
           <p
-            className="text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl animate-fade-in"
+            className="text-lg md:text-xl text-background/85 leading-relaxed mb-8 max-w-2xl animate-fade-in"
             style={{ animationDelay: "0.2s" }}
           >
             We support young and underprivileged athletes across India with world-class training,
@@ -123,7 +195,7 @@ export function HeroSection() {
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8"
+              className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
             >
               <Link to="/get-involved">
                 <Heart className="h-5 w-5" />
@@ -135,7 +207,7 @@ export function HeroSection() {
               asChild
               size="lg"
               variant="outline"
-              className="w-full sm:w-auto border-background/30 bg-transparent text-background hover:bg-background/10 hover:text-background gap-2 text-base px-8"
+              className="w-full sm:w-auto border-background/40 bg-background/10 backdrop-blur-sm text-background hover:bg-background/20 hover:border-background/60 gap-2 text-base px-8 transition-all duration-300"
             >
               <Link to="/get-involved">
                 <Users className="h-5 w-5" />
@@ -147,41 +219,37 @@ export function HeroSection() {
               asChild
               size="lg"
               variant="ghost"
-              className="w-full sm:w-auto text-background hover:bg-background/10 gap-2 text-base"
+              className="w-full sm:w-auto text-background hover:bg-background/10 gap-2 text-base group transition-all duration-300"
             >
               <Link to="/what-we-do">
                 Explore Our Work
-                <ArrowRight className="h-5 w-5" />
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
           </div>
 
           {/* Quick Stats */}
           <div
-            className="grid grid-cols-2 gap-4 sm:flex sm:flex-wrap sm:gap-8 rounded-2xl bg-background/80 backdrop-blur-sm border border-border/60 shadow-md px-4 py-4 animate-fade-in"
+            className="inline-flex flex-wrap gap-6 sm:gap-10 rounded-2xl bg-background/90 backdrop-blur-md border border-border/50 shadow-xl px-6 py-5 animate-fade-in"
             style={{ animationDelay: "0.4s" }}
           >
-            {[
-              { value: "150+", label: "Athletes Supported" },
-              { value: "25+", label: "Partner Schools" },
-              { value: "10+", label: "Districts Reached" },
-            ].map((stat, i) => (
+            {stats.map((stat, i) => (
               <div
                 key={i}
-                className={i === 2 ? "text-foreground col-span-2 sm:col-span-1" : "text-foreground"}
+                className={`text-foreground ${i !== 0 ? "border-l border-border pl-6 sm:pl-10" : ""}`}
               >
                 <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-sm text-muted-foreground whitespace-nowrap">{stat.label}</div>
               </div>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Decorative Elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent z-0 pointer-events-none" />
+      {/* Bottom Gradient Fade */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent z-0 pointer-events-none" />
     </section>
   );
 }
