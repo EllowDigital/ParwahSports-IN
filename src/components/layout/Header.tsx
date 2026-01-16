@@ -22,6 +22,13 @@ const navigation = [
   { name: "Contact", href: "/contact" },
 ];
 
+const policyLinks = [
+  { name: "Shipping Policy", href: "/shipping-policy" },
+  { name: "Terms & Conditions", href: "/terms-and-conditions" },
+  { name: "Refund Policy", href: "/refund-policy" },
+  { name: "Privacy Policy", href: "/privacy-policy" },
+];
+
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -79,6 +86,16 @@ export function Header() {
                     </Link>
                   </DropdownMenuItem>
                 ))}
+
+                <div className="my-1 h-px bg-border" />
+
+                {policyLinks.map((item) => (
+                  <DropdownMenuItem key={item.name} asChild>
+                    <Link to={item.href} className={isActive(item.href) ? "text-primary" : ""}>
+                      {item.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -125,6 +142,26 @@ export function Header() {
                   {item.name}
                 </Link>
               ))}
+
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Policies
+                </p>
+                {policyLinks.map((item) => (
+                  <Link
+                    key={item.href}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium rounded-md transition-colors ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
               <Button
                 asChild
                 variant="default"

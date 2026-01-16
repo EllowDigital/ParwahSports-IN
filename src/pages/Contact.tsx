@@ -32,8 +32,8 @@ const Contact = () => {
               For donation and payment-related queries, please contact us at{" "}
               <a className="text-primary hover:underline" href={`mailto:${email}`}>
                 {email}
-              </a>
-              {" "}or{" "}
+              </a>{" "}
+              or{" "}
               <a className="text-primary hover:underline" href={`tel:${phoneHref}`}>
                 {phoneDisplay}
               </a>

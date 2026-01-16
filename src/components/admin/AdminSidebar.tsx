@@ -69,7 +69,7 @@ export function AdminSidebar() {
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
                 isActive
                   ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )}
             >
               <item.icon className="w-5 h-5" />
@@ -96,9 +96,7 @@ export function AdminSidebar() {
           Sign Out
         </button>
         {user && (
-          <div className="px-3 py-2 text-xs text-muted-foreground truncate">
-            {user.email}
-          </div>
+          <div className="px-3 py-2 text-xs text-muted-foreground truncate">{user.email}</div>
         )}
       </div>
     </>
@@ -114,11 +112,7 @@ export function AdminSidebar() {
           </div>
           <span className="font-semibold text-sm">Admin Panel</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
+        <Button variant="ghost" size="icon" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </Button>
       </div>
@@ -135,7 +129,7 @@ export function AdminSidebar() {
       <aside
         className={cn(
           "lg:hidden fixed top-14 left-0 bottom-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <SidebarContent />

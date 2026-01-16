@@ -7,8 +7,22 @@ import { LogIn, UserPlus, Loader2, Mail, Lock, User } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -18,16 +32,18 @@ const loginSchema = z.object({
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
-const signupSchema = z.object({
-  full_name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email"),
-  phone: z.string().optional(),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  confirm_password: z.string(),
-}).refine((data) => data.password === data.confirm_password, {
-  message: "Passwords don't match",
-  path: ["confirm_password"],
-});
+const signupSchema = z
+  .object({
+    full_name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Please enter a valid email"),
+    phone: z.string().optional(),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    confirm_password: z.string(),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: "Passwords don't match",
+    path: ["confirm_password"],
+  });
 
 type LoginFormData = z.infer<typeof loginSchema>;
 type SignupFormData = z.infer<typeof signupSchema>;
@@ -228,11 +244,7 @@ export default function MemberLogin() {
                             <FormControl>
                               <div className="relative">
                                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                  placeholder="Your full name"
-                                  className="pl-10"
-                                  {...field}
-                                />
+                                <Input placeholder="Your full name" className="pl-10" {...field} />
                               </div>
                             </FormControl>
                             <FormMessage />
@@ -267,11 +279,7 @@ export default function MemberLogin() {
                           <FormItem>
                             <FormLabel>Phone (Optional)</FormLabel>
                             <FormControl>
-                              <Input
-                                type="tel"
-                                placeholder="+91 XXXXX XXXXX"
-                                {...field}
-                              />
+                              <Input type="tel" placeholder="+91 XXXXX XXXXX" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

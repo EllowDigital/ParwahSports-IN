@@ -44,7 +44,7 @@ export default function AdminLogin() {
 
     try {
       const { error: signInError } = await signIn(email, password);
-      
+
       if (signInError) {
         setError("Invalid email or password. Please try again.");
         setIsLoading(false);
@@ -76,9 +76,7 @@ export default function AdminLogin() {
         <Card className="border-border/50 shadow-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-xl">Welcome back</CardTitle>
-            <CardDescription>
-              Enter your credentials to access the admin dashboard
-            </CardDescription>
+            <CardDescription>Enter your credentials to access the admin dashboard</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">

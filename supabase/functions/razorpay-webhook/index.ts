@@ -22,18 +22,18 @@ serve(async (req) => {
     const encoder = new TextEncoder();
     const key = encoder.encode(webhookSecret);
     const message = encoder.encode(body);
-    
+
     const hmac = await crypto.subtle.importKey(
       "raw",
       key,
       { name: "HMAC", hash: "SHA-256" },
       false,
-      ["sign"]
+      ["sign"],
     );
-    
+
     const signatureBuffer = await crypto.subtle.sign("HMAC", hmac, message);
     const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
-      .map(b => b.toString(16).padStart(2, "0"))
+      .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
 
     if (expectedSignature !== signature) {
@@ -49,7 +49,7 @@ serve(async (req) => {
     switch (event.event) {
       case "payment.captured": {
         const payment = event.payload.payment.entity;
-        
+
         // Update donation if it's a donation payment
         if (payment.notes?.type === "donation") {
           await supabase
@@ -74,7 +74,7 @@ serve(async (req) => {
 
       case "payment.failed": {
         const payment = event.payload.payment.entity;
-        
+
         if (payment.notes?.type === "donation") {
           await supabase
             .from("donations")
@@ -97,7 +97,7 @@ serve(async (req) => {
 
       case "subscription.activated": {
         const subscription = event.payload.subscription.entity;
-        
+
         await supabase
           .from("subscriptions")
           .update({
@@ -123,7 +123,7 @@ serve(async (req) => {
         if (sub) {
           // Create payment record
           const paymentReference = `PAY-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-          
+
           await supabase.from("payments").insert({
             member_id: sub.member_id,
             subscription_id: sub.id,
@@ -148,7 +148,7 @@ serve(async (req) => {
 
       case "subscription.cancelled": {
         const subscription = event.payload.subscription.entity;
-        
+
         await supabase
           .from("subscriptions")
           .update({
@@ -161,7 +161,7 @@ serve(async (req) => {
 
       case "subscription.expired": {
         const subscription = event.payload.subscription.entity;
-        
+
         await supabase
           .from("subscriptions")
           .update({
@@ -174,7 +174,7 @@ serve(async (req) => {
 
       case "subscription.paused": {
         const subscription = event.payload.subscription.entity;
-        
+
         await supabase
           .from("subscriptions")
           .update({ status: "paused" })
@@ -184,7 +184,7 @@ serve(async (req) => {
 
       case "subscription.resumed": {
         const subscription = event.payload.subscription.entity;
-        
+
         await supabase
           .from("subscriptions")
           .update({ status: "active" })
@@ -203,7 +203,7 @@ serve(async (req) => {
     console.error("Webhook error:", error);
     return new Response(
       JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      { status: 500, headers: { "Content-Type": "application/json" } },
     );
   }
 });

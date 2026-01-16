@@ -73,13 +73,15 @@ export default function AdminSettings() {
                 </div>
                 <div>
                   <p className="font-medium text-foreground">Admin Access</p>
-                  <p className="text-sm text-muted-foreground">You have full administrator privileges</p>
+                  <p className="text-sm text-muted-foreground">
+                    You have full administrator privileges
+                  </p>
                 </div>
               </div>
               <div className="pt-4 border-t border-border text-sm text-muted-foreground">
                 <p>
-                  To change your password or update security settings, please contact the system administrator
-                  or use the Supabase dashboard.
+                  To change your password or update security settings, please contact the system
+                  administrator or use the Supabase dashboard.
                 </p>
               </div>
             </CardContent>
@@ -89,7 +91,9 @@ export default function AdminSettings() {
           <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>About This CMS</CardTitle>
-              <CardDescription>Content Management System for Parwah Sports Charitable Trust</CardDescription>
+              <CardDescription>
+                Content Management System for Parwah Sports Charitable Trust
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid sm:grid-cols-3 gap-6 text-sm">
@@ -102,7 +106,8 @@ export default function AdminSettings() {
                 <div>
                   <p className="font-medium text-foreground mb-1">Events Calendar</p>
                   <p className="text-muted-foreground">
-                    Create and manage events to keep your community informed about upcoming activities.
+                    Create and manage events to keep your community informed about upcoming
+                    activities.
                   </p>
                 </div>
                 <div>

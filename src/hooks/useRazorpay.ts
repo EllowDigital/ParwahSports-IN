@@ -65,7 +65,7 @@ export function useRazorpay() {
 
       rzp.open();
     },
-    [isLoaded]
+    [isLoaded],
   );
 
   const openSubscription = useCallback(
@@ -108,7 +108,7 @@ export function useRazorpay() {
 
       rzp.open();
     },
-    [isLoaded]
+    [isLoaded],
   );
 
   return { isLoaded, openPayment, openSubscription };

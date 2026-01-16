@@ -3,15 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Crown,
-  Plus,
-  Edit,
-  Trash2,
-  Loader2,
-  Check,
-  X,
-} from "lucide-react";
+import { Crown, Plus, Edit, Trash2, Loader2, Check, X } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -99,10 +91,7 @@ export default function PlansManager() {
   const { data: plans, isLoading } = useQuery({
     queryKey: ["admin-plans"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("membership_plans")
-        .select("*")
-        .order("price");
+      const { data, error } = await supabase.from("membership_plans").select("*").order("price");
 
       if (error) throw error;
       return data as MembershipPlan[];
@@ -242,9 +231,7 @@ export default function PlansManager() {
                       {getPlanTypeBadge(plan.type)}
                       <CardTitle className="mt-2">{plan.name}</CardTitle>
                     </div>
-                    {!plan.is_active && (
-                      <Badge variant="outline">Inactive</Badge>
-                    )}
+                    {!plan.is_active && <Badge variant="outline">Inactive</Badge>}
                   </div>
                   <p className="text-2xl font-bold">
                     ₹{Number(plan.price).toLocaleString()}
@@ -275,11 +262,7 @@ export default function PlansManager() {
                       <Edit className="mr-2 h-4 w-4" />
                       Edit
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setPlanToDelete(plan)}
-                    >
+                    <Button variant="outline" size="sm" onClick={() => setPlanToDelete(plan)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
                   </div>

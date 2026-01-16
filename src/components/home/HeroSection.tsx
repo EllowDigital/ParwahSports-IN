@@ -45,9 +45,12 @@ export function HeroSection() {
     api?.scrollNext();
   }, [api]);
 
-  const scrollTo = useCallback((index: number) => {
-    api?.scrollTo(index);
-  }, [api]);
+  const scrollTo = useCallback(
+    (index: number) => {
+      api?.scrollTo(index);
+    },
+    [api],
+  );
 
   useEffect(() => {
     if (!api) return;
@@ -72,7 +75,7 @@ export function HeroSection() {
   }, [api, isPaused]);
 
   return (
-    <section 
+    <section
       className="relative min-h-[calc(100svh-4rem)] lg:min-h-[calc(100svh-5rem)] flex items-center overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -145,9 +148,7 @@ export function HeroSection() {
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-0">
         <div className="max-w-3xl">
           {/* Badge */}
-          <div 
-            className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in border border-secondary/30"
-          >
+          <div className="inline-flex items-center gap-2 bg-secondary/20 backdrop-blur-sm text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 animate-fade-in border border-secondary/30">
             <Trophy className="h-4 w-4" />
             <span>Empowering Athletes Since 2015</span>
           </div>
@@ -160,16 +161,16 @@ export function HeroSection() {
             Empowering Athletes.{" "}
             <span className="text-secondary relative">
               Transforming Dreams
-              <svg 
-                className="absolute -bottom-2 left-0 w-full h-3 text-secondary/50" 
-                viewBox="0 0 200 12" 
+              <svg
+                className="absolute -bottom-2 left-0 w-full h-3 text-secondary/50"
+                viewBox="0 0 200 12"
                 fill="none"
                 preserveAspectRatio="none"
               >
-                <path 
-                  d="M1 8.5C30 3 70 1 100 4C130 7 170 9 199 5" 
-                  stroke="currentColor" 
-                  strokeWidth="3" 
+                <path
+                  d="M1 8.5C30 3 70 1 100 4C130 7 170 9 199 5"
+                  stroke="currentColor"
+                  strokeWidth="3"
                   strokeLinecap="round"
                 />
               </svg>

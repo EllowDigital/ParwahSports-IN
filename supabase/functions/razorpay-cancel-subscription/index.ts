@@ -59,10 +59,10 @@ serve(async (req) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
         },
         body: JSON.stringify({ cancel_at_cycle_end: true }),
-      }
+      },
     );
 
     if (!cancelResponse.ok) {
@@ -87,7 +87,7 @@ serve(async (req) => {
       JSON.stringify({ success: true, message: "Subscription cancelled successfully" }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error: unknown) {
     console.error("Error:", error);
@@ -96,7 +96,7 @@ serve(async (req) => {
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   }
 });

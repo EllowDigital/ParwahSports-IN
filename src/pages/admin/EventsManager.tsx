@@ -5,9 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -120,10 +133,7 @@ export default function EventsManager() {
 
     try {
       if (editingEvent) {
-        const { error } = await supabase
-          .from("events")
-          .update(payload)
-          .eq("id", editingEvent.id);
+        const { error } = await supabase.from("events").update(payload).eq("id", editingEvent.id);
 
         if (error) throw error;
         toast({ title: "Success", description: "Event updated successfully" });
@@ -178,10 +188,13 @@ export default function EventsManager() {
             <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Events Manager</h1>
             <p className="text-muted-foreground mt-1">Manage your events and calendar</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
@@ -192,7 +205,9 @@ export default function EventsManager() {
               <DialogHeader>
                 <DialogTitle>{editingEvent ? "Edit Event" : "Add New Event"}</DialogTitle>
                 <DialogDescription>
-                  {editingEvent ? "Update the event details below" : "Fill in the details for the new event"}
+                  {editingEvent
+                    ? "Update the event details below"
+                    : "Fill in the details for the new event"}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -286,12 +301,19 @@ export default function EventsManager() {
                   <Switch
                     id="is_featured"
                     checked={formData.is_featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_featured: checked })
+                    }
                   />
                   <Label htmlFor="is_featured">Featured Event</Label>
                 </div>
                 <div className="flex gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                    className="flex-1"
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSaving} className="flex-1">
@@ -379,7 +401,11 @@ export default function EventsManager() {
                         <Button size="sm" variant="outline" onClick={() => openEditDialog(event)}>
                           <Pencil className="w-4 h-4" />
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleDelete(event.id)}>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          onClick={() => handleDelete(event.id)}
+                        >
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>

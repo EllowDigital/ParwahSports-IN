@@ -26,8 +26,14 @@ export default function AdminDashboard() {
         const [imagesRes, eventsRes, teamRes, upcomingRes] = await Promise.all([
           supabase.from("gallery_images").select("id", { count: "exact", head: true }),
           supabase.from("events").select("id", { count: "exact", head: true }),
-          supabase.from("team_members").select("id", { count: "exact", head: true }).eq("is_active", true),
-          supabase.from("events").select("id", { count: "exact", head: true }).eq("status", "upcoming"),
+          supabase
+            .from("team_members")
+            .select("id", { count: "exact", head: true })
+            .eq("is_active", true),
+          supabase
+            .from("events")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "upcoming"),
         ]);
 
         setStats({

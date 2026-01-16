@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  Heart,
-  Search,
-  Download,
-  Eye,
-  Loader2,
-  Calendar,
-  IndianRupee,
-} from "lucide-react";
+import { Heart, Search, Download, Eye, Loader2, Calendar, IndianRupee } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,13 +54,13 @@ export default function DonationsManager() {
   const { data: donations, isLoading } = useQuery({
     queryKey: ["admin-donations", statusFilter],
     queryFn: async () => {
-      let query = supabase
-        .from("donations")
-        .select("*")
-        .order("created_at", { ascending: false });
+      let query = supabase.from("donations").select("*").order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
-        query = query.eq("payment_status", statusFilter as "pending" | "success" | "failed" | "refunded");
+        query = query.eq(
+          "payment_status",
+          statusFilter as "pending" | "success" | "failed" | "refunded",
+        );
       }
 
       const { data, error } = await query;
@@ -81,14 +73,17 @@ export default function DonationsManager() {
     (d) =>
       d.donor_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       d.donor_email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      d.payment_reference?.toLowerCase().includes(searchTerm.toLowerCase())
+      d.payment_reference?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const totalDonations = filteredDonations?.reduce((sum, d) => 
-    d.payment_status === "success" ? sum + Number(d.amount) : sum, 0
-  ) || 0;
+  const totalDonations =
+    filteredDonations?.reduce(
+      (sum, d) => (d.payment_status === "success" ? sum + Number(d.amount) : sum),
+      0,
+    ) || 0;
 
-  const successfulCount = filteredDonations?.filter(d => d.payment_status === "success").length || 0;
+  const successfulCount =
+    filteredDonations?.filter((d) => d.payment_status === "success").length || 0;
 
   const exportToCSV = () => {
     if (!filteredDonations) return;
@@ -115,8 +110,9 @@ export default function DonationsManager() {
       format(new Date(d.created_at), "yyyy-MM-dd HH:mm"),
     ]);
 
-    const csvContent =
-      [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -247,9 +243,7 @@ export default function DonationsManager() {
                         ₹{Number(donation.amount).toLocaleString()}
                       </TableCell>
                       <TableCell>{getStatusBadge(donation.payment_status)}</TableCell>
-                      <TableCell>
-                        {format(new Date(donation.created_at), "MMM dd, yyyy")}
-                      </TableCell>
+                      <TableCell>{format(new Date(donation.created_at), "MMM dd, yyyy")}</TableCell>
                       <TableCell>
                         <Button
                           variant="ghost"
@@ -280,9 +274,7 @@ export default function DonationsManager() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Donation Details</DialogTitle>
-            <DialogDescription>
-              Reference: {selectedDonation?.payment_reference}
-            </DialogDescription>
+            <DialogDescription>Reference: {selectedDonation?.payment_reference}</DialogDescription>
           </DialogHeader>
           {selectedDonation && (
             <div className="space-y-4">

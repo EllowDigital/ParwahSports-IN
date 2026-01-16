@@ -8,7 +8,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRazorpay } from "@/hooks/useRazorpay";
@@ -20,7 +27,10 @@ const donationSchema = z.object({
   donor_email: z.string().email("Please enter a valid email"),
   donor_phone: z.string().optional(),
   donor_address: z.string().optional(),
-  amount: z.number().min(100, "Minimum donation is ₹100").max(1000000, "Maximum donation is ₹10,00,000"),
+  amount: z
+    .number()
+    .min(100, "Minimum donation is ₹100")
+    .max(1000000, "Maximum donation is ₹10,00,000"),
   notes: z.string().optional(),
 });
 
@@ -104,14 +114,17 @@ export default function Donate() {
         onSuccess: async (response) => {
           try {
             // Verify payment
-            const { error: verifyError } = await supabase.functions.invoke("razorpay-verify-payment", {
-              body: {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                type: "donation",
+            const { error: verifyError } = await supabase.functions.invoke(
+              "razorpay-verify-payment",
+              {
+                body: {
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                  type: "donation",
+                },
               },
-            });
+            );
 
             if (verifyError) {
               throw new Error("Payment verification failed");
@@ -192,7 +205,8 @@ export default function Donate() {
               Make a Donation
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Your generous contribution helps us empower young athletes and build a brighter future for our community.
+              Your generous contribution helps us empower young athletes and build a brighter future
+              for our community.
             </p>
           </div>
 
@@ -336,7 +350,8 @@ export default function Donate() {
                     </Button>
 
                     <p className="text-xs text-center text-muted-foreground">
-                      Your payment is processed securely via Razorpay. We do not store your card details.
+                      Your payment is processed securely via Razorpay. We do not store your card
+                      details.
                     </p>
                   </form>
                 </Form>

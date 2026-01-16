@@ -15,9 +15,7 @@ export default function RefundPolicy() {
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground">
               Cancellation &amp; Refund Policy
             </h1>
-            <p className="mt-4 text-muted-foreground">
-              Last updated: January 16, 2026
-            </p>
+            <p className="mt-4 text-muted-foreground">Last updated: January 16, 2026</p>
           </div>
         </div>
       </section>
@@ -28,7 +26,9 @@ export default function RefundPolicy() {
             <Card className="border-border/50">
               <CardContent className="p-6 lg:p-10 space-y-6">
                 <div className="space-y-2">
-                  <h2 className="text-xl font-semibold text-foreground">Donations are non-refundable</h2>
+                  <h2 className="text-xl font-semibold text-foreground">
+                    Donations are non-refundable
+                  </h2>
                   <p className="text-muted-foreground">
                     Donations made on this website are generally non-refundable.
                   </p>

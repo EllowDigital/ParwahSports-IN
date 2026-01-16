@@ -12,7 +12,8 @@ serve(async (req) => {
   }
 
   try {
-    const { amount, type, donor_name, donor_email, donor_phone, donor_address, plan_id, notes } = await req.json();
+    const { amount, type, donor_name, donor_email, donor_phone, donor_address, plan_id, notes } =
+      await req.json();
 
     const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
     const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
@@ -38,12 +39,12 @@ serve(async (req) => {
     };
 
     const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
-    
+
     const orderResponse = await fetch("https://api.razorpay.com/v1/orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Basic ${auth}`,
+        Authorization: `Basic ${auth}`,
       },
       body: JSON.stringify(orderData),
     });
@@ -90,7 +91,7 @@ serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error: unknown) {
     console.error("Error:", error);
@@ -99,7 +100,7 @@ serve(async (req) => {
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   }
 });

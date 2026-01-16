@@ -1,16 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  Users,
-  Search,
-  Download,
-  Eye,
-  Loader2,
-  UserX,
-  UserCheck,
-  Crown,
-} from "lucide-react";
+import { Users, Search, Download, Eye, Loader2, UserX, UserCheck, Crown } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,7 +66,8 @@ export default function MembersManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("members")
-        .select(`
+        .select(
+          `
           *,
           subscriptions (
             id,
@@ -85,7 +77,8 @@ export default function MembersManager() {
               type
             )
           )
-        `)
+        `,
+        )
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -95,10 +88,7 @@ export default function MembersManager() {
 
   const toggleMemberStatus = useMutation({
     mutationFn: async ({ id, is_active }: { id: string; is_active: boolean }) => {
-      const { error } = await supabase
-        .from("members")
-        .update({ is_active })
-        .eq("id", id);
+      const { error } = await supabase.from("members").update({ is_active }).eq("id", id);
 
       if (error) throw error;
     },
@@ -122,25 +112,17 @@ export default function MembersManager() {
   const filteredMembers = members?.filter(
     (m) =>
       m.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      m.email.toLowerCase().includes(searchTerm.toLowerCase())
+      m.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const activeMembers = members?.filter((m) => m.is_active).length || 0;
-  const withSubscription = members?.filter((m) => 
-    m.subscriptions.some((s) => s.status === "active")
-  ).length || 0;
+  const withSubscription =
+    members?.filter((m) => m.subscriptions.some((s) => s.status === "active")).length || 0;
 
   const exportToCSV = () => {
     if (!filteredMembers) return;
 
-    const headers = [
-      "Name",
-      "Email",
-      "Phone",
-      "Status",
-      "Active Subscription",
-      "Joined Date",
-    ];
+    const headers = ["Name", "Email", "Phone", "Status", "Active Subscription", "Joined Date"];
 
     const rows = filteredMembers.map((m) => [
       m.full_name,
@@ -151,8 +133,9 @@ export default function MembersManager() {
       format(new Date(m.created_at), "yyyy-MM-dd"),
     ]);
 
-    const csvContent =
-      [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -269,9 +252,7 @@ export default function MembersManager() {
                             <span className="text-muted-foreground">None</span>
                           )}
                         </TableCell>
-                        <TableCell>
-                          {format(new Date(member.created_at), "MMM dd, yyyy")}
-                        </TableCell>
+                        <TableCell>{format(new Date(member.created_at), "MMM dd, yyyy")}</TableCell>
                         <TableCell>
                           <div className="flex gap-2">
                             <Button
@@ -364,9 +345,7 @@ export default function MembersManager() {
                         className="flex items-center justify-between p-2 bg-muted rounded"
                       >
                         <span>{sub.membership_plans.name}</span>
-                        <Badge
-                          variant={sub.status === "active" ? "default" : "secondary"}
-                        >
+                        <Badge variant={sub.status === "active" ? "default" : "secondary"}>
                           {sub.status}
                         </Badge>
                       </div>
@@ -405,9 +384,7 @@ export default function MembersManager() {
                 })
               }
             >
-              {toggleMemberStatus.isPending && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+              {toggleMemberStatus.isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Confirm
             </AlertDialogAction>
           </AlertDialogFooter>

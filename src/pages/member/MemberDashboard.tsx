@@ -17,7 +17,14 @@ import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
@@ -311,7 +318,8 @@ export default function MemberDashboard() {
     onSuccess: () => {
       toast({
         title: "Subscription cancelled",
-        description: "Your subscription has been cancelled and will end at the end of the billing period.",
+        description:
+          "Your subscription has been cancelled and will end at the end of the billing period.",
       });
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       setShowCancelDialog(false);
@@ -387,8 +395,12 @@ export default function MemberDashboard() {
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-xl font-semibold">{subscription.membership_plans.name}</h3>
-                        <p className="text-muted-foreground">{subscription.membership_plans.description}</p>
+                        <h3 className="text-xl font-semibold">
+                          {subscription.membership_plans.name}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {subscription.membership_plans.description}
+                        </p>
                       </div>
                       {getStatusBadge(subscription.status)}
                     </div>
@@ -428,7 +440,9 @@ export default function MemberDashboard() {
                 ) : (
                   <div className="text-center py-8">
                     <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-muted-foreground mb-4">You don't have an active membership</p>
+                    <p className="text-muted-foreground mb-4">
+                      You don't have an active membership
+                    </p>
                     <Button onClick={() => setShowPlanDialog(true)}>
                       <Crown className="mr-2 h-4 w-4" />
                       Choose a Plan

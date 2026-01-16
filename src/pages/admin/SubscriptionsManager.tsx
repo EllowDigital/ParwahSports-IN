@@ -1,15 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import {
-  CreditCard,
-  Search,
-  Download,
-  Eye,
-  Loader2,
-  Calendar,
-  Crown,
-} from "lucide-react";
+import { CreditCard, Search, Download, Eye, Loader2, Calendar, Crown } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -68,7 +60,8 @@ export default function SubscriptionsManager() {
     queryFn: async () => {
       let query = supabase
         .from("subscriptions")
-        .select(`
+        .select(
+          `
           *,
           members (
             full_name,
@@ -79,11 +72,15 @@ export default function SubscriptionsManager() {
             type,
             price
           )
-        `)
+        `,
+        )
         .order("created_at", { ascending: false });
 
       if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter as "active" | "cancelled" | "expired" | "pending" | "paused");
+        query = query.eq(
+          "status",
+          statusFilter as "active" | "cancelled" | "expired" | "pending" | "paused",
+        );
       }
 
       const { data, error } = await query;
@@ -95,13 +92,12 @@ export default function SubscriptionsManager() {
   const filteredSubscriptions = subscriptions?.filter(
     (s) =>
       s.members.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.members.email.toLowerCase().includes(searchTerm.toLowerCase())
+      s.members.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const activeCount = subscriptions?.filter((s) => s.status === "active").length || 0;
-  const autoPayCount = subscriptions?.filter(
-    (s) => s.status === "active" && s.razorpay_subscription_id
-  ).length || 0;
+  const autoPayCount =
+    subscriptions?.filter((s) => s.status === "active" && s.razorpay_subscription_id).length || 0;
 
   const exportToCSV = () => {
     if (!filteredSubscriptions) return;
@@ -126,8 +122,9 @@ export default function SubscriptionsManager() {
       s.razorpay_subscription_id || "",
     ]);
 
-    const csvContent =
-      [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
+    const csvContent = [headers, ...rows]
+      .map((row) => row.map((cell) => `"${cell}"`).join(","))
+      .join("\n");
 
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -304,9 +301,7 @@ export default function SubscriptionsManager() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Subscription Details</DialogTitle>
-            <DialogDescription>
-              {selectedSubscription?.membership_plans.name}
-            </DialogDescription>
+            <DialogDescription>{selectedSubscription?.membership_plans.name}</DialogDescription>
           </DialogHeader>
           {selectedSubscription && (
             <div className="space-y-4">

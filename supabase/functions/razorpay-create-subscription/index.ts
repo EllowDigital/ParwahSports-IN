@@ -57,7 +57,7 @@ serve(async (req) => {
     // For lifetime plan, create a regular order instead of subscription
     if (plan.type === "lifetime") {
       const paymentReference = `PAY-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
-      
+
       const orderData = {
         amount: Math.round(plan.price * 100),
         currency: "INR",
@@ -73,7 +73,7 @@ serve(async (req) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
         },
         body: JSON.stringify(orderData),
       });
@@ -123,7 +123,7 @@ serve(async (req) => {
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
+        },
       );
     }
 
@@ -149,7 +149,7 @@ serve(async (req) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Basic ${auth}`,
+          Authorization: `Basic ${auth}`,
         },
         body: JSON.stringify(planData),
       });
@@ -184,7 +184,7 @@ serve(async (req) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Basic ${auth}`,
+        Authorization: `Basic ${auth}`,
       },
       body: JSON.stringify(subscriptionData),
     });
@@ -221,7 +221,7 @@ serve(async (req) => {
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error: unknown) {
     console.error("Error:", error);
@@ -230,7 +230,7 @@ serve(async (req) => {
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   }
 });

@@ -6,7 +6,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -154,7 +161,11 @@ export default function TeamManager() {
       fetchMembers();
     } catch (error) {
       console.error("Error deleting team member:", error);
-      toast({ title: "Error", description: "Failed to delete team member", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to delete team member",
+        variant: "destructive",
+      });
     }
   };
 
@@ -176,10 +187,13 @@ export default function TeamManager() {
             <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Team Manager</h1>
             <p className="text-muted-foreground mt-1">Manage your team members</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
@@ -190,7 +204,9 @@ export default function TeamManager() {
               <DialogHeader>
                 <DialogTitle>{editingMember ? "Edit Member" : "Add New Member"}</DialogTitle>
                 <DialogDescription>
-                  {editingMember ? "Update the member details below" : "Fill in the details for the new team member"}
+                  {editingMember
+                    ? "Update the member details below"
+                    : "Fill in the details for the new team member"}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -277,20 +293,29 @@ export default function TeamManager() {
                       id="display_order"
                       type="number"
                       value={formData.display_order}
-                      onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })
+                      }
                     />
                   </div>
                   <div className="flex items-center gap-2 pt-6">
                     <Switch
                       id="is_active"
                       checked={formData.is_active}
-                      onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_active: checked })
+                      }
                     />
                     <Label htmlFor="is_active">Active</Label>
                   </div>
                 </div>
                 <div className="flex gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                    className="flex-1"
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSaving} className="flex-1">
@@ -323,7 +348,10 @@ export default function TeamManager() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {members.map((member) => (
-              <Card key={member.id} className={`overflow-hidden ${!member.is_active ? "opacity-60" : ""}`}>
+              <Card
+                key={member.id}
+                className={`overflow-hidden ${!member.is_active ? "opacity-60" : ""}`}
+              >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
@@ -342,7 +370,12 @@ export default function TeamManager() {
                       <Button size="sm" variant="ghost" onClick={() => openEditDialog(member)}>
                         <Pencil className="w-4 h-4" />
                       </Button>
-                      <Button size="sm" variant="ghost" className="text-destructive" onClick={() => handleDelete(member.id)}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="text-destructive"
+                        onClick={() => handleDelete(member.id)}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </Button>
                     </div>
@@ -394,9 +427,7 @@ export default function TeamManager() {
                       </a>
                     )}
                   </div>
-                  {!member.is_active && (
-                    <p className="text-xs text-destructive mt-2">Inactive</p>
-                  )}
+                  {!member.is_active && <p className="text-xs text-destructive mt-2">Inactive</p>}
                 </CardContent>
               </Card>
             ))}

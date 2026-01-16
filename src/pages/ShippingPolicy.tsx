@@ -15,9 +15,7 @@ export default function ShippingPolicy() {
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground">
               Shipping Policy
             </h1>
-            <p className="mt-4 text-muted-foreground">
-              Last updated: January 16, 2026
-            </p>
+            <p className="mt-4 text-muted-foreground">Last updated: January 16, 2026</p>
           </div>
         </div>
       </section>

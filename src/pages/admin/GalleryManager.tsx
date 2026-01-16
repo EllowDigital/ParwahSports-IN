@@ -5,9 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Loader2, Image as ImageIcon } from "lucide-react";
@@ -144,10 +157,13 @@ export default function GalleryManager() {
             <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Gallery Manager</h1>
             <p className="text-muted-foreground mt-1">Manage your gallery images</p>
           </div>
-          <Dialog open={isDialogOpen} onOpenChange={(open) => {
-            setIsDialogOpen(open);
-            if (!open) resetForm();
-          }}>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open);
+              if (!open) resetForm();
+            }}
+          >
             <DialogTrigger asChild>
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
@@ -158,7 +174,9 @@ export default function GalleryManager() {
               <DialogHeader>
                 <DialogTitle>{editingImage ? "Edit Image" : "Add New Image"}</DialogTitle>
                 <DialogDescription>
-                  {editingImage ? "Update the image details below" : "Fill in the details for the new image"}
+                  {editingImage
+                    ? "Update the image details below"
+                    : "Fill in the details for the new image"}
                 </DialogDescription>
               </DialogHeader>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -215,7 +233,9 @@ export default function GalleryManager() {
                       id="display_order"
                       type="number"
                       value={formData.display_order}
-                      onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })
+                      }
                     />
                   </div>
                 </div>
@@ -223,12 +243,19 @@ export default function GalleryManager() {
                   <Switch
                     id="is_featured"
                     checked={formData.is_featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_featured: checked })
+                    }
                   />
                   <Label htmlFor="is_featured">Featured Image</Label>
                 </div>
                 <div className="flex gap-2 pt-4">
-                  <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setIsDialogOpen(false)}
+                    className="flex-1"
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={isSaving} className="flex-1">

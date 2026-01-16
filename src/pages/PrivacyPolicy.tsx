@@ -15,9 +15,7 @@ export default function PrivacyPolicy() {
             <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground">
               Privacy Policy
             </h1>
-            <p className="mt-4 text-muted-foreground">
-              Last updated: January 16, 2026
-            </p>
+            <p className="mt-4 text-muted-foreground">Last updated: January 16, 2026</p>
           </div>
         </div>
       </section>
@@ -28,8 +26,8 @@ export default function PrivacyPolicy() {
             <Card className="border-border/50">
               <CardContent className="p-6 lg:p-10 space-y-6">
                 <p className="text-muted-foreground">
-                  This Privacy Policy describes how Parwah Sports Charitable Trust collects and
-                  uses information when you make a donation or interact with our website.
+                  This Privacy Policy describes how Parwah Sports Charitable Trust collects and uses
+                  information when you make a donation or interact with our website.
                 </p>
 
                 <div className="space-y-3">
