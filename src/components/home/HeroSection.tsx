@@ -1,6 +1,6 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Heart, Users, Trophy, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight, Heart, Users, Trophy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -36,14 +36,7 @@ export function HeroSection() {
   const [api, setApi] = useState<CarouselApi>();
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-
-  const scrollPrev = useCallback(() => {
-    api?.scrollPrev();
-  }, [api]);
-
-  const scrollNext = useCallback(() => {
-    api?.scrollNext();
-  }, [api]);
+  const indicatorRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const scrollTo = useCallback(
     (index: number) => {
@@ -73,6 +66,14 @@ export function HeroSection() {
 
     return () => clearInterval(intervalId);
   }, [api, isPaused]);
+
+  useEffect(() => {
+    indicatorRefs.current[activeIndex]?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+      inline: "center",
+    });
+  }, [activeIndex]);
 
   return (
     <section
@@ -111,38 +112,27 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-foreground/20" />
       </div>
 
-      {/* Navigation Arrows */}
-      <button
-        onClick={scrollPrev}
-        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-background/20 backdrop-blur-sm border border-background/30 text-background flex items-center justify-center transition-all duration-300 hover:bg-background/30 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-secondary"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="h-6 w-6" />
-      </button>
-      <button
-        onClick={scrollNext}
-        className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-background/20 backdrop-blur-sm border border-background/30 text-background flex items-center justify-center transition-all duration-300 hover:bg-background/30 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-secondary"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="h-6 w-6" />
-      </button>
-
-      {/* Slide Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
-        {sliderImages.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => scrollTo(index)}
-            className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary ${
-              activeIndex === index
-                ? "w-8 h-2 bg-secondary"
-                : "w-2 h-2 bg-background/50 hover:bg-background/80"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-            aria-current={activeIndex === index ? "true" : undefined}
-          />
-        ))}
-      </div>
+        {/* Slide Indicators (auto-scrolls to active button) */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 max-w-[92vw] overflow-x-auto scroll-smooth px-2">
+          <div className="flex items-center gap-2 w-max mx-auto">
+            {sliderImages.map((_, index) => (
+              <button
+                key={index}
+                ref={(el) => {
+                  indicatorRefs.current[index] = el;
+                }}
+                onClick={() => scrollTo(index)}
+                className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary ${
+                  activeIndex === index
+                    ? "w-8 h-2 bg-secondary"
+                    : "w-2 h-2 bg-background/50 hover:bg-background/80"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+                aria-current={activeIndex === index ? "true" : undefined}
+              />
+            ))}
+          </div>
+        </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-0">
