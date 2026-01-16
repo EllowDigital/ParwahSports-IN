@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -56,7 +56,7 @@ export default function GalleryManager() {
     display_order: 0,
   });
 
-  const fetchImages = async () => {
+  const fetchImages = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from("gallery_images")
@@ -71,11 +71,11 @@ export default function GalleryManager() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
 
   useEffect(() => {
-    fetchImages();
-  }, []);
+    void fetchImages();
+  }, [fetchImages]);
 
   const resetForm = () => {
     setFormData({

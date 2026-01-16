@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { getErrorMessage } from "@/lib/errors";
 
 interface MembershipPlan {
   id: string;
@@ -129,10 +130,10 @@ export default function PlansManager() {
       queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
       handleCloseDialog();
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     },
@@ -151,10 +152,10 @@ export default function PlansManager() {
       queryClient.invalidateQueries({ queryKey: ["admin-plans"] });
       setPlanToDelete(null);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     },

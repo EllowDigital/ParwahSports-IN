@@ -48,6 +48,7 @@ import { useAuth } from "@/contexts/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { format } from "date-fns";
+import { getErrorMessage } from "@/lib/errors";
 
 interface MembershipPlan {
   id: string;
@@ -115,7 +116,7 @@ export default function MemberDashboard() {
         setShowPlanDialog(true);
       }
     }
-  }, [selectedPlanId]);
+  }, [selectedPlanId, plans]);
 
   // Fetch member data
   const { data: member } = useQuery({
@@ -246,20 +247,20 @@ export default function MemberDashboard() {
               queryClient.invalidateQueries({ queryKey: ["subscription"] });
               queryClient.invalidateQueries({ queryKey: ["payments"] });
               setShowPlanDialog(false);
-            } catch (err: any) {
+            } catch (err: unknown) {
               toast({
                 title: "Error",
-                description: err.message,
+                description: getErrorMessage(err),
                 variant: "destructive",
               });
             }
             setIsProcessing(false);
           },
-          onError: (error) => {
+          onError: (error: unknown) => {
             setIsProcessing(false);
             toast({
               title: "Payment failed",
-              description: error.message,
+              description: getErrorMessage(error),
               variant: "destructive",
             });
           },
@@ -285,21 +286,21 @@ export default function MemberDashboard() {
             setShowPlanDialog(false);
             setIsProcessing(false);
           },
-          onError: (error) => {
+          onError: (error: unknown) => {
             setIsProcessing(false);
             toast({
               title: "Subscription failed",
-              description: error.message,
+              description: getErrorMessage(error),
               variant: "destructive",
             });
           },
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsProcessing(false);
       toast({
         title: "Error",
-        description: err.message,
+        description: getErrorMessage(err),
         variant: "destructive",
       });
     }
@@ -324,10 +325,10 @@ export default function MemberDashboard() {
       queryClient.invalidateQueries({ queryKey: ["subscription"] });
       setShowCancelDialog(false);
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     },
