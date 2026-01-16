@@ -15,6 +15,13 @@ const resources = [
   { name: "Contact Us", href: "/contact" },
 ];
 
+const policies = [
+  { name: "Shipping Policy", href: "/shipping-policy" },
+  { name: "Terms & Conditions", href: "/terms-and-conditions" },
+  { name: "Cancellation & Refund Policy", href: "/refund-policy" },
+  { name: "Privacy Policy", href: "/privacy-policy" },
+];
+
 export function Footer() {
   const socialLinks = [
     {
@@ -109,6 +116,20 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+
+            <h3 className="font-semibold text-lg mt-8 mb-4">Policies</h3>
+            <ul className="space-y-3">
+              {policies.map((link) => (
+                <li key={link.name}>
+                  <Link
+                    to={link.href}
+                    className="text-sm opacity-80 hover:opacity-100 hover:text-secondary transition-colors"
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
 
           {/* Contact */}
@@ -155,6 +176,17 @@ export function Footer() {
             <p className="text-sm opacity-60">
               © 2024 Parwah Sports Charitable Trust. All rights reserved.
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-sm opacity-70">
+              {policies.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="hover:opacity-100 hover:text-secondary transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
             <p className="text-sm opacity-60 flex items-center gap-1">
               Made with <Heart className="h-4 w-4 text-secondary fill-secondary" /> for Indian
               Athletes
