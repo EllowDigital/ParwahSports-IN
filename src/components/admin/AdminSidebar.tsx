@@ -16,7 +16,7 @@ import {
   Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuth } from "@/contexts/auth";
 import { useState } from "react";
 
 const navigation = [
