@@ -26,6 +26,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { getErrorMessage } from "@/lib/errors";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -90,10 +91,10 @@ export default function MemberLogin() {
       });
 
       navigate("/member/dashboard", { state: { selectedPlanId: planId } });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Login failed",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     } finally {
@@ -140,10 +141,10 @@ export default function MemberLogin() {
       if (authData.session) {
         navigate("/member/dashboard", { state: { selectedPlanId: planId } });
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: "Signup failed",
-        description: error.message,
+        description: getErrorMessage(error),
         variant: "destructive",
       });
     } finally {

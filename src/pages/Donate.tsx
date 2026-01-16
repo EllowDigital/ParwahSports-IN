@@ -19,6 +19,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRazorpay } from "@/hooks/useRazorpay";
+import { getErrorMessage } from "@/lib/errors";
 
 const presetAmounts = [500, 1000, 2500, 5000, 10000];
 
@@ -136,29 +137,29 @@ export default function Donate() {
               title: "Thank you!",
               description: "Your donation was successful.",
             });
-          } catch (err: any) {
+          } catch (err: unknown) {
             toast({
               title: "Error",
-              description: err.message,
+              description: getErrorMessage(err),
               variant: "destructive",
             });
           }
           setIsProcessing(false);
         },
-        onError: (error) => {
+        onError: (error: unknown) => {
           setIsProcessing(false);
           toast({
             title: "Payment failed",
-            description: error.message || "Please try again",
+            description: getErrorMessage(error) || "Please try again",
             variant: "destructive",
           });
         },
       });
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsProcessing(false);
       toast({
         title: "Error",
-        description: err.message,
+        description: getErrorMessage(err),
         variant: "destructive",
       });
     }

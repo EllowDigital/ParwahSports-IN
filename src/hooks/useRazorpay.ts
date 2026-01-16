@@ -1,8 +1,50 @@
 import { useCallback, useEffect, useState } from "react";
 
+type RazorpayOrderSuccessResponse = {
+  razorpay_order_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpaySubscriptionSuccessResponse = {
+  razorpay_subscription_id: string;
+  razorpay_payment_id: string;
+  razorpay_signature: string;
+};
+
+type RazorpayPrefill = {
+  name?: string;
+  email?: string;
+  contact?: string;
+};
+
+type RazorpayModalOptions = {
+  ondismiss?: () => void;
+};
+
+type RazorpayCheckoutOptions = {
+  key: string;
+  name: string;
+  description?: string;
+  amount?: number;
+  currency?: string;
+  order_id?: string;
+  subscription_id?: string;
+  handler: (response: unknown) => void;
+  prefill?: RazorpayPrefill;
+  theme?: { color?: string };
+  modal?: RazorpayModalOptions;
+};
+
+type RazorpayInstance = {
+  open: () => void;
+};
+
+type RazorpayConstructor = new (options: RazorpayCheckoutOptions) => RazorpayInstance;
+
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay?: RazorpayConstructor;
   }
 }
 
@@ -37,7 +79,7 @@ export function useRazorpay() {
         razorpay_payment_id: string;
         razorpay_signature: string;
       }) => void;
-      onError: (error: any) => void;
+      onError: (error: unknown) => void;
     }) => {
       if (!isLoaded || !window.Razorpay) {
         options.onError(new Error("Razorpay SDK not loaded"));
@@ -49,9 +91,9 @@ export function useRazorpay() {
         amount: options.amount,
         currency: options.currency,
         order_id: options.orderId,
-        name: "SSFA Foundation",
+        name: "Parwah Sports",
         description: "Donation / Membership Payment",
-        handler: options.onSuccess,
+        handler: (response) => options.onSuccess(response as RazorpayOrderSuccessResponse),
         prefill: options.prefill,
         theme: {
           color: "#1a365d",
@@ -82,7 +124,7 @@ export function useRazorpay() {
         razorpay_payment_id: string;
         razorpay_signature: string;
       }) => void;
-      onError: (error: any) => void;
+      onError: (error: unknown) => void;
     }) => {
       if (!isLoaded || !window.Razorpay) {
         options.onError(new Error("Razorpay SDK not loaded"));
@@ -92,9 +134,10 @@ export function useRazorpay() {
       const rzp = new window.Razorpay({
         key: options.keyId,
         subscription_id: options.subscriptionId,
-        name: "SSFA Foundation",
+        name: "Parwah Sports",
         description: "Membership Subscription",
-        handler: options.onSuccess,
+        handler: (response) =>
+          options.onSuccess(response as RazorpaySubscriptionSuccessResponse),
         prefill: options.prefill,
         theme: {
           color: "#1a365d",
