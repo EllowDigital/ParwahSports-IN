@@ -15,12 +15,20 @@ import GetInvolved from "./pages/GetInvolved";
 import Gallery from "./pages/Gallery";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Donate from "./pages/Donate";
+import Membership from "./pages/Membership";
+import MemberLogin from "./pages/member/MemberLogin";
+import MemberDashboard from "./pages/member/MemberDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/admin/Dashboard";
 import GalleryManager from "./pages/admin/GalleryManager";
 import EventsManager from "./pages/admin/EventsManager";
 import TeamManager from "./pages/admin/TeamManager";
 import AdminSettings from "./pages/admin/Settings";
+import DonationsManager from "./pages/admin/DonationsManager";
+import MembersManager from "./pages/admin/MembersManager";
+import SubscriptionsManager from "./pages/admin/SubscriptionsManager";
+import PlansManager from "./pages/admin/PlansManager";
 
 const queryClient = new QueryClient();
 
@@ -42,11 +50,19 @@ const App = () => (
             <Route path="/get-involved" element={<GetInvolved />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/donate" element={<Donate />} />
+            <Route path="/membership" element={<Membership />} />
+            <Route path="/member/login" element={<MemberLogin />} />
+            <Route path="/member/dashboard" element={<MemberDashboard />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/gallery" element={<GalleryManager />} />
             <Route path="/admin/events" element={<EventsManager />} />
             <Route path="/admin/team" element={<TeamManager />} />
+            <Route path="/admin/donations" element={<DonationsManager />} />
+            <Route path="/admin/members" element={<MembersManager />} />
+            <Route path="/admin/subscriptions" element={<SubscriptionsManager />} />
+            <Route path="/admin/plans" element={<PlansManager />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

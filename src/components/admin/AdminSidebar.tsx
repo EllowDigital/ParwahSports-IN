@@ -5,11 +5,15 @@ import {
   Image,
   Calendar,
   Users,
+  UserCheck,
   Settings,
   LogOut,
   Home,
   Menu,
   X,
+  Heart,
+  CreditCard,
+  Crown,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
@@ -20,6 +24,10 @@ const navigation = [
   { name: "Gallery", href: "/admin/gallery", icon: Image },
   { name: "Events", href: "/admin/events", icon: Calendar },
   { name: "Team", href: "/admin/team", icon: Users },
+  { name: "Donations", href: "/admin/donations", icon: Heart },
+  { name: "Members", href: "/admin/members", icon: UserCheck },
+  { name: "Subscriptions", href: "/admin/subscriptions", icon: CreditCard },
+  { name: "Plans", href: "/admin/plans", icon: Crown },
   { name: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
@@ -48,7 +56,10 @@ export function AdminSidebar() {
       {/* Navigation */}
       <nav className="flex-1 px-3 py-4 space-y-1">
         {navigation.map((item) => {
-          const isActive = location.pathname === item.href;
+          const isActive =
+            item.href === "/admin"
+              ? location.pathname === "/admin"
+              : location.pathname.startsWith(item.href);
           return (
             <Link
               key={item.name}
