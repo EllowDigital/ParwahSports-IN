@@ -136,8 +136,7 @@ export function useRazorpay() {
         subscription_id: options.subscriptionId,
         name: "Parwah Sports",
         description: "Membership Subscription",
-        handler: (response) =>
-          options.onSuccess(response as RazorpaySubscriptionSuccessResponse),
+        handler: (response) => options.onSuccess(response as RazorpaySubscriptionSuccessResponse),
         prefill: options.prefill,
         theme: {
           color: "#1a365d",

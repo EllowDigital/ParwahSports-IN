@@ -107,17 +107,6 @@ export default function MemberDashboard() {
     }
   }, [user, navigate]);
 
-  // Show plan selection dialog if coming from membership page
-  useEffect(() => {
-    if (selectedPlanId && plans) {
-      const plan = plans.find((p) => p.id === selectedPlanId);
-      if (plan) {
-        setSelectedPlan(plan);
-        setShowPlanDialog(true);
-      }
-    }
-  }, [selectedPlanId, plans]);
-
   // Fetch member data
   const { data: member } = useQuery({
     queryKey: ["member", user?.id],
@@ -148,6 +137,17 @@ export default function MemberDashboard() {
       return data as MembershipPlan[];
     },
   });
+
+  // Show plan selection dialog if coming from membership page
+  useEffect(() => {
+    if (selectedPlanId && plans) {
+      const plan = plans.find((p) => p.id === selectedPlanId);
+      if (plan) {
+        setSelectedPlan(plan);
+        setShowPlanDialog(true);
+      }
+    }
+  }, [selectedPlanId, plans]);
 
   // Fetch active subscription
   const { data: subscription, isLoading: subLoading } = useQuery({
