@@ -2,12 +2,17 @@ import { Layout } from "@/components/layout/Layout";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEffect } from "react";
 
 const Contact = () => {
   const headquartersAddress = "Mahak Complex, Delhi Road, Rampur Maniharan, Saharanpur 247451";
   const phoneDisplay = "9557960056";
   const phoneHref = "+919557960056";
   const email = "ParwahSports@gmail.com";
+
+  useEffect(() => {
+    document.title = "Contact | Parwah Sports";
+  }, []);
 
   return (
     <Layout>
@@ -22,6 +27,17 @@ const Contact = () => {
             </h1>
             <p className="text-lg text-muted-foreground">
               Have questions? We'd love to hear from you.
+            </p>
+            <p className="text-sm text-muted-foreground mt-3">
+              For donation and payment-related queries, please contact us at{" "}
+              <a className="text-primary hover:underline" href={`mailto:${email}`}>
+                {email}
+              </a>
+              {" "}or{" "}
+              <a className="text-primary hover:underline" href={`tel:${phoneHref}`}>
+                {phoneDisplay}
+              </a>
+              .
             </p>
           </div>
         </div>

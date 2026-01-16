@@ -17,6 +17,10 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Donate from "./pages/Donate";
 import Membership from "./pages/Membership";
+import ShippingPolicy from "./pages/ShippingPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
+import RefundPolicy from "./pages/RefundPolicy";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import MemberLogin from "./pages/member/MemberLogin";
 import MemberDashboard from "./pages/member/MemberDashboard";
 import AdminLogin from "./pages/AdminLogin";
@@ -50,6 +54,10 @@ const App = () => (
             <Route path="/get-involved" element={<GetInvolved />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
+            <Route path="/shipping-policy" element={<ShippingPolicy />} />
+            <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+            <Route path="/refund-policy" element={<RefundPolicy />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/donate" element={<Donate />} />
             <Route path="/membership" element={<Membership />} />
             <Route path="/member/login" element={<MemberLogin />} />
