@@ -23,6 +23,8 @@ import RefundPolicy from "./pages/RefundPolicy";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import MemberLogin from "./pages/member/MemberLogin";
 import MemberDashboard from "./pages/member/MemberDashboard";
+import StudentLogin from "./pages/student/StudentLogin";
+import StudentDashboard from "./pages/student/StudentDashboard";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/admin/Dashboard";
 import GalleryManager from "./pages/admin/GalleryManager";
@@ -33,6 +35,13 @@ import DonationsManager from "./pages/admin/DonationsManager";
 import MembersManager from "./pages/admin/MembersManager";
 import SubscriptionsManager from "./pages/admin/SubscriptionsManager";
 import PlansManager from "./pages/admin/PlansManager";
+import NewsManager from "./pages/admin/NewsManager";
+import BlogsManager from "./pages/admin/BlogsManager";
+import AnnouncementsManager from "./pages/admin/AnnouncementsManager";
+import CompetitionsManager from "./pages/admin/CompetitionsManager";
+import StudentsManager from "./pages/admin/StudentsManager";
+import ParticipationsManager from "./pages/admin/ParticipationsManager";
+import CertificatesManager from "./pages/admin/CertificatesManager";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +71,8 @@ const App = () => (
             <Route path="/membership" element={<Membership />} />
             <Route path="/member/login" element={<MemberLogin />} />
             <Route path="/member/dashboard" element={<MemberDashboard />} />
+            <Route path="/student/login" element={<StudentLogin />} />
+            <Route path="/student/dashboard" element={<StudentDashboard />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/gallery" element={<GalleryManager />} />
@@ -71,6 +82,13 @@ const App = () => (
             <Route path="/admin/members" element={<MembersManager />} />
             <Route path="/admin/subscriptions" element={<SubscriptionsManager />} />
             <Route path="/admin/plans" element={<PlansManager />} />
+            <Route path="/admin/news" element={<NewsManager />} />
+            <Route path="/admin/blogs" element={<BlogsManager />} />
+            <Route path="/admin/announcements" element={<AnnouncementsManager />} />
+            <Route path="/admin/competitions" element={<CompetitionsManager />} />
+            <Route path="/admin/students" element={<StudentsManager />} />
+            <Route path="/admin/participations" element={<ParticipationsManager />} />
+            <Route path="/admin/certificates" element={<CertificatesManager />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
