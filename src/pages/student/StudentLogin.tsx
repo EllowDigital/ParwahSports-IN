@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap } from "lucide-react";
-import Layout from "@/components/layout/Layout";
+import { Layout } from "@/components/layout/Layout";
 
 export default function StudentLogin() {
   const [email, setEmail] = useState("");
