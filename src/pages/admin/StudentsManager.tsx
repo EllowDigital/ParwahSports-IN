@@ -84,9 +84,9 @@ export default function StudentsManager() {
 
         // Add student role
         if (user_id) {
-          const { error: roleError } = await supabase.from("user_roles").insert([
-            { user_id, role: "student" },
-          ]);
+          const { error: roleError } = await supabase
+            .from("user_roles")
+            .insert([{ user_id, role: "student" }]);
           if (roleError) console.error("Error adding student role:", roleError);
         }
       }
@@ -109,7 +109,11 @@ export default function StudentsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error creating student", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error creating student",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -133,7 +137,11 @@ export default function StudentsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error updating student", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error updating student",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -147,7 +155,11 @@ export default function StudentsManager() {
       toast({ title: "Student deleted successfully" });
     },
     onError: (error) => {
-      toast({ title: "Error deleting student", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error deleting student",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -200,7 +212,10 @@ export default function StudentsManager() {
       item.user_id ? "Yes" : "No",
       format(new Date(item.created_at), "yyyy-MM-dd HH:mm"),
     ]);
-    const csvContent = [headers.join(","), ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(","))].join("\n");
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -273,7 +288,9 @@ export default function StudentsManager() {
                     <Switch
                       id="is_active"
                       checked={formData.is_active}
-                      onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_active: checked })
+                      }
                     />
                     <Label htmlFor="is_active">Active</Label>
                   </div>
@@ -283,7 +300,9 @@ export default function StudentsManager() {
                         <Switch
                           id="create_account"
                           checked={formData.create_account}
-                          onCheckedChange={(checked) => setFormData({ ...formData, create_account: checked })}
+                          onCheckedChange={(checked) =>
+                            setFormData({ ...formData, create_account: checked })
+                          }
                         />
                         <Label htmlFor="create_account">Create Login Account</Label>
                       </div>
@@ -307,7 +326,10 @@ export default function StudentsManager() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
                       {editingItem ? "Update" : "Create"}
                     </Button>
                   </div>
@@ -365,7 +387,9 @@ export default function StudentsManager() {
                     <TableCell>
                       <span
                         className={`px-2 py-1 rounded-full text-xs ${
-                          item.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                          item.is_active
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {item.is_active ? "Active" : "Inactive"}

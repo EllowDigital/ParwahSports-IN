@@ -107,7 +107,10 @@ export default function BlogsManager() {
       if (imageFile) {
         featured_image_url = await uploadImage(imageFile);
       }
-      const { error } = await supabase.from("blogs").update({ ...data, featured_image_url }).eq("id", id);
+      const { error } = await supabase
+        .from("blogs")
+        .update({ ...data, featured_image_url })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -188,7 +191,10 @@ export default function BlogsManager() {
       item.publish_date,
       format(new Date(item.created_at), "yyyy-MM-dd HH:mm"),
     ]);
-    const csvContent = [headers.join(","), ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(","))].join("\n");
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -290,7 +296,10 @@ export default function BlogsManager() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
                       {editingItem ? "Update" : "Create"}
                     </Button>
                   </div>
@@ -341,7 +350,9 @@ export default function BlogsManager() {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell className="font-medium max-w-[200px] truncate">{item.title}</TableCell>
+                    <TableCell className="font-medium max-w-[200px] truncate">
+                      {item.title}
+                    </TableCell>
                     <TableCell>{item.author || "-"}</TableCell>
                     <TableCell>
                       <span

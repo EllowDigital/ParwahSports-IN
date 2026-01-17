@@ -77,11 +77,13 @@ export default function CertificatesManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("certificates")
-        .select(`
+        .select(
+          `
           *,
           students:student_id(name, email),
           competitions:competition_id(name)
-        `)
+        `,
+        )
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Certificate[];
@@ -113,7 +115,9 @@ export default function CertificatesManager() {
   const uploadCertificate = async (file: File, studentId: string): Promise<string> => {
     const fileExt = file.name.split(".").pop();
     const fileName = `${studentId}/${Date.now()}.${fileExt}`;
-    const { error: uploadError } = await supabase.storage.from("certificates").upload(fileName, file);
+    const { error: uploadError } = await supabase.storage
+      .from("certificates")
+      .upload(fileName, file);
     if (uploadError) throw uploadError;
     const { data } = supabase.storage.from("certificates").getPublicUrl(fileName);
     return data.publicUrl;
@@ -143,7 +147,11 @@ export default function CertificatesManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error uploading certificate", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error uploading certificate",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -174,7 +182,11 @@ export default function CertificatesManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error updating certificate", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error updating certificate",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -188,7 +200,11 @@ export default function CertificatesManager() {
       toast({ title: "Certificate deleted successfully" });
     },
     onError: (error) => {
-      toast({ title: "Error deleting certificate", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error deleting certificate",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -228,7 +244,14 @@ export default function CertificatesManager() {
 
   const exportToCSV = () => {
     if (!certificates) return;
-    const headers = ["Student", "Title", "Competition", "Issue Date", "Certificate URL", "Created At"];
+    const headers = [
+      "Student",
+      "Title",
+      "Competition",
+      "Issue Date",
+      "Certificate URL",
+      "Created At",
+    ];
     const csvData = certificates.map((item) => [
       item.students?.name || "",
       item.title,
@@ -237,7 +260,10 @@ export default function CertificatesManager() {
       item.certificate_url,
       format(new Date(item.created_at), "yyyy-MM-dd HH:mm"),
     ]);
-    const csvContent = [headers.join(","), ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(","))].join("\n");
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -266,7 +292,9 @@ export default function CertificatesManager() {
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>{editingItem ? "Edit Certificate" : "Upload Certificate"}</DialogTitle>
+                  <DialogTitle>
+                    {editingItem ? "Edit Certificate" : "Upload Certificate"}
+                  </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -335,7 +363,9 @@ export default function CertificatesManager() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="certificate">Certificate File (PDF/Image) {!editingItem && "*"}</Label>
+                    <Label htmlFor="certificate">
+                      Certificate File (PDF/Image) {!editingItem && "*"}
+                    </Label>
                     <Input
                       id="certificate"
                       type="file"
@@ -353,7 +383,10 @@ export default function CertificatesManager() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
                       {editingItem ? "Update" : "Upload"}
                     </Button>
                   </div>

@@ -86,11 +86,13 @@ export default function ParticipationsManager() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("participations")
-        .select(`
+        .select(
+          `
           *,
           students:student_id(name, email),
           competitions:competition_id(name, event_date)
-        `)
+        `,
+        )
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as Participation[];
@@ -141,7 +143,11 @@ export default function ParticipationsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error creating participation", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error creating participation",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -165,7 +171,11 @@ export default function ParticipationsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error updating participation", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error updating participation",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -179,7 +189,11 @@ export default function ParticipationsManager() {
       toast({ title: "Participation deleted successfully" });
     },
     onError: (error) => {
-      toast({ title: "Error deleting participation", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error deleting participation",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -227,7 +241,10 @@ export default function ParticipationsManager() {
       item.notes || "",
       format(new Date(item.created_at), "yyyy-MM-dd HH:mm"),
     ]);
-    const csvContent = [headers.join(","), ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(","))].join("\n");
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -256,7 +273,9 @@ export default function ParticipationsManager() {
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>{editingItem ? "Edit Participation" : "Add Participation"}</DialogTitle>
+                  <DialogTitle>
+                    {editingItem ? "Edit Participation" : "Add Participation"}
+                  </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -309,7 +328,9 @@ export default function ParticipationsManager() {
                       <Label htmlFor="status">Status</Label>
                       <Select
                         value={formData.status}
-                        onValueChange={(value: ParticipationStatus) => setFormData({ ...formData, status: value })}
+                        onValueChange={(value: ParticipationStatus) =>
+                          setFormData({ ...formData, status: value })
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue />
@@ -337,7 +358,10 @@ export default function ParticipationsManager() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
                       {editingItem ? "Update" : "Create"}
                     </Button>
                   </div>
@@ -374,7 +398,9 @@ export default function ParticipationsManager() {
               ) : (
                 participations?.map((item) => (
                   <TableRow key={item.id}>
-                    <TableCell className="font-medium">{item.students?.name || "Unknown"}</TableCell>
+                    <TableCell className="font-medium">
+                      {item.students?.name || "Unknown"}
+                    </TableCell>
                     <TableCell>
                       <div>
                         <div>{item.competitions?.name || "Unknown"}</div>
@@ -396,7 +422,9 @@ export default function ParticipationsManager() {
                       )}
                     </TableCell>
                     <TableCell>
-                      <span className={`px-2 py-1 rounded-full text-xs ${statusColors[item.status]}`}>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs ${statusColors[item.status]}`}
+                      >
                         {item.status.replace("_", " ")}
                       </span>
                     </TableCell>

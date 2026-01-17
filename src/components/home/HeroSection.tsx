@@ -112,27 +112,27 @@ export function HeroSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-foreground/20" />
       </div>
 
-        {/* Slide Indicators (auto-scrolls to active button) */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 max-w-[92vw] overflow-x-auto scroll-smooth px-2">
-          <div className="flex items-center gap-2 w-max mx-auto">
-            {sliderImages.map((_, index) => (
-              <button
-                key={index}
-                ref={(el) => {
-                  indicatorRefs.current[index] = el;
-                }}
-                onClick={() => scrollTo(index)}
-                className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary ${
-                  activeIndex === index
-                    ? "w-8 h-2 bg-secondary"
-                    : "w-2 h-2 bg-background/50 hover:bg-background/80"
-                }`}
-                aria-label={`Go to slide ${index + 1}`}
-                aria-current={activeIndex === index ? "true" : undefined}
-              />
-            ))}
-          </div>
+      {/* Slide Indicators (auto-scrolls to active button) */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 max-w-[92vw] overflow-x-auto scroll-smooth px-2">
+        <div className="flex items-center gap-2 w-max mx-auto">
+          {sliderImages.map((_, index) => (
+            <button
+              key={index}
+              ref={(el) => {
+                indicatorRefs.current[index] = el;
+              }}
+              onClick={() => scrollTo(index)}
+              className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-2 focus:ring-secondary ${
+                activeIndex === index
+                  ? "w-8 h-2 bg-secondary"
+                  : "w-2 h-2 bg-background/50 hover:bg-background/80"
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+              aria-current={activeIndex === index ? "true" : undefined}
+            />
+          ))}
         </div>
+      </div>
 
       {/* Content */}
       <div className="container mx-auto px-4 lg:px-8 relative z-10 py-12 lg:py-0">

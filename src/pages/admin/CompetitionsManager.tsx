@@ -89,7 +89,11 @@ export default function CompetitionsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error creating competition", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error creating competition",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -99,7 +103,10 @@ export default function CompetitionsManager() {
       if (imageFile) {
         cover_image_url = await uploadImage(imageFile);
       }
-      const { error } = await supabase.from("competitions").update({ ...data, cover_image_url }).eq("id", id);
+      const { error } = await supabase
+        .from("competitions")
+        .update({ ...data, cover_image_url })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -108,7 +115,11 @@ export default function CompetitionsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error updating competition", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error updating competition",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -122,7 +133,11 @@ export default function CompetitionsManager() {
       toast({ title: "Competition deleted successfully" });
     },
     onError: (error) => {
-      toast({ title: "Error deleting competition", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error deleting competition",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -178,7 +193,10 @@ export default function CompetitionsManager() {
       item.is_participation_open ? "Yes" : "No",
       format(new Date(item.created_at), "yyyy-MM-dd HH:mm"),
     ]);
-    const csvContent = [headers.join(","), ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(","))].join("\n");
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -255,7 +273,9 @@ export default function CompetitionsManager() {
                     <Switch
                       id="is_participation_open"
                       checked={formData.is_participation_open}
-                      onCheckedChange={(checked) => setFormData({ ...formData, is_participation_open: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_participation_open: checked })
+                      }
                     />
                     <Label htmlFor="is_participation_open">Participation Open</Label>
                   </div>
@@ -263,7 +283,10 @@ export default function CompetitionsManager() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
                       {editingItem ? "Update" : "Create"}
                     </Button>
                   </div>

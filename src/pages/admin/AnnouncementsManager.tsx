@@ -102,7 +102,11 @@ export default function AnnouncementsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error creating announcement", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error creating announcement",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -122,7 +126,11 @@ export default function AnnouncementsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error updating announcement", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error updating announcement",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -136,7 +144,11 @@ export default function AnnouncementsManager() {
       toast({ title: "Announcement deleted successfully" });
     },
     onError: (error) => {
-      toast({ title: "Error deleting announcement", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error deleting announcement",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -177,7 +189,15 @@ export default function AnnouncementsManager() {
 
   const exportToCSV = () => {
     if (!announcements) return;
-    const headers = ["Title", "Message", "Priority", "Active", "Start Date", "End Date", "Created At"];
+    const headers = [
+      "Title",
+      "Message",
+      "Priority",
+      "Active",
+      "Start Date",
+      "End Date",
+      "Created At",
+    ];
     const csvData = announcements.map((item) => [
       item.title,
       item.message,
@@ -187,7 +207,10 @@ export default function AnnouncementsManager() {
       item.end_date || "",
       format(new Date(item.created_at), "yyyy-MM-dd HH:mm"),
     ]);
-    const csvContent = [headers.join(","), ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(","))].join("\n");
+    const csvContent = [
+      headers.join(","),
+      ...csvData.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+    ].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -216,7 +239,9 @@ export default function AnnouncementsManager() {
               </DialogTrigger>
               <DialogContent className="max-w-lg">
                 <DialogHeader>
-                  <DialogTitle>{editingItem ? "Edit Announcement" : "Add Announcement"}</DialogTitle>
+                  <DialogTitle>
+                    {editingItem ? "Edit Announcement" : "Add Announcement"}
+                  </DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
@@ -242,7 +267,9 @@ export default function AnnouncementsManager() {
                     <Label htmlFor="priority">Priority</Label>
                     <Select
                       value={formData.priority}
-                      onValueChange={(value: AnnouncementPriority) => setFormData({ ...formData, priority: value })}
+                      onValueChange={(value: AnnouncementPriority) =>
+                        setFormData({ ...formData, priority: value })
+                      }
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -278,7 +305,9 @@ export default function AnnouncementsManager() {
                     <Switch
                       id="is_active"
                       checked={formData.is_active}
-                      onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
+                      onCheckedChange={(checked) =>
+                        setFormData({ ...formData, is_active: checked })
+                      }
                     />
                     <Label htmlFor="is_active">Active</Label>
                   </div>
@@ -286,7 +315,10 @@ export default function AnnouncementsManager() {
                     <Button type="button" variant="outline" onClick={resetForm}>
                       Cancel
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button
+                      type="submit"
+                      disabled={createMutation.isPending || updateMutation.isPending}
+                    >
                       {editingItem ? "Update" : "Create"}
                     </Button>
                   </div>
@@ -325,15 +357,21 @@ export default function AnnouncementsManager() {
                   const PriorityIcon = priorityIcons[item.priority];
                   return (
                     <TableRow key={item.id}>
-                      <TableCell className="font-medium max-w-[200px] truncate">{item.title}</TableCell>
+                      <TableCell className="font-medium max-w-[200px] truncate">
+                        {item.title}
+                      </TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit ${priorityColors[item.priority]}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit ${priorityColors[item.priority]}`}
+                        >
                           <PriorityIcon className="w-3 h-3" />
                           {item.priority}
                         </span>
                       </TableCell>
                       <TableCell>
-                        <span className={`px-2 py-1 rounded-full text-xs ${item.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs ${item.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}
+                        >
                           {item.is_active ? "Active" : "Inactive"}
                         </span>
                       </TableCell>

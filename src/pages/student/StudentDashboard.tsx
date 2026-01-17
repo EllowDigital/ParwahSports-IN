@@ -21,7 +21,11 @@ export default function StudentDashboard() {
   const { data: student } = useQuery({
     queryKey: ["student-profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from("students").select("*").eq("user_id", user?.id).single();
+      const { data, error } = await supabase
+        .from("students")
+        .select("*")
+        .eq("user_id", user?.id)
+        .single();
       if (error) throw error;
       setStudentId(data.id);
       return data;
@@ -70,7 +74,9 @@ export default function StudentDashboard() {
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold">Welcome, {student?.name || "Student"}</h1>
-            <p className="text-muted-foreground">View your certificates and participation history</p>
+            <p className="text-muted-foreground">
+              View your certificates and participation history
+            </p>
           </div>
           <Button variant="outline" onClick={handleSignOut}>
             <LogOut className="w-4 h-4 mr-2" /> Sign Out
@@ -80,14 +86,20 @@ export default function StudentDashboard() {
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Award className="w-5 h-5" /> Certificates</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Award className="w-5 h-5" /> Certificates
+              </CardTitle>
               <CardDescription>{certificates?.length || 0} certificates earned</CardDescription>
             </CardHeader>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2"><Trophy className="w-5 h-5" /> Participations</CardTitle>
-              <CardDescription>{participations?.length || 0} competitions participated</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="w-5 h-5" /> Participations
+              </CardTitle>
+              <CardDescription>
+                {participations?.length || 0} competitions participated
+              </CardDescription>
             </CardHeader>
           </Card>
         </div>
@@ -102,7 +114,10 @@ export default function StudentDashboard() {
             ) : (
               <div className="space-y-4">
                 {certificates?.map((cert) => (
-                  <div key={cert.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={cert.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div>
                       <h3 className="font-medium">{cert.title}</h3>
                       <p className="text-sm text-muted-foreground">
@@ -132,15 +147,21 @@ export default function StudentDashboard() {
             ) : (
               <div className="space-y-4">
                 {participations?.map((p) => (
-                  <div key={p.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div
+                    key={p.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
+                  >
                     <div>
                       <h3 className="font-medium">{p.competitions?.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {p.competitions?.event_date && format(new Date(p.competitions.event_date), "MMM d, yyyy")}
+                        {p.competitions?.event_date &&
+                          format(new Date(p.competitions.event_date), "MMM d, yyyy")}
                         {p.position && ` • Position: ${p.position}`}
                       </p>
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs ${p.status === "winner" ? "bg-secondary/10 text-secondary" : "bg-primary/10 text-primary"}`}>
+                    <span
+                      className={`px-2 py-1 rounded-full text-xs ${p.status === "winner" ? "bg-secondary/10 text-secondary" : "bg-primary/10 text-primary"}`}
+                    >
                       {p.status.replace("_", " ")}
                     </span>
                   </div>
