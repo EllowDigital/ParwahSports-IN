@@ -42,6 +42,12 @@ import CompetitionsManager from "./pages/admin/CompetitionsManager";
 import StudentsManager from "./pages/admin/StudentsManager";
 import ParticipationsManager from "./pages/admin/ParticipationsManager";
 import CertificatesManager from "./pages/admin/CertificatesManager";
+import VolunteersManager from "./pages/admin/VolunteersManager";
+import News from "./pages/News";
+import Blogs from "./pages/Blogs";
+import Announcements from "./pages/Announcements";
+import Events from "./pages/Events";
+import Volunteer from "./pages/Volunteer";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +66,11 @@ const App = () => (
             <Route path="/resources" element={<Resources />} />
             <Route path="/calendar" element={<Calendar />} />
             <Route path="/team" element={<Team />} />
+            <Route path="/news" element={<News />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/announcements" element={<Announcements />} />
+            <Route path="/events" element={<Events />} />
+            <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/get-involved" element={<GetInvolved />} />
             <Route path="/gallery" element={<Gallery />} />
             <Route path="/contact" element={<Contact />} />
@@ -89,6 +100,7 @@ const App = () => (
             <Route path="/admin/students" element={<StudentsManager />} />
             <Route path="/admin/participations" element={<ParticipationsManager />} />
             <Route path="/admin/certificates" element={<CertificatesManager />} />
+            <Route path="/admin/volunteers" element={<VolunteersManager />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -2,45 +2,80 @@ import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { Image, Calendar, Users, TrendingUp } from "lucide-react";
+import {
+  Image,
+  Calendar,
+  Users,
+  Newspaper,
+  FileText,
+  Bell,
+  Trophy,
+  GraduationCap,
+  Heart,
+  CreditCard,
+  UserCheck,
+} from "lucide-react";
 
 interface Stats {
-  totalImages: number;
-  totalEvents: number;
-  totalTeamMembers: number;
-  upcomingEvents: number;
+  gallery: number;
+  events: number;
+  team: number;
+  news: number;
+  blogs: number;
+  announcements: number;
+  competitions: number;
+  students: number;
+  donations: number;
+  members: number;
+  volunteers: number;
 }
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({
-    totalImages: 0,
-    totalEvents: 0,
-    totalTeamMembers: 0,
-    upcomingEvents: 0,
+    gallery: 0,
+    events: 0,
+    team: 0,
+    news: 0,
+    blogs: 0,
+    announcements: 0,
+    competitions: 0,
+    students: 0,
+    donations: 0,
+    members: 0,
+    volunteers: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [imagesRes, eventsRes, teamRes, upcomingRes] = await Promise.all([
-          supabase.from("gallery_images").select("id", { count: "exact", head: true }),
-          supabase.from("events").select("id", { count: "exact", head: true }),
-          supabase
-            .from("team_members")
-            .select("id", { count: "exact", head: true })
-            .eq("is_active", true),
-          supabase
-            .from("events")
-            .select("id", { count: "exact", head: true })
-            .eq("status", "upcoming"),
-        ]);
+        const [gallery, events, team, news, blogs, announcements, competitions, students, donations, members, volunteers] =
+          await Promise.all([
+            supabase.from("gallery_images").select("id", { count: "exact", head: true }),
+            supabase.from("events").select("id", { count: "exact", head: true }),
+            supabase.from("team_members").select("id", { count: "exact", head: true }).eq("is_active", true),
+            supabase.from("news").select("id", { count: "exact", head: true }),
+            supabase.from("blogs").select("id", { count: "exact", head: true }),
+            supabase.from("announcements").select("id", { count: "exact", head: true }).eq("is_active", true),
+            supabase.from("competitions").select("id", { count: "exact", head: true }),
+            supabase.from("students").select("id", { count: "exact", head: true }).eq("is_active", true),
+            supabase.from("donations").select("id", { count: "exact", head: true }).eq("payment_status", "success"),
+            supabase.from("members").select("id", { count: "exact", head: true }).eq("is_active", true),
+            supabase.from("volunteers").select("id", { count: "exact", head: true }),
+          ]);
 
         setStats({
-          totalImages: imagesRes.count ?? 0,
-          totalEvents: eventsRes.count ?? 0,
-          totalTeamMembers: teamRes.count ?? 0,
-          upcomingEvents: upcomingRes.count ?? 0,
+          gallery: gallery.count ?? 0,
+          events: events.count ?? 0,
+          team: team.count ?? 0,
+          news: news.count ?? 0,
+          blogs: blogs.count ?? 0,
+          announcements: announcements.count ?? 0,
+          competitions: competitions.count ?? 0,
+          students: students.count ?? 0,
+          donations: donations.count ?? 0,
+          members: members.count ?? 0,
+          volunteers: volunteers.count ?? 0,
         });
       } catch (error) {
         console.error("Error fetching stats:", error);
@@ -53,147 +88,71 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    {
-      title: "Gallery Images",
-      value: stats.totalImages,
-      icon: Image,
-      description: "Total images in gallery",
-      color: "text-blue-500",
-      bgColor: "bg-blue-500/10",
-    },
-    {
-      title: "Events",
-      value: stats.totalEvents,
-      icon: Calendar,
-      description: "Total events created",
-      color: "text-green-500",
-      bgColor: "bg-green-500/10",
-    },
-    {
-      title: "Team Members",
-      value: stats.totalTeamMembers,
-      icon: Users,
-      description: "Active team members",
-      color: "text-purple-500",
-      bgColor: "bg-purple-500/10",
-    },
-    {
-      title: "Upcoming Events",
-      value: stats.upcomingEvents,
-      icon: TrendingUp,
-      description: "Events scheduled",
-      color: "text-orange-500",
-      bgColor: "bg-orange-500/10",
-    },
+    { title: "News", value: stats.news, icon: Newspaper, href: "/admin/news" },
+    { title: "Blogs", value: stats.blogs, icon: FileText, href: "/admin/blogs" },
+    { title: "Announcements", value: stats.announcements, icon: Bell, href: "/admin/announcements" },
+    { title: "Events", value: stats.events, icon: Calendar, href: "/admin/events" },
+    { title: "Gallery", value: stats.gallery, icon: Image, href: "/admin/gallery" },
+    { title: "Competitions", value: stats.competitions, icon: Trophy, href: "/admin/competitions" },
+    { title: "Team Members", value: stats.team, icon: Users, href: "/admin/team" },
+    { title: "Students", value: stats.students, icon: GraduationCap, href: "/admin/students" },
+    { title: "Donations", value: stats.donations, icon: Heart, href: "/admin/donations" },
+    { title: "Members", value: stats.members, icon: UserCheck, href: "/admin/members" },
+    { title: "Volunteers", value: stats.volunteers, icon: CreditCard, href: "/admin/volunteers" },
   ];
 
   return (
     <AdminLayout>
       <div className="space-y-8">
-        {/* Header */}
         <div>
           <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-muted-foreground mt-1">
-            Welcome to the Parwah Sports Charitable Trust admin panel
-          </p>
+          <p className="text-muted-foreground mt-1">Overview of all CMS sections</p>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {statCards.map((stat) => (
-            <Card key={stat.title} className="border-border/50">
-              <CardHeader className="flex flex-row items-center justify-between pb-2">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
-                  {stat.title}
-                </CardTitle>
-                <div className={`p-2 rounded-lg ${stat.bgColor}`}>
-                  <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-foreground">
-                  {isLoading ? "..." : stat.value}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">{stat.description}</p>
-              </CardContent>
-            </Card>
+            <a key={stat.title} href={stat.href}>
+              <Card className="border-border/50 hover:shadow-md transition-shadow cursor-pointer">
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-xs font-medium text-muted-foreground">
+                    {stat.title}
+                  </CardTitle>
+                  <stat.icon className="w-4 h-4 text-primary" />
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold text-foreground">
+                    {isLoading ? "..." : stat.value}
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
           ))}
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="border-border/50">
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>Common tasks you can perform</CardDescription>
-            </CardHeader>
-            <CardContent className="grid grid-cols-2 gap-3">
-              <a
-                href="/admin/gallery"
-                className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center"
-              >
-                <Image className="w-6 h-6 mx-auto mb-2 text-primary" />
-                <span className="text-sm font-medium">Add Image</span>
-              </a>
-              <a
-                href="/admin/events"
-                className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center"
-              >
-                <Calendar className="w-6 h-6 mx-auto mb-2 text-primary" />
-                <span className="text-sm font-medium">Create Event</span>
-              </a>
-              <a
-                href="/admin/team"
-                className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center"
-              >
-                <Users className="w-6 h-6 mx-auto mb-2 text-primary" />
-                <span className="text-sm font-medium">Add Member</span>
-              </a>
-              <a
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center"
-              >
-                <TrendingUp className="w-6 h-6 mx-auto mb-2 text-primary" />
-                <span className="text-sm font-medium">View Site</span>
-              </a>
-            </CardContent>
-          </Card>
-
-          <Card className="border-border/50">
-            <CardHeader>
-              <CardTitle>Getting Started</CardTitle>
-              <CardDescription>Tips for managing your content</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary">1</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Add images to your gallery to showcase your events and activities
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary">2</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Create events to keep your community informed about upcoming activities
-                </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary">3</span>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Manage your team members to display them on your website
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="border-border/50">
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common tasks</CardDescription>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <a href="/admin/news" className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center">
+              <Newspaper className="w-6 h-6 mx-auto mb-2 text-primary" />
+              <span className="text-sm font-medium">Add News</span>
+            </a>
+            <a href="/admin/events" className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center">
+              <Calendar className="w-6 h-6 mx-auto mb-2 text-primary" />
+              <span className="text-sm font-medium">Add Event</span>
+            </a>
+            <a href="/admin/blogs" className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center">
+              <FileText className="w-6 h-6 mx-auto mb-2 text-primary" />
+              <span className="text-sm font-medium">Add Blog</span>
+            </a>
+            <a href="/" target="_blank" className="p-4 rounded-lg border border-border hover:bg-accent transition-colors text-center">
+              <Image className="w-6 h-6 mx-auto mb-2 text-primary" />
+              <span className="text-sm font-medium">View Site</span>
+            </a>
+          </CardContent>
+        </Card>
       </div>
     </AdminLayout>
   );
