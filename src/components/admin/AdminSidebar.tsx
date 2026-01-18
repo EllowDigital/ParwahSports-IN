@@ -21,6 +21,7 @@ import {
   GraduationCap,
   Award,
   Medal,
+  HandHeart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
@@ -51,6 +52,7 @@ const navigationSections = [
     title: "People",
     items: [
       { name: "Team", href: "/admin/team", icon: Users },
+      { name: "Volunteers", href: "/admin/volunteers", icon: HandHeart },
       { name: "Students", href: "/admin/students", icon: GraduationCap },
       { name: "Participations", href: "/admin/participations", icon: Medal },
       { name: "Certificates", href: "/admin/certificates", icon: Award },

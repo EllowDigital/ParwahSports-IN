@@ -1,0 +1,91 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { AlertTriangle, AlertCircle, Info, X } from "lucide-react";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
+interface Announcement {
+  id: string;
+  title: string;
+  message: string;
+  priority: "normal" | "important" | "urgent";
+}
+
+export function AnnouncementsBanner() {
+  const [dismissedIds, setDismissedIds] = useState<string[]>([]);
+
+  const { data: announcements } = useQuery({
+    queryKey: ["home-announcements"],
+    queryFn: async () => {
+      const today = new Date().toISOString().split("T")[0];
+      const { data, error } = await supabase
+        .from("announcements")
+        .select("id, title, message, priority")
+        .eq("is_active", true)
+        .or(`start_date.is.null,start_date.lte.${today}`)
+        .or(`end_date.is.null,end_date.gte.${today}`)
+        .order("priority", { ascending: false })
+        .limit(3);
+      if (error) throw error;
+      return data as Announcement[];
+    },
+  });
+
+  const visibleAnnouncements = announcements?.filter((a) => !dismissedIds.includes(a.id)) || [];
+
+  if (visibleAnnouncements.length === 0) return null;
+
+  const priorityStyles = {
+    urgent: {
+      bg: "bg-destructive",
+      text: "text-destructive-foreground",
+      icon: AlertTriangle,
+    },
+    important: {
+      bg: "bg-primary",
+      text: "text-primary-foreground",
+      icon: AlertCircle,
+    },
+    normal: {
+      bg: "bg-secondary",
+      text: "text-secondary-foreground",
+      icon: Info,
+    },
+  };
+
+  // Show only the highest priority announcement
+  const topAnnouncement = visibleAnnouncements[0];
+  const style = priorityStyles[topAnnouncement.priority];
+  const Icon = style.icon;
+
+  return (
+    <div className={`${style.bg} ${style.text}`}>
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Icon className="h-5 w-5 shrink-0" />
+            <div className="min-w-0 flex-1">
+              <span className="font-semibold">{topAnnouncement.title}:</span>{" "}
+              <span className="opacity-90 line-clamp-1">{topAnnouncement.message}</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              to="/announcements"
+              className="text-sm underline underline-offset-2 hover:opacity-80 hidden sm:inline"
+            >
+              View All
+            </Link>
+            <button
+              onClick={() => setDismissedIds([...dismissedIds, topAnnouncement.id])}
+              className="p-1 hover:opacity-70 transition-opacity"
+              aria-label="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
