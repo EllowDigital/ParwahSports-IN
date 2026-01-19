@@ -1,124 +1,74 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
-import { Calendar as CalendarIcon, MapPin, Users, Clock, Filter } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Calendar as CalendarIcon, MapPin, Clock, Filter } from "lucide-react";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format, isFuture, isPast, isToday } from "date-fns";
 
-const events = [
-  {
-    id: 1,
-    title: "Inter-School Taekwondo Championship",
-    date: "2024-03-15",
-    time: "9:00 AM - 6:00 PM",
-    location: "Sports Complex, Dehradun",
-    type: "Competition",
-    participants: "500+ Athletes",
-    description: "Annual championship featuring schools from across Uttarakhand.",
-  },
-  {
-    id: 2,
-    title: "Summer Training Camp",
-    date: "2024-04-01",
-    time: "6:00 AM - 12:00 PM",
-    location: "Rishikesh Training Center",
-    type: "Training Camp",
-    participants: "120 Athletes",
-    description: "30-day intensive training program for selected athletes.",
-  },
-  {
-    id: 3,
-    title: "Talent Identification Trial",
-    date: "2024-04-20",
-    time: "8:00 AM - 4:00 PM",
-    location: "Various Districts",
-    type: "Talent Trial",
-    participants: "Open Registration",
-    description: "Scouting event to identify promising young athletes.",
-  },
-  {
-    id: 4,
-    title: "Sports Science Workshop",
-    date: "2024-05-05",
-    time: "10:00 AM - 4:00 PM",
-    location: "Online",
-    type: "Workshop",
-    participants: "Coaches & Athletes",
-    description: "Expert-led workshop on sports nutrition and recovery.",
-  },
-  {
-    id: 5,
-    title: "District Level Competition",
-    date: "2024-05-15",
-    time: "9:00 AM - 5:00 PM",
-    location: "Haridwar Stadium",
-    type: "Competition",
-    participants: "300+ Athletes",
-    description: "District championship qualifying event.",
-  },
-  {
-    id: 6,
-    title: "Community Fitness Drive",
-    date: "2024-06-01",
-    time: "6:00 AM - 9:00 AM",
-    location: "Rajpur Road, Dehradun",
-    type: "Community Event",
-    participants: "Open to Public",
-    description: "Free fitness activities and health awareness program.",
-  },
-  {
-    id: 7,
-    title: "Coaching Certification Program",
-    date: "2024-06-15",
-    time: "9:00 AM - 5:00 PM",
-    location: "PSCT Training Center",
-    type: "Training Camp",
-    participants: "Aspiring Coaches",
-    description: "5-day certification course for sports coaches.",
-  },
-  {
-    id: 8,
-    title: "State Championship Preparation Camp",
-    date: "2024-07-01",
-    time: "6:00 AM - 6:00 PM",
-    location: "Dehradun",
-    type: "Training Camp",
-    participants: "Selected Athletes",
-    description: "Pre-competition training for state qualifiers.",
-  },
-];
+interface Event {
+  id: string;
+  title: string;
+  description: string | null;
+  event_date: string;
+  start_time: string | null;
+  end_time: string | null;
+  location: string | null;
+  status: string | null;
+}
 
-const eventTypes = [
-  "All",
-  "Competition",
-  "Training Camp",
-  "Workshop",
-  "Talent Trial",
-  "Community Event",
-];
-
-const typeColors: Record<string, string> = {
-  Competition: "bg-secondary/10 text-secondary border-secondary/30",
-  "Training Camp": "bg-primary/10 text-primary border-primary/30",
-  Workshop: "bg-accent/10 text-accent border-accent/30",
-  "Talent Trial": "bg-chart-4/20 text-chart-4 border-chart-4/30",
-  "Community Event": "bg-chart-5/20 text-chart-5 border-chart-5/30",
-};
+const eventTypes = ["All", "Upcoming", "Past"];
 
 const Calendar = () => {
   const [selectedType, setSelectedType] = useState("All");
 
-  const filteredEvents =
-    selectedType === "All" ? events : events.filter((event) => event.type === selectedType);
+  const { data: events, isLoading } = useQuery({
+    queryKey: ["calendar-events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .order("event_date", { ascending: true });
+      if (error) throw error;
+      return data as Event[];
+    },
+  });
+
+  const filteredEvents = events?.filter((event) => {
+    const eventDate = new Date(event.event_date);
+    if (selectedType === "Upcoming") {
+      return isFuture(eventDate) || isToday(eventDate);
+    }
+    if (selectedType === "Past") {
+      return isPast(eventDate) && !isToday(eventDate);
+    }
+    return true;
+  }) || [];
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("en-IN", {
-      weekday: "short",
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
+    return format(date, "EEE, MMM d, yyyy");
+  };
+
+  const getEventStatus = (dateString: string) => {
+    const eventDate = new Date(dateString);
+    if (isToday(eventDate)) return "Today";
+    if (isFuture(eventDate)) return "Upcoming";
+    return "Completed";
+  };
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Today":
+        return "bg-secondary text-secondary-foreground";
+      case "Upcoming":
+        return "bg-primary/10 text-primary border-primary/30";
+      default:
+        return "bg-muted text-muted-foreground";
+    }
   };
 
   return (
@@ -154,7 +104,6 @@ const Calendar = () => {
                 variant={selectedType === type ? "default" : "outline"}
                 size="sm"
                 onClick={() => setSelectedType(type)}
-                className={selectedType === type ? "bg-primary text-primary-foreground" : ""}
               >
                 {type}
               </Button>
@@ -167,58 +116,92 @@ const Calendar = () => {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto space-y-6">
-            {filteredEvents.map((event) => (
-              <Card
-                key={event.id}
-                className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
-              >
-                <div className="flex flex-col md:flex-row">
-                  {/* Date Badge */}
-                  <div className="bg-primary text-primary-foreground p-6 flex flex-col items-center justify-center md:w-32 shrink-0">
-                    <CalendarIcon className="h-6 w-6 mb-2" />
-                    <div className="text-center">
-                      <div className="text-2xl font-bold">{new Date(event.date).getDate()}</div>
-                      <div className="text-sm opacity-80">
-                        {new Date(event.date).toLocaleDateString("en-IN", { month: "short" })}
+            {isLoading ? (
+              [...Array(4)].map((_, i) => (
+                <Card key={i} className="p-6">
+                  <div className="flex gap-6">
+                    <Skeleton className="h-24 w-24 rounded-lg" />
+                    <div className="flex-1 space-y-3">
+                      <Skeleton className="h-6 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
+                  </div>
+                </Card>
+              ))
+            ) : filteredEvents.length === 0 ? (
+              <div className="text-center py-12">
+                <CalendarIcon className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+                <h3 className="text-xl font-semibold text-foreground mb-2">No Events Found</h3>
+                <p className="text-muted-foreground">
+                  {selectedType === "Upcoming"
+                    ? "Stay tuned for upcoming events!"
+                    : selectedType === "Past"
+                    ? "No past events to show."
+                    : "No events available yet."}
+                </p>
+              </div>
+            ) : (
+              filteredEvents.map((event) => {
+                const status = getEventStatus(event.event_date);
+                return (
+                  <Card
+                    key={event.id}
+                    className="border-0 shadow-lg hover:shadow-xl transition-shadow overflow-hidden"
+                  >
+                    <div className="flex flex-col md:flex-row">
+                      {/* Date Badge */}
+                      <div className="bg-primary text-primary-foreground p-6 flex flex-col items-center justify-center md:w-32 shrink-0">
+                        <CalendarIcon className="h-6 w-6 mb-2" />
+                        <div className="text-center">
+                          <div className="text-2xl font-bold">
+                            {new Date(event.event_date).getDate()}
+                          </div>
+                          <div className="text-sm opacity-80">
+                            {format(new Date(event.event_date), "MMM")}
+                          </div>
+                          <div className="text-xs opacity-70">
+                            {format(new Date(event.event_date), "yyyy")}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 p-6">
+                        <div className="flex flex-wrap items-center gap-3 mb-3">
+                          <Badge variant="outline" className={getStatusColor(status)}>
+                            {status}
+                          </Badge>
+                          <span className="text-sm text-muted-foreground">
+                            {formatDate(event.event_date)}
+                          </span>
+                        </div>
+                        <CardTitle className="text-xl mb-2">{event.title}</CardTitle>
+                        {event.description && (
+                          <p className="text-muted-foreground mb-4 line-clamp-2">
+                            {event.description}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                          {event.start_time && (
+                            <span className="flex items-center gap-1">
+                              <Clock className="h-4 w-4" />
+                              {event.start_time}
+                              {event.end_time && ` - ${event.end_time}`}
+                            </span>
+                          )}
+                          {event.location && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-4 w-4" />
+                              {event.location}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="flex-1 p-6">
-                    <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <Badge variant="outline" className={typeColors[event.type]}>
-                        {event.type}
-                      </Badge>
-                      <span className="text-sm text-muted-foreground">
-                        {formatDate(event.date)}
-                      </span>
-                    </div>
-                    <CardTitle className="text-xl mb-2">{event.title}</CardTitle>
-                    <p className="text-muted-foreground mb-4">{event.description}</p>
-                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-4 w-4" />
-                        {event.time}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" />
-                        {event.location}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Users className="h-4 w-4" />
-                        {event.participants}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            ))}
-
-            {filteredEvents.length === 0 && (
-              <div className="text-center py-12 text-muted-foreground">
-                No events found for the selected category.
-              </div>
+                  </Card>
+                );
+              })
             )}
           </div>
         </div>
