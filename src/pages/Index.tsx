@@ -5,6 +5,9 @@ import { ImpactSection } from "@/components/home/ImpactSection";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { CTASection } from "@/components/home/CTASection";
 import { AnnouncementsBanner } from "@/components/home/AnnouncementsBanner";
+import { FeaturedEventsSection } from "@/components/home/FeaturedEventsSection";
+import { LatestNewsSection } from "@/components/home/LatestNewsSection";
+import { RecentBlogsSection } from "@/components/home/RecentBlogsSection";
 
 const Index = () => {
   return (
@@ -12,7 +15,10 @@ const Index = () => {
       <AnnouncementsBanner />
       <HeroSection />
       <WhatWeDoSection />
+      <FeaturedEventsSection />
+      <LatestNewsSection />
       <ImpactSection />
+      <RecentBlogsSection />
       <PartnersSection />
       <CTASection />
     </Layout>
