@@ -48,6 +48,7 @@ import Blogs from "./pages/Blogs";
 import Announcements from "./pages/Announcements";
 import Events from "./pages/Events";
 import Volunteer from "./pages/Volunteer";
+import Competitions from "./pages/Competitions";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
             <Route path="/blogs" element={<Blogs />} />
             <Route path="/announcements" element={<Announcements />} />
             <Route path="/events" element={<Events />} />
+            <Route path="/competitions" element={<Competitions />} />
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/get-involved" element={<GetInvolved />} />
             <Route path="/gallery" element={<Gallery />} />

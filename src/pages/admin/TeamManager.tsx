@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Users, Mail, Phone, Linkedin, Twitter } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Users, Mail, Phone, Linkedin, Twitter, Upload, X } from "lucide-react";
 
 interface TeamMember {
   id: string;
@@ -40,6 +40,10 @@ export default function TeamManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -90,6 +94,8 @@ export default function TeamManager() {
       is_active: true,
     });
     setEditingMember(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
   };
 
   const openEditDialog = (member: TeamMember) => {
@@ -106,24 +112,65 @@ export default function TeamManager() {
       display_order: member.display_order || 0,
       is_active: member.is_active ?? true,
     });
+    setPreviewUrl(member.image_url);
     setIsDialogOpen(true);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Error", description: "Please select an image file", variant: "destructive" });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Error", description: "Image must be less than 5MB", variant: "destructive" });
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const uploadToStorage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("team-images")
+      .upload(fileName, file, { cacheControl: "3600", upsert: false });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from("team-images").getPublicUrl(fileName);
+    return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
 
-    const payload = {
-      ...formData,
-      image_url: formData.image_url || null,
-      email: formData.email || null,
-      phone: formData.phone || null,
-      linkedin_url: formData.linkedin_url || null,
-      twitter_url: formData.twitter_url || null,
-      bio: formData.bio || null,
-    };
-
     try {
+      let imageUrl = formData.image_url || null;
+
+      if (selectedFile) {
+        setIsUploading(true);
+        imageUrl = await uploadToStorage(selectedFile);
+        setIsUploading(false);
+      }
+
+      const payload = {
+        ...formData,
+        image_url: imageUrl,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        linkedin_url: formData.linkedin_url || null,
+        twitter_url: formData.twitter_url || null,
+        bio: formData.bio || null,
+      };
+
       if (editingMember) {
         const { error } = await supabase
           .from("team_members")
@@ -147,6 +194,7 @@ export default function TeamManager() {
       toast({ title: "Error", description: "Failed to save team member", variant: "destructive" });
     } finally {
       setIsSaving(false);
+      setIsUploading(false);
     }
   };
 
@@ -241,13 +289,47 @@ export default function TeamManager() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="image_url">Photo URL</Label>
-                  <Input
-                    id="image_url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    placeholder="https://example.com/photo.jpg"
-                  />
+                  <Label>Profile Photo</Label>
+                  <div className="border-2 border-dashed border-border rounded-lg p-4">
+                    {previewUrl ? (
+                      <div className="relative">
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="w-full h-40 object-cover rounded-lg"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-2 right-2"
+                          onClick={() => {
+                            setPreviewUrl(null);
+                            setSelectedFile(null);
+                            setFormData((prev) => ({ ...prev, image_url: "" }));
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div
+                        className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Click to upload photo</p>
+                        <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG</p>
+                      </div>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                  </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
@@ -318,9 +400,9 @@ export default function TeamManager() {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isSaving} className="flex-1">
-                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                    {editingMember ? "Update" : "Add"}
+                  <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
+                    {(isSaving || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                    {isUploading ? "Uploading..." : editingMember ? "Update" : "Add"}
                   </Button>
                 </div>
               </form>
