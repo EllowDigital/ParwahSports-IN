@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +24,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Calendar, MapPin, Clock } from "lucide-react";
+import { Plus, Pencil, Trash2, Loader2, Calendar, MapPin, Clock, Upload, X } from "lucide-react";
 import { format } from "date-fns";
 
 interface Event {
@@ -54,6 +54,10 @@ export default function EventsManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const [formData, setFormData] = useState({
@@ -102,6 +106,8 @@ export default function EventsManager() {
       status: "upcoming",
     });
     setEditingEvent(null);
+    setSelectedFile(null);
+    setPreviewUrl(null);
   };
 
   const openEditDialog = (event: Event) => {
@@ -117,21 +123,62 @@ export default function EventsManager() {
       is_featured: event.is_featured || false,
       status: event.status || "upcoming",
     });
+    setPreviewUrl(event.image_url);
     setIsDialogOpen(true);
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Error", description: "Please select an image file", variant: "destructive" });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Error", description: "Image must be less than 5MB", variant: "destructive" });
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const uploadToStorage = async (file: File): Promise<string> => {
+    const fileExt = file.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("event-images")
+      .upload(fileName, file, { cacheControl: "3600", upsert: false });
+
+    if (uploadError) throw uploadError;
+
+    const { data } = supabase.storage.from("event-images").getPublicUrl(fileName);
+    return data.publicUrl;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
 
-    const payload = {
-      ...formData,
-      start_time: formData.start_time || null,
-      end_time: formData.end_time || null,
-      image_url: formData.image_url || null,
-    };
-
     try {
+      let imageUrl = formData.image_url || null;
+
+      if (selectedFile) {
+        setIsUploading(true);
+        imageUrl = await uploadToStorage(selectedFile);
+        setIsUploading(false);
+      }
+
+      const payload = {
+        ...formData,
+        start_time: formData.start_time || null,
+        end_time: formData.end_time || null,
+        image_url: imageUrl,
+      };
+
       if (editingEvent) {
         const { error } = await supabase.from("events").update(payload).eq("id", editingEvent.id);
 
@@ -152,6 +199,7 @@ export default function EventsManager() {
       toast({ title: "Error", description: "Failed to save event", variant: "destructive" });
     } finally {
       setIsSaving(false);
+      setIsUploading(false);
     }
   };
 
@@ -289,13 +337,47 @@ export default function EventsManager() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="image_url">Image URL</Label>
-                  <Input
-                    id="image_url"
-                    value={formData.image_url}
-                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                    placeholder="https://example.com/image.jpg"
-                  />
+                  <Label>Cover Image</Label>
+                  <div className="border-2 border-dashed border-border rounded-lg p-4">
+                    {previewUrl ? (
+                      <div className="relative">
+                        <img
+                          src={previewUrl}
+                          alt="Preview"
+                          className="w-full h-40 object-cover rounded-lg"
+                        />
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="destructive"
+                          className="absolute top-2 right-2"
+                          onClick={() => {
+                            setPreviewUrl(null);
+                            setSelectedFile(null);
+                            setFormData((prev) => ({ ...prev, image_url: "" }));
+                          }}
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div
+                        className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
+                        onClick={() => fileInputRef.current?.click()}
+                      >
+                        <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Click to upload image</p>
+                        <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
+                      </div>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <Switch
@@ -311,14 +393,14 @@ export default function EventsManager() {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={() => setIsDialogOpen(false)}
+                    onClick={() => { setIsDialogOpen(false); resetForm(); }}
                     className="flex-1"
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={isSaving} className="flex-1">
-                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                    {editingEvent ? "Update" : "Create"}
+                  <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
+                    {(isSaving || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                    {isUploading ? "Uploading..." : editingEvent ? "Update" : "Create"}
                   </Button>
                 </div>
               </form>

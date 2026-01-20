@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
   Table,
@@ -29,8 +28,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Download, Image as ImageIcon } from "lucide-react";
+import { Plus, Pencil, Trash2, Download, Image as ImageIcon, Upload, X, Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { useRef } from "react";
 
 interface BlogItem {
   id: string;
@@ -55,6 +56,8 @@ export default function BlogsManager() {
   });
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -86,7 +89,9 @@ export default function BlogsManager() {
     mutationFn: async (data: typeof formData) => {
       let featured_image_url = null;
       if (imageFile) {
+        setIsUploading(true);
         featured_image_url = await uploadImage(imageFile);
+        setIsUploading(false);
       }
       const { error } = await supabase.from("blogs").insert([{ ...data, featured_image_url }]);
       if (error) throw error;
@@ -97,6 +102,7 @@ export default function BlogsManager() {
       resetForm();
     },
     onError: (error) => {
+      setIsUploading(false);
       toast({ title: "Error creating blog", description: error.message, variant: "destructive" });
     },
   });
@@ -105,7 +111,9 @@ export default function BlogsManager() {
     mutationFn: async ({ id, data }: { id: string; data: typeof formData }) => {
       let featured_image_url = editingItem?.featured_image_url || null;
       if (imageFile) {
+        setIsUploading(true);
         featured_image_url = await uploadImage(imageFile);
+        setIsUploading(false);
       }
       const { error } = await supabase
         .from("blogs")
@@ -119,6 +127,7 @@ export default function BlogsManager() {
       resetForm();
     },
     onError: (error) => {
+      setIsUploading(false);
       toast({ title: "Error updating blog", description: error.message, variant: "destructive" });
     },
   });
@@ -166,10 +175,25 @@ export default function BlogsManager() {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+      toast({ title: "Error", description: "Please select an image file", variant: "destructive" });
+      return;
     }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast({ title: "Error", description: "Image must be less than 5MB", variant: "destructive" });
+      return;
+    }
+
+    setImageFile(file);
+    setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -244,27 +268,56 @@ export default function BlogsManager() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="content">Content</Label>
-                    <Textarea
-                      id="content"
-                      value={formData.content}
-                      onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                      rows={8}
+                    <Label>Content</Label>
+                    <RichTextEditor
+                      content={formData.content}
+                      onChange={(content) => setFormData({ ...formData, content })}
                       placeholder="Write your blog content here..."
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="image">Featured Image</Label>
-                    <Input id="image" type="file" accept="image/*" onChange={handleImageChange} />
-                    {imagePreview && (
-                      <div className="mt-2 relative w-full h-40">
-                        <img
-                          src={imagePreview}
-                          alt="Preview"
-                          className="w-full h-full object-cover rounded-lg"
-                        />
-                      </div>
-                    )}
+                  <div className="space-y-2">
+                    <Label>Featured Image</Label>
+                    <div className="border-2 border-dashed border-border rounded-lg p-4">
+                      {imagePreview ? (
+                        <div className="relative">
+                          <img
+                            src={imagePreview}
+                            alt="Preview"
+                            className="w-full h-40 object-cover rounded-lg"
+                          />
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="destructive"
+                            className="absolute top-2 right-2"
+                            onClick={handleRemoveImage}
+                          >
+                            <X className="w-4 h-4" />
+                          </Button>
+                          {isUploading && (
+                            <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
+                              <Loader2 className="w-8 h-8 animate-spin text-primary" />
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div
+                          className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
+                          onClick={() => fileInputRef.current?.click()}
+                        >
+                          <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                          <p className="text-sm text-muted-foreground">Click to upload image</p>
+                          <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
+                        </div>
+                      )}
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -298,9 +351,12 @@ export default function BlogsManager() {
                     </Button>
                     <Button
                       type="submit"
-                      disabled={createMutation.isPending || updateMutation.isPending}
+                      disabled={createMutation.isPending || updateMutation.isPending || isUploading}
                     >
-                      {editingItem ? "Update" : "Create"}
+                      {(createMutation.isPending || updateMutation.isPending || isUploading) && (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      )}
+                      {isUploading ? "Uploading..." : editingItem ? "Update" : "Create"}
                     </Button>
                   </div>
                 </form>
