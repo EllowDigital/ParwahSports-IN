@@ -43,6 +43,7 @@ import StudentsManager from "./pages/admin/StudentsManager";
 import ParticipationsManager from "./pages/admin/ParticipationsManager";
 import CertificatesManager from "./pages/admin/CertificatesManager";
 import VolunteersManager from "./pages/admin/VolunteersManager";
+import ProjectsManager from "./pages/admin/ProjectsManager";
 import News from "./pages/News";
 import Blogs from "./pages/Blogs";
 import Announcements from "./pages/Announcements";
@@ -103,6 +104,7 @@ const App = () => (
             <Route path="/admin/participations" element={<ParticipationsManager />} />
             <Route path="/admin/certificates" element={<CertificatesManager />} />
             <Route path="/admin/volunteers" element={<VolunteersManager />} />
+            <Route path="/admin/projects" element={<ProjectsManager />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

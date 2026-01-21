@@ -1,29 +1,38 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Heart, ChevronDown } from "lucide-react";
+import { Menu, X, Heart, ChevronDown, Newspaper, FileText, CalendarDays, Trophy, Megaphone, FolderOpen, Image, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 
-const navigation = [
+const mainNavigation = [
   { name: "Home", href: "/" },
   { name: "About Us", href: "/about" },
   { name: "What We Do", href: "/what-we-do" },
   { name: "Projects", href: "/projects" },
-  { name: "Resources", href: "/resources" },
-  { name: "News", href: "/news" },
-  { name: "Blogs", href: "/blogs" },
-  { name: "Events", href: "/events" },
-  { name: "Announcements", href: "/announcements" },
+];
+
+const contentLinks = [
+  { name: "News", href: "/news", icon: Newspaper },
+  { name: "Blogs", href: "/blogs", icon: FileText },
+  { name: "Events", href: "/events", icon: CalendarDays },
+  { name: "Competitions", href: "/competitions", icon: Trophy },
+  { name: "Announcements", href: "/announcements", icon: Megaphone },
+];
+
+const moreLinks = [
+  { name: "Gallery", href: "/gallery", icon: Image },
+  { name: "Team", href: "/team", icon: Users },
+  { name: "Calendar", href: "/calendar", icon: CalendarDays },
+  { name: "Resources", href: "/resources", icon: FolderOpen },
   { name: "Volunteer", href: "/volunteer" },
-  { name: "Calendar", href: "/calendar" },
-  { name: "Team", href: "/team" },
   { name: "Get Involved", href: "/get-involved" },
-  { name: "Gallery", href: "/gallery" },
   { name: "Contact", href: "/contact" },
 ];
 
@@ -66,7 +75,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-1">
-            {navigation.slice(0, 5).map((item) => (
+            {mainNavigation.map((item) => (
               <Link
                 key={item.name}
                 to={item.href}
@@ -79,24 +88,43 @@ export function Header() {
                 {item.name}
               </Link>
             ))}
+
+            {/* Content Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex items-center gap-1">
+                Content <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48">
+                <DropdownMenuLabel className="text-xs text-muted-foreground">Updates & Media</DropdownMenuLabel>
+                {contentLinks.map((item) => (
+                  <DropdownMenuItem key={item.name} asChild>
+                    <Link to={item.href} className={`flex items-center gap-2 ${isActive(item.href) ? "text-primary" : ""}`}>
+                      <item.icon className="h-4 w-4" />
+                      {item.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* More Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex items-center gap-1">
                 More <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-48">
-                {navigation.slice(5).map((item) => (
+                {moreLinks.map((item) => (
                   <DropdownMenuItem key={item.name} asChild>
                     <Link to={item.href} className={isActive(item.href) ? "text-primary" : ""}>
                       {item.name}
                     </Link>
                   </DropdownMenuItem>
                 ))}
-
-                <div className="my-1 h-px bg-border" />
-
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs text-muted-foreground">Policies</DropdownMenuLabel>
                 {policyLinks.map((item) => (
                   <DropdownMenuItem key={item.name} asChild>
-                    <Link to={item.href} className={isActive(item.href) ? "text-primary" : ""}>
+                    <Link to={item.href} className={`text-xs ${isActive(item.href) ? "text-primary" : ""}`}>
                       {item.name}
                     </Link>
                   </DropdownMenuItem>
@@ -112,7 +140,7 @@ export function Header() {
               variant="default"
               className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
             >
-              <Link to="/get-involved">
+              <Link to="/donate">
                 <Heart className="h-4 w-4" />
                 Donate Now
               </Link>
@@ -131,9 +159,9 @@ export function Header() {
 
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
-          <div className="lg:hidden py-4 border-t border-border animate-fade-in">
+          <div className="lg:hidden py-4 border-t border-border animate-fade-in max-h-[80vh] overflow-y-auto">
             <div className="flex flex-col gap-1">
-              {navigation.map((item) => (
+              {mainNavigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
@@ -148,6 +176,50 @@ export function Header() {
                 </Link>
               ))}
 
+              {/* Content Section */}
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Content
+                </p>
+                {contentLinks.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* More Section */}
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  More
+                </p>
+                {moreLinks.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium rounded-md transition-colors ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Policies Section */}
               <div className="mt-3 pt-3 border-t border-border">
                 <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                   Policies
@@ -167,12 +239,13 @@ export function Header() {
                   </Link>
                 ))}
               </div>
+
               <Button
                 asChild
                 variant="default"
-                className="mt-4 bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+                className="mt-4 mx-4 bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
               >
-                <Link to="/get-involved" onClick={() => setMobileMenuOpen(false)}>
+                <Link to="/donate" onClick={() => setMobileMenuOpen(false)}>
                   <Heart className="h-4 w-4" />
                   Donate Now
                 </Link>

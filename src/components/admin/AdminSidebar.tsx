@@ -22,6 +22,7 @@ import {
   Award,
   Medal,
   HandHeart,
+  FolderOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
@@ -44,6 +45,7 @@ const navigationSections = [
   {
     title: "Programs",
     items: [
+      { name: "Projects", href: "/admin/projects", icon: FolderOpen },
       { name: "Events", href: "/admin/events", icon: Calendar },
       { name: "Competitions", href: "/admin/competitions", icon: Trophy },
     ],
