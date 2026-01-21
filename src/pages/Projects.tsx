@@ -1,90 +1,45 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { Calendar, MapPin, Users, Trophy, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
-import communityImage from "@/assets/community-event.jpg";
-import trainingImage from "@/assets/training-session.jpg";
-import victoryImage from "@/assets/victory-moment.jpg";
-import heroImage from "@/assets/hero-athletes.jpg";
 
-const projects = [
-  {
-    title: "Inter-School Taekwondo Championship 2024",
-    description:
-      "Annual championship bringing together schools from across Uttarakhand for competitive martial arts events.",
-    image: communityImage,
-    location: "Dehradun, Uttarakhand",
-    year: "2024",
-    participants: "500+",
-    category: "Championship",
-    status: "Upcoming",
-  },
-  {
-    title: "Summer Sports Camp",
-    description:
-      "Intensive 30-day training camp for talented young athletes covering multiple sports disciplines.",
-    image: trainingImage,
-    location: "Rishikesh",
-    year: "2024",
-    participants: "120",
-    category: "Training Camp",
-    status: "Completed",
-  },
-  {
-    title: "State-Level Talent Trials",
-    description:
-      "Talent identification program to scout promising athletes from rural and underserved areas.",
-    image: heroImage,
-    location: "Multiple Districts",
-    year: "2024",
-    participants: "800+",
-    category: "Talent Trial",
-    status: "Ongoing",
-  },
-  {
-    title: "National Sports Day Celebration",
-    description:
-      "Community event celebrating sports with exhibitions, workshops, and awareness programs.",
-    image: victoryImage,
-    location: "Haridwar",
-    year: "2023",
-    participants: "1000+",
-    category: "Community Event",
-    status: "Completed",
-  },
-  {
-    title: "Youth Fitness Workshop Series",
-    description:
-      "Monthly workshops teaching fitness fundamentals, nutrition, and healthy lifestyle habits to youth.",
-    image: trainingImage,
-    location: "Dehradun Schools",
-    year: "2024",
-    participants: "300+",
-    category: "Workshop",
-    status: "Ongoing",
-  },
-  {
-    title: "Rural Sports Outreach Program",
-    description:
-      "Taking sports equipment and training to remote villages to promote sports participation.",
-    image: communityImage,
-    location: "Tehri, Pauri, Chamoli",
-    year: "2024",
-    participants: "450+",
-    category: "Outreach",
-    status: "Ongoing",
-  },
-];
+interface Project {
+  id: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  location: string | null;
+  year: string | null;
+  participants: string | null;
+  category: string | null;
+  status: string | null;
+  is_featured: boolean | null;
+}
 
-const statusColors = {
-  Upcoming: "bg-secondary/10 text-secondary border-secondary/30",
-  Ongoing: "bg-accent/10 text-accent border-accent/30",
-  Completed: "bg-primary/10 text-primary border-primary/30",
+const statusColors: Record<string, string> = {
+  upcoming: "bg-secondary/10 text-secondary border-secondary/30",
+  ongoing: "bg-accent/10 text-accent border-accent/30",
+  completed: "bg-primary/10 text-primary border-primary/30",
 };
 
 const Projects = () => {
+  const { data: projects, isLoading } = useQuery({
+    queryKey: ["public-projects"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .order("display_order", { ascending: true });
+      if (error) throw error;
+      return data as Project[];
+    },
+  });
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -128,59 +83,97 @@ const Projects = () => {
       {/* Projects Grid */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projects.map((project, index) => (
-              <Card
-                key={index}
-                className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300"
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <Badge
-                      variant="outline"
-                      className={`${statusColors[project.status as keyof typeof statusColors]} backdrop-blur-sm`}
-                    >
-                      {project.status}
-                    </Badge>
+          {isLoading ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {[...Array(6)].map((_, i) => (
+                <Card key={i} className="overflow-hidden">
+                  <Skeleton className="h-48 w-full" />
+                  <CardHeader>
+                    <Skeleton className="h-6 w-3/4" />
+                  </CardHeader>
+                  <CardContent>
+                    <Skeleton className="h-16 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : projects?.length === 0 ? (
+            <div className="text-center py-16">
+              <Trophy className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Projects Yet</h3>
+              <p className="text-muted-foreground">Check back soon for our upcoming projects!</p>
+            </div>
+          ) : (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {projects?.map((project) => (
+                <Card
+                  key={project.id}
+                  className="group overflow-hidden border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+                >
+                  <div className="relative h-48 overflow-hidden bg-muted">
+                    {project.image_url ? (
+                      <img
+                        src={project.image_url}
+                        alt={project.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Trophy className="h-16 w-16 text-muted-foreground/30" />
+                      </div>
+                    )}
+                    {project.status && (
+                      <div className="absolute top-4 left-4">
+                        <Badge
+                          variant="outline"
+                          className={`${statusColors[project.status.toLowerCase()] || "bg-muted text-muted-foreground"} backdrop-blur-sm capitalize`}
+                        >
+                          {project.status}
+                        </Badge>
+                      </div>
+                    )}
+                    {project.category && (
+                      <div className="absolute top-4 right-4">
+                        <Badge variant="secondary" className="bg-background/90 text-foreground">
+                          {project.category}
+                        </Badge>
+                      </div>
+                    )}
                   </div>
-                  <div className="absolute top-4 right-4">
-                    <Badge variant="secondary" className="bg-background/90 text-foreground">
-                      {project.category}
-                    </Badge>
-                  </div>
-                </div>
-                <CardHeader>
-                  <CardTitle className="text-xl line-clamp-2 group-hover:text-primary transition-colors">
-                    {project.title}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <CardDescription className="text-base mb-4 line-clamp-3">
-                    {project.description}
-                  </CardDescription>
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                      {project.location}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
-                      {project.year}
-                    </span>
-                    <span className="flex items-center gap-1">
-                      <Users className="h-4 w-4" />
-                      {project.participants}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                  <CardHeader>
+                    <CardTitle className="text-xl line-clamp-2 group-hover:text-primary transition-colors">
+                      {project.title}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <CardDescription className="text-base mb-4 line-clamp-3">
+                      {project.description || "No description available."}
+                    </CardDescription>
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+                      {project.location && (
+                        <span className="flex items-center gap-1">
+                          <MapPin className="h-4 w-4" />
+                          {project.location}
+                        </span>
+                      )}
+                      {project.year && (
+                        <span className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          {project.year}
+                        </span>
+                      )}
+                      {project.participants && (
+                        <span className="flex items-center gap-1">
+                          <Users className="h-4 w-4" />
+                          {project.participants}
+                        </span>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
