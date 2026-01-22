@@ -30,7 +30,7 @@ const donationSchema = z.object({
   donor_address: z.string().optional(),
   amount: z
     .number()
-    .min(100, "Minimum donation is ₹100")
+    .min(1, "Minimum donation is ₹1")
     .max(1000000, "Maximum donation is ₹10,00,000"),
   notes: z.string().optional(),
 });
