@@ -15,6 +15,13 @@ serve(async (req) => {
     const { amount, type, donor_name, donor_email, donor_phone, donor_address, plan_id, notes } =
       await req.json();
 
+    if (typeof amount !== "number" || Number.isNaN(amount) || amount < 1) {
+      return new Response(JSON.stringify({ error: "Minimum donation is ₹1" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
     const razorpayKeySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
 
