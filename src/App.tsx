@@ -50,6 +50,7 @@ import Announcements from "./pages/Announcements";
 import Events from "./pages/Events";
 import Volunteer from "./pages/Volunteer";
 import Competitions from "./pages/Competitions";
+import Portals from "./pages/Portals";
 
 const queryClient = new QueryClient();
 
@@ -73,6 +74,7 @@ const App = () => (
             <Route path="/announcements" element={<Announcements />} />
             <Route path="/events" element={<Events />} />
             <Route path="/competitions" element={<Competitions />} />
+            <Route path="/portals" element={<Portals />} />
             <Route path="/volunteer" element={<Volunteer />} />
             <Route path="/get-involved" element={<GetInvolved />} />
             <Route path="/gallery" element={<Gallery />} />
