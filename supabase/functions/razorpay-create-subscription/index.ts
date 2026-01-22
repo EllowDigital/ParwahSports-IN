@@ -54,6 +54,49 @@ serve(async (req) => {
 
     const auth = btoa(`${razorpayKeyId}:${razorpayKeySecret}`);
 
+    const callRazorpay = async (url: string, payload: Record<string, unknown>) => {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Basic ${auth}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Razorpay error ${response.status}: ${errorText}`);
+      }
+
+      return response.json();
+    };
+
+    const createRazorpayPlan = async () => {
+      const period = plan.type === "monthly" ? "monthly" : "yearly";
+      const interval = 1;
+
+      const planData = {
+        period,
+        interval,
+        item: {
+          name: plan.name,
+          amount: Math.round(Number(plan.price) * 100),
+          currency: "INR",
+        },
+      };
+
+      const razorpayPlan = await callRazorpay("https://api.razorpay.com/v1/plans", planData);
+      const newPlanId = razorpayPlan.id as string;
+
+      await supabase
+        .from("membership_plans")
+        .update({ razorpay_plan_id: newPlanId })
+        .eq("id", plan_id);
+
+      return newPlanId;
+    };
+
     // For lifetime plan, create a regular order instead of subscription
     if (plan.type === "lifetime") {
       const paymentReference = `PAY-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
@@ -69,21 +112,7 @@ serve(async (req) => {
         },
       };
 
-      const orderResponse = await fetch("https://api.razorpay.com/v1/orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${auth}`,
-        },
-        body: JSON.stringify(orderData),
-      });
-
-      if (!orderResponse.ok) {
-        const errorText = await orderResponse.text();
-        throw new Error(`Failed to create order: ${errorText}`);
-      }
-
-      const order = await orderResponse.json();
+      const order = await callRazorpay("https://api.razorpay.com/v1/orders", orderData);
 
       // Create subscription record
       const { data: subscription, error: subError } = await supabase
@@ -131,42 +160,7 @@ serve(async (req) => {
     let razorpayPlanId = plan.razorpay_plan_id;
 
     if (!razorpayPlanId) {
-      // Create Razorpay plan
-      const period = plan.type === "monthly" ? "monthly" : "yearly";
-      const interval = 1;
-
-      const planData = {
-        period,
-        interval,
-        item: {
-          name: plan.name,
-          amount: Math.round(plan.price * 100),
-          currency: "INR",
-        },
-      };
-
-      const planResponse = await fetch("https://api.razorpay.com/v1/plans", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${auth}`,
-        },
-        body: JSON.stringify(planData),
-      });
-
-      if (!planResponse.ok) {
-        const errorText = await planResponse.text();
-        throw new Error(`Failed to create Razorpay plan: ${errorText}`);
-      }
-
-      const razorpayPlan = await planResponse.json();
-      razorpayPlanId = razorpayPlan.id;
-
-      // Update plan with Razorpay plan ID
-      await supabase
-        .from("membership_plans")
-        .update({ razorpay_plan_id: razorpayPlanId })
-        .eq("id", plan_id);
+      razorpayPlanId = await createRazorpayPlan();
     }
 
     // Create subscription
@@ -180,21 +174,26 @@ serve(async (req) => {
       },
     };
 
-    const subscriptionResponse = await fetch("https://api.razorpay.com/v1/subscriptions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Basic ${auth}`,
-      },
-      body: JSON.stringify(subscriptionData),
-    });
-
-    if (!subscriptionResponse.ok) {
-      const errorText = await subscriptionResponse.text();
-      throw new Error(`Failed to create subscription: ${errorText}`);
+    let razorpaySubscription: { id: string };
+    try {
+      razorpaySubscription = await callRazorpay(
+        "https://api.razorpay.com/v1/subscriptions",
+        subscriptionData,
+      );
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes("plan") || message.includes("plan_id")) {
+        // Retry once by recreating plan in Razorpay
+        razorpayPlanId = await createRazorpayPlan();
+        const retryData = { ...subscriptionData, plan_id: razorpayPlanId };
+        razorpaySubscription = await callRazorpay(
+          "https://api.razorpay.com/v1/subscriptions",
+          retryData,
+        );
+      } else {
+        throw error;
+      }
     }
-
-    const razorpaySubscription = await subscriptionResponse.json();
 
     // Create subscription record in database
     const { data: subscription, error: subError } = await supabase
