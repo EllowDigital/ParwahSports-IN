@@ -4,6 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 serve(async (req) => {
   try {
     const webhookSecret = Deno.env.get("RAZORPAY_WEBHOOK_SECRET");
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
@@ -44,6 +45,53 @@ serve(async (req) => {
     const event = JSON.parse(body);
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    const runInBackground = (promise: Promise<unknown>) => {
+      const edgeRuntime = (globalThis as any).EdgeRuntime;
+      if (edgeRuntime?.waitUntil) {
+        edgeRuntime.waitUntil(promise);
+        return;
+      }
+      promise.catch((e) => console.error("Background task failed:", e));
+    };
+
+    const sendDonationEmail = async (opts: {
+      to: string;
+      donorName: string;
+      amountText?: string;
+      paymentRef?: string;
+    }) => {
+      if (!resendApiKey) return;
+
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: "Parwah Sports <onboarding@resend.dev>",
+          to: [opts.to],
+          subject: "Thank you for your donation to Parwah Sports",
+          html: `
+            <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height: 1.6; color: #111827;">
+              <h2 style="margin: 0 0 12px;">Thank you, ${opts.donorName}!</h2>
+              <p style="margin: 0 0 12px;">We’ve received your donation ${opts.amountText ? `<strong>(${opts.amountText})</strong>` : ""}. Your support helps young athletes with training, equipment, and opportunities.</p>
+              ${opts.paymentRef ? `<p style="margin: 0 0 12px;"><strong>Payment reference:</strong> ${opts.paymentRef}</p>` : ""}
+              <p style="margin: 0 0 12px;">With gratitude,<br/>Parwah Sports Charitable Trust</p>
+            </div>
+          `,
+        }),
+      });
+
+      const bodyText = await res.text();
+      if (!res.ok) {
+        console.error("Resend API error:", res.status, bodyText);
+        throw new Error("Failed to send confirmation email");
+      }
+
+      console.log("Donation confirmation email sent:", bodyText);
+    };
+
     console.log("Received webhook event:", event.event);
 
     switch (event.event) {
@@ -59,6 +107,38 @@ serve(async (req) => {
               payment_status: "success",
             })
             .eq("razorpay_order_id", payment.order_id);
+
+          // Fallback email from webhook (in case user closed the checkout before verify endpoint)
+          if (resendApiKey) {
+            const { data: donation } = await supabase
+              .from("donations")
+              .select("donor_name, donor_email, amount, payment_reference, confirmation_email_sent_at")
+              .eq("razorpay_order_id", payment.order_id)
+              .maybeSingle();
+
+            if (donation?.donor_email && !donation.confirmation_email_sent_at) {
+              const donorName = donation.donor_name || "Supporter";
+              const amountText = donation.amount
+                ? `₹${Number(donation.amount).toLocaleString("en-IN")}`
+                : "";
+              const paymentRef = donation.payment_reference || "";
+
+              runInBackground(
+                (async () => {
+                  await sendDonationEmail({
+                    to: donation.donor_email,
+                    donorName,
+                    amountText,
+                    paymentRef,
+                  });
+                  await supabase
+                    .from("donations")
+                    .update({ confirmation_email_sent_at: new Date().toISOString() })
+                    .eq("razorpay_order_id", payment.order_id);
+                })(),
+              );
+            }
+          }
         } else {
           // Update payment record
           await supabase

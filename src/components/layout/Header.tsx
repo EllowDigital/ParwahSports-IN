@@ -27,13 +27,17 @@ const contentLinks = [
 ];
 
 const moreLinks = [
+  { name: "Get Involved", href: "/get-involved", icon: FolderOpen },
+  { name: "Donate", href: "/donate", icon: Heart },
+  { name: "Volunteer", href: "/volunteer", icon: Users },
+  { name: "Membership", href: "/membership", icon: Trophy },
+  { name: "Member Login", href: "/member/login", icon: Users },
+  { name: "Student Login", href: "/student/login", icon: Trophy },
   { name: "Gallery", href: "/gallery", icon: Image },
   { name: "Team", href: "/team", icon: Users },
   { name: "Calendar", href: "/calendar", icon: CalendarDays },
   { name: "Resources", href: "/resources", icon: FolderOpen },
-  { name: "Volunteer", href: "/volunteer" },
-  { name: "Get Involved", href: "/get-involved" },
-  { name: "Contact", href: "/contact" },
+  { name: "Contact", href: "/contact", icon: FolderOpen },
 ];
 
 const policyLinks = [

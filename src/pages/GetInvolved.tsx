@@ -76,6 +76,21 @@ const donationOptions = [
 ];
 
 const GetInvolved = () => {
+  const ctaLinkFor = (cta: string) => {
+    switch (cta) {
+      case "Become a Volunteer":
+        return "/volunteer";
+      case "Donate Now":
+        return "/donate";
+      case "Explore Partnerships":
+        return "/contact";
+      case "Spread the Word":
+        return "/contact";
+      default:
+        return "/contact";
+    }
+  };
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -153,9 +168,11 @@ const GetInvolved = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button variant="outline" className="w-full gap-2">
-                    {way.cta}
-                    <ArrowRight className="h-4 w-4" />
+                  <Button asChild variant="outline" className="w-full gap-2">
+                    <Link to={ctaLinkFor(way.cta)}>
+                      {way.cta}
+                      <ArrowRight className="h-4 w-4" />
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>
@@ -193,9 +210,14 @@ const GetInvolved = () => {
                 ))}
               </div>
 
-              <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-lg py-6">
-                <Heart className="h-5 w-5" />
-                Proceed to Donate
+              <Button
+                asChild
+                className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-lg py-6"
+              >
+                <Link to="/donate">
+                  <Heart className="h-5 w-5" />
+                  Proceed to Donate
+                </Link>
               </Button>
 
               <p className="text-sm text-muted-foreground mt-4 text-center">
@@ -260,7 +282,7 @@ const GetInvolved = () => {
                 size="lg"
                 className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
               >
-                <Link to="/contact">Apply as Volunteer</Link>
+                <Link to="/volunteer">Apply as Volunteer</Link>
               </Button>
               <Button
                 asChild
