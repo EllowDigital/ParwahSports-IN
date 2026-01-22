@@ -108,14 +108,14 @@ export default function MemberDashboard() {
   }, [user, navigate]);
 
   // Fetch member data
-  const { data: member } = useQuery({
+  const { data: member, isFetched: memberFetched } = useQuery({
     queryKey: ["member", user?.id],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("members")
         .select("*")
         .eq("user_id", user!.id)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== "PGRST116") throw error;
       return data as Member | null;
@@ -160,7 +160,7 @@ export default function MemberDashboard() {
         .in("status", ["active", "pending"])
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (error && error.code !== "PGRST116") throw error;
       return data as Subscription | null;
@@ -186,18 +186,21 @@ export default function MemberDashboard() {
 
   // Create member if not exists
   useEffect(() => {
-    if (user && !member) {
+    if (user && memberFetched && !member) {
       const createMember = async () => {
-        await supabase.from("members").insert({
-          user_id: user.id,
-          full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Member",
-          email: user.email!,
-        });
+        await supabase.from("members").upsert(
+          {
+            user_id: user.id,
+            full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Member",
+            email: user.email!,
+          },
+          { onConflict: "user_id", ignoreDuplicates: true },
+        );
         queryClient.invalidateQueries({ queryKey: ["member", user.id] });
       };
       createMember();
     }
-  }, [user, member, queryClient]);
+  }, [user, member, memberFetched, queryClient]);
 
   const handleSubscribe = async () => {
     if (!selectedPlan || !member || !isLoaded) return;
