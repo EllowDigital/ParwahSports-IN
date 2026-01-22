@@ -1,6 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { Resend } from "https://esm.sh/resend@4.0.0?target=deno";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -61,6 +60,45 @@ serve(async (req) => {
       promise.catch((e) => console.error("Background task failed:", e));
     };
 
+    const sendDonationEmail = async (opts: {
+      to: string;
+      donorName: string;
+      amountText?: string;
+      paymentRef?: string;
+    }) => {
+      if (!resendApiKey) return;
+
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${resendApiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          // NOTE: Use a verified sender domain in Resend for production.
+          from: "Parwah Sports <onboarding@resend.dev>",
+          to: [opts.to],
+          subject: "Thank you for your donation to Parwah Sports",
+          html: `
+            <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height: 1.6; color: #111827;">
+              <h2 style="margin: 0 0 12px;">Thank you, ${opts.donorName}!</h2>
+              <p style="margin: 0 0 12px;">We’ve received your donation ${opts.amountText ? `<strong>(${opts.amountText})</strong>` : ""}. Your support helps young athletes with training, equipment, and opportunities.</p>
+              ${opts.paymentRef ? `<p style="margin: 0 0 12px;"><strong>Payment reference:</strong> ${opts.paymentRef}</p>` : ""}
+              <p style="margin: 0 0 12px;">With gratitude,<br/>Parwah Sports Charitable Trust</p>
+            </div>
+          `,
+        }),
+      });
+
+      const bodyText = await res.text();
+      if (!res.ok) {
+        console.error("Resend API error:", res.status, bodyText);
+        throw new Error("Failed to send confirmation email");
+      }
+
+      console.log("Donation confirmation email sent:", bodyText);
+    };
+
     if (type === "donation") {
       const { error } = await supabase
         .from("donations")
@@ -78,37 +116,35 @@ serve(async (req) => {
 
       // Send confirmation email (non-blocking)
       if (resendApiKey) {
-        const resend = new Resend(resendApiKey);
         const { data: donation } = await supabase
           .from("donations")
-          .select("donor_name, donor_email, amount, payment_reference")
+          .select("donor_name, donor_email, amount, payment_reference, confirmation_email_sent_at")
           .eq("razorpay_order_id", razorpay_order_id)
           .maybeSingle();
 
-        if (donation?.donor_email) {
+        if (donation?.donor_email && !donation.confirmation_email_sent_at) {
           const donorName = donation.donor_name || "Supporter";
-          const amountText = donation.amount ? `₹${Number(donation.amount).toLocaleString("en-IN")}` : "";
+          const amountText = donation.amount
+            ? `₹${Number(donation.amount).toLocaleString("en-IN")}`
+            : "";
           const paymentRef = donation.payment_reference || "";
 
           runInBackground(
-            resend.emails.send({
-              // NOTE: Use a verified domain sender in Resend for production.
-              from: "Parwah Sports <onboarding@resend.dev>",
-              to: [donation.donor_email],
-              subject: "Thank you for your donation to Parwah Sports",
-              html: `
-                <div style="font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; line-height: 1.6; color: #111827;">
-                  <h2 style="margin: 0 0 12px;">Thank you, ${donorName}!</h2>
-                  <p style="margin: 0 0 12px;">We’ve received your donation ${amountText ? `<strong>(${amountText})</strong>` : ""}. Your support helps young athletes get training, equipment, and opportunities.</p>
-                  ${paymentRef ? `<p style="margin: 0 0 12px;"><strong>Payment reference:</strong> ${paymentRef}</p>` : ""}
-                  <p style="margin: 0 0 12px;">With gratitude,<br/>Parwah Sports Charitable Trust</p>
-                </div>
-              `,
-            }),
+            (async () => {
+              await sendDonationEmail({
+                to: donation.donor_email,
+                donorName,
+                amountText,
+                paymentRef,
+              });
+
+              await supabase
+                .from("donations")
+                .update({ confirmation_email_sent_at: new Date().toISOString() })
+                .eq("razorpay_order_id", razorpay_order_id);
+            })(),
           );
         }
-      } else {
-        console.log("RESEND_API_KEY not configured; skipping donation confirmation email.");
       }
     } else if (type === "lifetime") {
       const { error } = await supabase
