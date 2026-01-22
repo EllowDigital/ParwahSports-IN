@@ -30,6 +30,7 @@ const moreLinks = [
   { name: "Get Involved", href: "/get-involved", icon: FolderOpen },
   { name: "Donate", href: "/donate", icon: Heart },
   { name: "Volunteer", href: "/volunteer", icon: Users },
+  { name: "Portals", href: "/portals", icon: Users },
   { name: "Membership", href: "/membership", icon: Trophy },
   { name: "Member Login", href: "/member/login", icon: Users },
   { name: "Student Login", href: "/student/login", icon: Trophy },

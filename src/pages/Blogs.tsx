@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { FileText, Calendar, User, ArrowRight } from "lucide-react";
 import { format } from "date-fns";
+import DOMPurify from "dompurify";
 
 interface BlogItem {
   id: string;
@@ -173,7 +174,7 @@ export default function Blogs() {
               <div
                 className="prose prose-neutral dark:prose-invert max-w-none mt-4"
                 dangerouslySetInnerHTML={{
-                  __html: selectedBlog.content || "<p>No content available.</p>",
+                  __html: DOMPurify.sanitize(selectedBlog.content || "<p>No content available.</p>"),
                 }}
               />
             </>
