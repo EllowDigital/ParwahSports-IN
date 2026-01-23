@@ -146,7 +146,8 @@ serve(async (req) => {
           );
         }
       }
-    } else if (type === "lifetime") {
+    } else if (type === "lifetime" || type === "monthly" || type === "yearly") {
+      // Membership payments (one-time orders)
       const { error } = await supabase
         .from("payments")
         .update({
@@ -161,17 +162,27 @@ serve(async (req) => {
         throw new Error("Failed to update payment record");
       }
 
-      // Update subscription status
-      const { data: payment } = await supabase
+      const { data: payment, error: payErr } = await supabase
         .from("payments")
-        .select("subscription_id")
+        .select("subscription_id, plan_id")
         .eq("razorpay_order_id", razorpay_order_id)
-        .single();
+        .maybeSingle();
+      if (payErr) throw payErr;
 
       if (payment?.subscription_id) {
+        const start = new Date();
+        const end = new Date(start);
+        if (type === "monthly") end.setMonth(end.getMonth() + 1);
+        if (type === "yearly") end.setFullYear(end.getFullYear() + 1);
+
         await supabase
           .from("subscriptions")
-          .update({ status: "active", start_date: new Date().toISOString() })
+          .update({
+            status: "active",
+            start_date: start.toISOString(),
+            end_date: type === "lifetime" ? null : end.toISOString(),
+            next_billing_date: null,
+          })
           .eq("id", payment.subscription_id);
       }
     }

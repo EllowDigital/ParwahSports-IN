@@ -101,7 +101,7 @@ export default function MemberDashboard() {
   const location = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isLoaded, openPayment, openSubscription } = useRazorpay();
+  const { isLoaded, openPayment } = useRazorpay();
   const [showPlanDialog, setShowPlanDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<MembershipPlan | null>(null);
@@ -228,7 +228,7 @@ export default function MemberDashboard() {
       }
 
       if (data.type === "order") {
-        // Lifetime plan - one-time payment
+        // One-time payment (lifetime OR monthly/yearly pay-as-needed)
         openPayment({
           orderId: data.orderId,
           amount: data.amount,
@@ -246,13 +246,16 @@ export default function MemberDashboard() {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
                   razorpay_signature: response.razorpay_signature,
-                  type: "lifetime",
+                  type: data.paymentType,
                 },
               });
 
               toast({
                 title: "Welcome!",
-                description: "Your lifetime membership is now active.",
+                description:
+                  data.paymentType === "lifetime"
+                    ? "Your lifetime membership is now active."
+                    : "Your membership is now active.",
               });
 
               queryClient.invalidateQueries({ queryKey: ["subscription"] });
@@ -271,36 +274,6 @@ export default function MemberDashboard() {
             setIsProcessing(false);
             toast({
               title: "Payment failed",
-              description: getErrorMessage(error),
-              variant: "destructive",
-            });
-          },
-        });
-      } else {
-        // Subscription plan
-        openSubscription({
-          subscriptionId: data.subscriptionId,
-          keyId: data.keyId,
-          prefill: {
-            name: member.full_name,
-            email: member.email,
-            contact: member.phone || undefined,
-          },
-          onSuccess: async () => {
-            toast({
-              title: "Welcome!",
-              description: "Your subscription is now active.",
-            });
-
-            queryClient.invalidateQueries({ queryKey: ["subscription"] });
-            queryClient.invalidateQueries({ queryKey: ["payments"] });
-            setShowPlanDialog(false);
-            setIsProcessing(false);
-          },
-          onError: (error: unknown) => {
-            setIsProcessing(false);
-            toast({
-              title: "Subscription failed",
               description: getErrorMessage(error),
               variant: "destructive",
             });
@@ -452,7 +425,8 @@ export default function MemberDashboard() {
                     </div>
 
                     {subscription.status === "active" &&
-                      subscription.membership_plans.type !== "lifetime" && (
+                      subscription.membership_plans.type !== "lifetime" &&
+                      !!subscription.razorpay_subscription_id && (
                         <Button
                           variant="destructive"
                           size="sm"

@@ -140,7 +140,7 @@ serve(async (req) => {
             }
           }
         } else {
-          // Update payment record
+          // Membership payment (lifetime/monthly/yearly) OR other non-donation payments
           await supabase
             .from("payments")
             .update({
@@ -148,6 +148,32 @@ serve(async (req) => {
               payment_status: "success",
             })
             .eq("razorpay_order_id", payment.order_id);
+
+          // If it's a membership order (no autopay), activate the subscription entitlement
+          const membershipType = payment.notes?.type;
+          if (membershipType === "lifetime" || membershipType === "monthly" || membershipType === "yearly") {
+            const { data: payRow, error: payErr } = await supabase
+              .from("payments")
+              .select("subscription_id")
+              .eq("razorpay_order_id", payment.order_id)
+              .maybeSingle();
+            if (!payErr && payRow?.subscription_id) {
+              const start = new Date();
+              const end = new Date(start);
+              if (membershipType === "monthly") end.setMonth(end.getMonth() + 1);
+              if (membershipType === "yearly") end.setFullYear(end.getFullYear() + 1);
+
+              await supabase
+                .from("subscriptions")
+                .update({
+                  status: "active",
+                  start_date: start.toISOString(),
+                  end_date: membershipType === "lifetime" ? null : end.toISOString(),
+                  next_billing_date: null,
+                })
+                .eq("id", payRow.subscription_id);
+            }
+          }
         }
         break;
       }
