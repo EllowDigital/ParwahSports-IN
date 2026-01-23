@@ -130,7 +130,7 @@ serve(async (req) => {
     }
 
     // Create payment record
-    await supabase.from("payments").insert({
+    const { error: payInsErr } = await supabase.from("payments").insert({
       member_id,
       subscription_id: subscription.id,
       plan_id,
@@ -140,6 +140,13 @@ serve(async (req) => {
       payment_type: plan.type, // lifetime | monthly | yearly
       payment_status: "pending",
     });
+
+    if (payInsErr) {
+      console.error("Failed to create payment record:", payInsErr);
+      // rollback the dangling subscription so the UI doesn't get stuck on 'pending'
+      await supabase.from("subscriptions").delete().eq("id", subscription.id);
+      throw new Error("Failed to create payment record");
+    }
 
     return new Response(
       JSON.stringify({
