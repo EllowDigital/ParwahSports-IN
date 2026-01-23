@@ -97,111 +97,29 @@ serve(async (req) => {
       return newPlanId;
     };
 
-    // For lifetime plan, create a regular order instead of subscription
-    if (plan.type === "lifetime") {
-      const paymentReference = `PAY-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+    // Pay-as-needed memberships (no autopay): create a one-time order for ALL plan types.
+    // monthly/yearly create an order that activates the membership for the period.
+    const paymentReference = `PAY-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
 
-      const orderData = {
-        amount: Math.round(plan.price * 100),
-        currency: "INR",
-        receipt: paymentReference,
-        notes: {
-          type: "lifetime",
-          member_id: member_id,
-          plan_id: plan_id,
-        },
-      };
-
-      const order = await callRazorpay("https://api.razorpay.com/v1/orders", orderData);
-
-      // Create subscription record
-      const { data: subscription, error: subError } = await supabase
-        .from("subscriptions")
-        .insert({
-          member_id,
-          plan_id,
-          status: "pending",
-        })
-        .select()
-        .single();
-
-      if (subError) {
-        throw new Error("Failed to create subscription record");
-      }
-
-      // Create payment record
-      await supabase.from("payments").insert({
-        member_id,
-        subscription_id: subscription.id,
-        plan_id,
-        amount: plan.price,
-        razorpay_order_id: order.id,
-        payment_reference: paymentReference,
-        payment_type: "lifetime",
-        payment_status: "pending",
-      });
-
-      return new Response(
-        JSON.stringify({
-          type: "order",
-          orderId: order.id,
-          amount: order.amount,
-          currency: order.currency,
-          keyId: razorpayKeyId,
-          subscriptionId: subscription.id,
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
-      );
-    }
-
-    // For monthly/yearly, check if Razorpay plan exists or create one
-    let razorpayPlanId = plan.razorpay_plan_id;
-
-    if (!razorpayPlanId) {
-      razorpayPlanId = await createRazorpayPlan();
-    }
-
-    // Create subscription
-    const subscriptionData = {
-      plan_id: razorpayPlanId,
-      total_count: plan.type === "monthly" ? 120 : 10, // 10 years worth
-      customer_notify: 1,
+    const orderData = {
+      amount: Math.round(Number(plan.price) * 100),
+      currency: "INR",
+      receipt: paymentReference,
       notes: {
+        type: plan.type, // lifetime | monthly | yearly
         member_id: member_id,
         plan_id: plan_id,
       },
     };
 
-    let razorpaySubscription: { id: string };
-    try {
-      razorpaySubscription = await callRazorpay(
-        "https://api.razorpay.com/v1/subscriptions",
-        subscriptionData,
-      );
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (message.includes("plan") || message.includes("plan_id")) {
-        // Retry once by recreating plan in Razorpay
-        razorpayPlanId = await createRazorpayPlan();
-        const retryData = { ...subscriptionData, plan_id: razorpayPlanId };
-        razorpaySubscription = await callRazorpay(
-          "https://api.razorpay.com/v1/subscriptions",
-          retryData,
-        );
-      } else {
-        throw error;
-      }
-    }
+    const order = await callRazorpay("https://api.razorpay.com/v1/orders", orderData);
 
-    // Create subscription record in database
+    // Create subscription record (represents membership entitlement)
     const { data: subscription, error: subError } = await supabase
       .from("subscriptions")
       .insert({
         member_id,
         plan_id,
-        razorpay_subscription_id: razorpaySubscription.id,
         status: "pending",
       })
       .select()
@@ -211,12 +129,27 @@ serve(async (req) => {
       throw new Error("Failed to create subscription record");
     }
 
+    // Create payment record
+    await supabase.from("payments").insert({
+      member_id,
+      subscription_id: subscription.id,
+      plan_id,
+      amount: Number(plan.price),
+      razorpay_order_id: order.id,
+      payment_reference: paymentReference,
+      payment_type: plan.type, // lifetime | monthly | yearly
+      payment_status: "pending",
+    });
+
     return new Response(
       JSON.stringify({
-        type: "subscription",
-        subscriptionId: razorpaySubscription.id,
+        type: "order",
+        paymentType: plan.type,
+        orderId: order.id,
+        amount: order.amount,
+        currency: order.currency,
         keyId: razorpayKeyId,
-        dbSubscriptionId: subscription.id,
+        subscriptionId: subscription.id,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

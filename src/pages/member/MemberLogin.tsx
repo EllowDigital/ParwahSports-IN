@@ -121,12 +121,15 @@ export default function MemberLogin() {
 
       if (authData.user) {
         // Create member record
-        const { error: memberError } = await client.from("members").insert({
+        const { error: memberError } = await client.from("members").upsert(
+          {
           user_id: authData.user.id,
           full_name: data.full_name,
           email: data.email,
           phone: data.phone || null,
-        });
+          },
+          { onConflict: "user_id", ignoreDuplicates: true },
+        );
 
         if (memberError) {
           console.error("Failed to create member:", memberError);
