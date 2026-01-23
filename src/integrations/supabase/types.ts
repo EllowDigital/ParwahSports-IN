@@ -625,6 +625,30 @@ export type Database = {
         }
         Relationships: []
       }
+      student_password_reset_audit: {
+        Row: {
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          student_id: string
+          student_user_id: string | null
+        }
+        Insert: {
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          student_id: string
+          student_user_id?: string | null
+        }
+        Update: {
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          student_id?: string
+          student_user_id?: string | null
+        }
+        Relationships: []
+      }
       students: {
         Row: {
           created_at: string
