@@ -718,6 +718,50 @@ export type Database = {
           },
         ]
       }
+      team_member_private_contact_audit: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          new_email: string | null
+          new_phone: string | null
+          old_email: string | null
+          old_phone: string | null
+          team_member_id: string
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          new_email?: string | null
+          new_phone?: string | null
+          old_email?: string | null
+          old_phone?: string | null
+          team_member_id: string
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          new_email?: string | null
+          new_phone?: string | null
+          old_email?: string | null
+          old_phone?: string | null
+          team_member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_member_private_contact_audit_team_member_id_fkey"
+            columns: ["team_member_id"]
+            isOneToOne: false
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_member_private_contacts: {
         Row: {
           created_at: string
