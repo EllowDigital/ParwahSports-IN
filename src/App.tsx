@@ -4,6 +4,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { MemberAuthProvider } from "@/contexts/memberAuth";
+import { StudentAuthProvider } from "@/contexts/studentAuth";
 import Index from "./pages/Index";
 import About from "./pages/About";
 import WhatWeDo from "./pages/WhatWeDo";
@@ -84,11 +86,46 @@ const App = () => (
             <Route path="/refund-policy" element={<RefundPolicy />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/donate" element={<Donate />} />
-            <Route path="/membership" element={<Membership />} />
-            <Route path="/member/login" element={<MemberLogin />} />
-            <Route path="/member/dashboard" element={<MemberDashboard />} />
-            <Route path="/student/login" element={<StudentLogin />} />
-            <Route path="/student/dashboard" element={<StudentDashboard />} />
+            <Route
+              path="/membership"
+              element={
+                <MemberAuthProvider>
+                  <Membership />
+                </MemberAuthProvider>
+              }
+            />
+            <Route
+              path="/member/login"
+              element={
+                <MemberAuthProvider>
+                  <MemberLogin />
+                </MemberAuthProvider>
+              }
+            />
+            <Route
+              path="/member/dashboard"
+              element={
+                <MemberAuthProvider>
+                  <MemberDashboard />
+                </MemberAuthProvider>
+              }
+            />
+            <Route
+              path="/student/login"
+              element={
+                <StudentAuthProvider>
+                  <StudentLogin />
+                </StudentAuthProvider>
+              }
+            />
+            <Route
+              path="/student/dashboard"
+              element={
+                <StudentAuthProvider>
+                  <StudentDashboard />
+                </StudentAuthProvider>
+              }
+            />
             <Route path="/admin/login" element={<AdminLogin />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/gallery" element={<GalleryManager />} />
