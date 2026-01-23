@@ -25,8 +25,8 @@ import {
 } from "@/components/ui/form";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { getErrorMessage } from "@/lib/errors";
+import { useMemberAuth } from "@/contexts/memberAuth";
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email"),
@@ -55,6 +55,7 @@ export default function MemberLogin() {
   const location = useLocation();
   const { toast } = useToast();
   const planId = location.state?.planId;
+  const { client } = useMemberAuth();
 
   const loginForm = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
@@ -78,7 +79,7 @@ export default function MemberLogin() {
   const onLogin = async (data: LoginFormData) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await client.auth.signInWithPassword({
         email: data.email,
         password: data.password,
       });
@@ -105,7 +106,7 @@ export default function MemberLogin() {
   const onSignup = async (data: SignupFormData) => {
     setIsLoading(true);
     try {
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      const { data: authData, error: authError } = await client.auth.signUp({
         email: data.email,
         password: data.password,
         options: {
@@ -120,7 +121,7 @@ export default function MemberLogin() {
 
       if (authData.user) {
         // Create member record
-        const { error: memberError } = await supabase.from("members").insert({
+        const { error: memberError } = await client.from("members").insert({
           user_id: authData.user.id,
           full_name: data.full_name,
           email: data.email,

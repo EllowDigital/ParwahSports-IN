@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/auth";
+import { useMemberAuth } from "@/contexts/memberAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 interface MembershipPlan {
@@ -28,7 +28,7 @@ interface MembershipPlan {
 }
 
 export default function Membership() {
-  const { user } = useAuth();
+  const { user } = useMemberAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
 
