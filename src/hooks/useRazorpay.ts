@@ -86,6 +86,7 @@ export function useRazorpay() {
         return;
       }
 
+      let handled = false;
       const rzp = new window.Razorpay({
         key: options.keyId,
         amount: options.amount,
@@ -93,14 +94,17 @@ export function useRazorpay() {
         order_id: options.orderId,
         name: "Parwah Sports",
         description: "Donation / Membership Payment",
-        handler: (response) => options.onSuccess(response as RazorpayOrderSuccessResponse),
+        handler: (response) => {
+          handled = true;
+          options.onSuccess(response as RazorpayOrderSuccessResponse);
+        },
         prefill: options.prefill,
         theme: {
           color: "#1a365d",
         },
         modal: {
           ondismiss: () => {
-            options.onError(new Error("Payment cancelled by user"));
+            if (!handled) options.onError(new Error("Payment cancelled by user"));
           },
         },
       });
@@ -131,19 +135,23 @@ export function useRazorpay() {
         return;
       }
 
+      let handled = false;
       const rzp = new window.Razorpay({
         key: options.keyId,
         subscription_id: options.subscriptionId,
         name: "Parwah Sports",
         description: "Membership Subscription",
-        handler: (response) => options.onSuccess(response as RazorpaySubscriptionSuccessResponse),
+        handler: (response) => {
+          handled = true;
+          options.onSuccess(response as RazorpaySubscriptionSuccessResponse);
+        },
         prefill: options.prefill,
         theme: {
           color: "#1a365d",
         },
         modal: {
           ondismiss: () => {
-            options.onError(new Error("Payment cancelled by user"));
+            if (!handled) options.onError(new Error("Payment cancelled by user"));
           },
         },
       });

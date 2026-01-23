@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Crown,
   CreditCard,
+  Heart,
   History,
   LogOut,
   Loader2,
@@ -44,8 +45,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/auth";
-import { supabase } from "@/integrations/supabase/client";
+import { useMemberAuth } from "@/contexts/memberAuth";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { format } from "date-fns";
 import { getErrorMessage } from "@/lib/errors";
@@ -87,8 +87,16 @@ interface Member {
   phone: string | null;
 }
 
+interface Donation {
+  id: string;
+  amount: number;
+  payment_status: string | null;
+  payment_reference: string | null;
+  created_at: string;
+}
+
 export default function MemberDashboard() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, client } = useMemberAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
@@ -111,7 +119,7 @@ export default function MemberDashboard() {
   const { data: member, isFetched: memberFetched } = useQuery({
     queryKey: ["member", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("members")
         .select("*")
         .eq("user_id", user!.id)
@@ -127,7 +135,7 @@ export default function MemberDashboard() {
   const { data: plans } = useQuery({
     queryKey: ["membership-plans"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("membership_plans")
         .select("*")
         .eq("is_active", true)
@@ -153,7 +161,7 @@ export default function MemberDashboard() {
   const { data: subscription, isLoading: subLoading } = useQuery({
     queryKey: ["subscription", member?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("subscriptions")
         .select("*, membership_plans(*)")
         .eq("member_id", member!.id)
@@ -172,7 +180,7 @@ export default function MemberDashboard() {
   const { data: payments } = useQuery({
     queryKey: ["payments", member?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("payments")
         .select("*, membership_plans(*)")
         .eq("member_id", member!.id)
@@ -188,7 +196,7 @@ export default function MemberDashboard() {
   useEffect(() => {
     if (user && memberFetched && !member) {
       const createMember = async () => {
-        await supabase.from("members").upsert(
+        await client.from("members").upsert(
           {
             user_id: user.id,
             full_name: user.user_metadata?.full_name || user.email?.split("@")[0] || "Member",
@@ -200,7 +208,7 @@ export default function MemberDashboard() {
       };
       createMember();
     }
-  }, [user, member, memberFetched, queryClient]);
+  }, [user, member, memberFetched, queryClient, client]);
 
   const handleSubscribe = async () => {
     if (!selectedPlan || !member || !isLoaded) return;
@@ -208,7 +216,7 @@ export default function MemberDashboard() {
     setIsProcessing(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("razorpay-create-subscription", {
+      const { data, error } = await client.functions.invoke("razorpay-create-subscription", {
         body: {
           plan_id: selectedPlan.id,
           member_id: member.id,
@@ -233,7 +241,7 @@ export default function MemberDashboard() {
           },
           onSuccess: async (response) => {
             try {
-              await supabase.functions.invoke("razorpay-verify-payment", {
+              await client.functions.invoke("razorpay-verify-payment", {
                 body: {
                   razorpay_order_id: response.razorpay_order_id,
                   razorpay_payment_id: response.razorpay_payment_id,
@@ -313,7 +321,7 @@ export default function MemberDashboard() {
     mutationFn: async () => {
       if (!subscription) throw new Error("No subscription found");
 
-      const { error } = await supabase.functions.invoke("razorpay-cancel-subscription", {
+      const { error } = await client.functions.invoke("razorpay-cancel-subscription", {
         body: { subscription_id: subscription.id },
       });
 
@@ -341,6 +349,20 @@ export default function MemberDashboard() {
     await signOut();
     navigate("/");
   };
+
+  const { data: donations } = useQuery({
+    queryKey: ["donations", member?.email],
+    queryFn: async () => {
+      const { data, error } = await client
+        .from("donations")
+        .select("id, amount, payment_status, payment_reference, created_at")
+        .eq("donor_email", member!.email)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as Donation[];
+    },
+    enabled: !!member?.email,
+  });
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -478,8 +500,8 @@ export default function MemberDashboard() {
             </Card>
           </div>
 
-          {/* Payment History */}
-          <Card>
+          {/* Membership Payment History */}
+          <Card className="mb-6">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <History className="h-5 w-5" />
@@ -527,6 +549,47 @@ export default function MemberDashboard() {
                 <div className="text-center py-8 text-muted-foreground">
                   No payment history found
                 </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Donation History */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="h-5 w-5" />
+                Donation History
+              </CardTitle>
+              <CardDescription>
+                Donations made with <span className="font-medium">{member?.email}</span>
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {donations && donations.length > 0 ? (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Date</TableHead>
+                      <TableHead>Reference</TableHead>
+                      <TableHead>Amount</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {donations.map((d) => (
+                      <TableRow key={d.id}>
+                        <TableCell>{format(new Date(d.created_at), "MMM dd, yyyy")}</TableCell>
+                        <TableCell className="font-mono text-sm">
+                          {d.payment_reference || "-"}
+                        </TableCell>
+                        <TableCell>₹{Number(d.amount).toLocaleString("en-IN")}</TableCell>
+                        <TableCell>{getStatusBadge(d.payment_status || "pending")}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              ) : (
+                <div className="text-center py-8 text-muted-foreground">No donations found</div>
               )}
             </CardContent>
           </Card>
