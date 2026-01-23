@@ -21,9 +21,20 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Download, GraduationCap, Key } from "lucide-react";
 import { format } from "date-fns";
+import { z } from "zod";
 
 interface Student {
   id: string;
@@ -39,6 +50,8 @@ interface Student {
 export default function StudentsManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Student | null>(null);
+  const [linkingStudent, setLinkingStudent] = useState<Student | null>(null);
+  const [linkPassword, setLinkPassword] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -51,6 +64,8 @@ export default function StudentsManager() {
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const tempPasswordSchema = z.string().min(6, "Password must be at least 6 characters");
 
   const { data: students, isLoading } = useQuery({
     queryKey: ["admin-students"],
@@ -70,25 +85,18 @@ export default function StudentsManager() {
 
       // Create auth account if requested
       if (data.create_account && data.password) {
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: data.email,
-          password: data.password,
-          options: {
-            data: {
+        const { data: created, error: createErr } = await supabase.functions.invoke(
+          "admin-create-student-user",
+          {
+            body: {
+              email: data.email,
+              password: data.password,
               full_name: data.name,
             },
           },
-        });
-        if (authError) throw authError;
-        user_id = authData.user?.id;
-
-        // Add student role
-        if (user_id) {
-          const { error: roleError } = await supabase
-            .from("user_roles")
-            .insert([{ user_id, role: "student" }]);
-          if (roleError) console.error("Error adding student role:", roleError);
-        }
+        );
+        if (createErr) throw createErr;
+        user_id = (created as any)?.user_id ?? null;
       }
 
       const { error } = await supabase.from("students").insert([
@@ -112,6 +120,54 @@ export default function StudentsManager() {
       toast({
         title: "Error creating student",
         description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const activateAndLinkMutation = useMutation({
+    mutationFn: async ({ student, password }: { student: Student; password: string }) => {
+      const parsed = tempPasswordSchema.safeParse(password);
+      if (!parsed.success) {
+        throw new Error(parsed.error.errors[0]?.message || "Invalid password");
+      }
+
+      const { data: created, error: createErr } = await supabase.functions.invoke(
+        "admin-create-student-user",
+        {
+          body: {
+            email: student.email,
+            password,
+            full_name: student.name,
+          },
+        },
+      );
+      if (createErr) throw createErr;
+
+      const user_id = (created as any)?.user_id as string | undefined;
+      if (!user_id) throw new Error("User creation failed (missing user_id)");
+
+      const { error: updErr } = await supabase
+        .from("students")
+        .update({ user_id, is_active: true })
+        .eq("id", student.id);
+      if (updErr) throw updErr;
+
+      return { user_id };
+    },
+    onSuccess: ({ user_id }) => {
+      queryClient.invalidateQueries({ queryKey: ["admin-students"] });
+      toast({
+        title: "Student activated + linked",
+        description: `Auth user created: ${user_id}. Share the temporary password securely.`,
+      });
+      setLinkPassword("");
+      setLinkingStudent(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Failed to activate/link",
+        description: error?.message || "Unknown error",
         variant: "destructive",
       });
     },
@@ -175,6 +231,11 @@ export default function StudentsManager() {
     });
     setEditingItem(null);
     setIsDialogOpen(false);
+  };
+
+  const openActivateLink = (student: Student) => {
+    setLinkingStudent(student);
+    setLinkPassword("");
   };
 
   const handleEdit = (item: Student) => {
@@ -396,6 +457,16 @@ export default function StudentsManager() {
                       </span>
                     </TableCell>
                     <TableCell className="text-right">
+                      {!item.user_id && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => openActivateLink(item)}
+                          title="Activate + Link Account"
+                        >
+                          <Key className="w-4 h-4" />
+                        </Button>
+                      )}
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
                         <Pencil className="w-4 h-4" />
                       </Button>
@@ -415,6 +486,52 @@ export default function StudentsManager() {
           </Table>
         </div>
       </div>
+
+      <AlertDialog open={!!linkingStudent} onOpenChange={(open) => !open && setLinkingStudent(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Activate + Link Account</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will create a login for <span className="font-medium">{linkingStudent?.email}</span> and
+              activate their profile.
+              <br />
+              Set a temporary password and share it securely.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="space-y-2">
+            <Label htmlFor="link_password">Temporary Password</Label>
+            <Input
+              id="link_password"
+              type="password"
+              value={linkPassword}
+              onChange={(e) => setLinkPassword(e.target.value)}
+              minLength={6}
+              placeholder="Minimum 6 characters"
+            />
+          </div>
+
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={() => {
+                setLinkPassword("");
+                setLinkingStudent(null);
+              }}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (!linkingStudent) return;
+                activateAndLinkMutation.mutate({ student: linkingStudent, password: linkPassword });
+              }}
+              disabled={activateAndLinkMutation.isPending}
+            >
+              Activate + Link
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </AdminLayout>
   );
 }

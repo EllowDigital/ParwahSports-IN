@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/contexts/auth";
+import { useStudentAuth } from "@/contexts/studentAuth";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +9,7 @@ import { Award, Download, Trophy, LogOut } from "lucide-react";
 import { format } from "date-fns";
 
 export default function StudentDashboard() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, client } = useStudentAuth();
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState<string | null>(null);
 
@@ -21,7 +20,7 @@ export default function StudentDashboard() {
   const { data: student } = useQuery({
     queryKey: ["student-profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("students")
         .select("*")
         .eq("user_id", user?.id)
@@ -33,10 +32,12 @@ export default function StudentDashboard() {
     enabled: !!user,
   });
 
+  const isActive = student?.is_active ?? false;
+
   const { data: certificates } = useQuery({
     queryKey: ["student-certificates", studentId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("certificates")
         .select("*, competitions:competition_id(name)")
         .eq("student_id", studentId!)
@@ -44,13 +45,13 @@ export default function StudentDashboard() {
       if (error) throw error;
       return data;
     },
-    enabled: !!studentId,
+    enabled: !!studentId && isActive,
   });
 
   const { data: participations } = useQuery({
     queryKey: ["student-participations", studentId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from("participations")
         .select("*, competitions:competition_id(name, event_date)")
         .eq("student_id", studentId!)
@@ -58,7 +59,7 @@ export default function StudentDashboard() {
       if (error) throw error;
       return data;
     },
-    enabled: !!studentId,
+    enabled: !!studentId && isActive,
   });
 
   const handleSignOut = async () => {
@@ -67,6 +68,32 @@ export default function StudentDashboard() {
   };
 
   if (!user) return null;
+
+  if (student && !isActive) {
+    return (
+      <Layout>
+        <div className="container mx-auto px-4 py-12">
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+              <CardTitle>Account Pending Approval</CardTitle>
+              <CardDescription>
+                Your student account exists but is not active yet. Please wait for an admin to activate your
+                profile.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex items-center justify-between gap-4">
+              <div className="text-sm text-muted-foreground">
+                Signed in as <span className="font-medium">{user.email}</span>
+              </div>
+              <Button variant="outline" onClick={handleSignOut}>
+                <LogOut className="w-4 h-4 mr-2" /> Sign Out
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
