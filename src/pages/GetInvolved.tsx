@@ -210,6 +210,13 @@ const GetInvolved = () => {
                 ))}
               </div>
 
+              <Button asChild variant="outline" className="w-full gap-2 text-lg py-6 mb-3">
+                <Link to="/donate?amount=500#donate-form">
+                  <Heart className="h-5 w-5" />
+                  Donate ₹500
+                </Link>
+              </Button>
+
               <Button
                 asChild
                 className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-lg py-6"

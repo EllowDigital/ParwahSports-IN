@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
-import { Mail, Linkedin, Twitter, Users } from "lucide-react";
+import { Mail, Linkedin, Phone, Twitter, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -11,7 +11,8 @@ interface TeamMember {
   role: string;
   bio: string | null;
   image_url: string | null;
-  email: string | null;
+  public_email: string | null;
+  public_phone: string | null;
   linkedin_url: string | null;
   twitter_url: string | null;
   display_order: number | null;
@@ -23,7 +24,9 @@ const Team = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("team_members")
-        .select("*")
+        .select(
+          "id,name,role,bio,image_url,public_email,public_phone,linkedin_url,twitter_url,display_order,is_active",
+        )
         .eq("is_active", true)
         .order("display_order", { ascending: true });
       if (error) throw error;
@@ -147,12 +150,20 @@ const Team = () => {
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
                         <div className="flex gap-3">
-                          {member.email && (
+                          {member.public_email && (
                             <a
-                              href={`mailto:${member.email}`}
+                              href={`mailto:${member.public_email}`}
                               className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-secondary hover:text-secondary-foreground transition-colors"
                             >
                               <Mail className="h-5 w-5" />
+                            </a>
+                          )}
+                          {member.public_phone && (
+                            <a
+                              href={`tel:${member.public_phone}`}
+                              className="w-10 h-10 bg-background rounded-full flex items-center justify-center hover:bg-secondary hover:text-secondary-foreground transition-colors"
+                            >
+                              <Phone className="h-5 w-5" />
                             </a>
                           )}
                           {member.linkedin_url && (

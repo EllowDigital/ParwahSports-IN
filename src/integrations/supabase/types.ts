@@ -718,6 +718,38 @@ export type Database = {
           },
         ]
       }
+      team_member_private_contacts: {
+        Row: {
+          created_at: string
+          email: string | null
+          phone: string | null
+          team_member_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          phone?: string | null
+          team_member_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          phone?: string | null
+          team_member_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "team_member_private_contacts_team_member_id_fkey"
+            columns: ["team_member_id"]
+            isOneToOne: true
+            referencedRelation: "team_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       team_members: {
         Row: {
           bio: string | null
@@ -730,6 +762,8 @@ export type Database = {
           linkedin_url: string | null
           name: string
           phone: string | null
+          public_email: string | null
+          public_phone: string | null
           role: string
           twitter_url: string | null
           updated_at: string
@@ -745,6 +779,8 @@ export type Database = {
           linkedin_url?: string | null
           name: string
           phone?: string | null
+          public_email?: string | null
+          public_phone?: string | null
           role: string
           twitter_url?: string | null
           updated_at?: string
@@ -760,6 +796,8 @@ export type Database = {
           linkedin_url?: string | null
           name?: string
           phone?: string | null
+          public_email?: string | null
+          public_phone?: string | null
           role?: string
           twitter_url?: string | null
           updated_at?: string

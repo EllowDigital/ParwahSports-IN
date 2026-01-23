@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { getErrorMessage } from "@/lib/errors";
+import { useLocation } from "react-router-dom";
 
 const presetAmounts = [500, 1000, 2500, 5000, 10000];
 
@@ -68,6 +69,8 @@ export default function Donate() {
   const [paymentReference, setPaymentReference] = useState("");
   const { toast } = useToast();
   const { isLoaded, openPayment } = useRazorpay();
+  const location = useLocation();
+  const donateFormRef = useRef<HTMLDivElement | null>(null);
 
   const form = useForm<DonationFormData>({
     resolver: zodResolver(donationSchema),
@@ -93,6 +96,23 @@ export default function Donate() {
     setSelectedAmount(null);
     form.setValue("amount", numValue);
   };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const amountParam = params.get("amount");
+    const parsedAmount = amountParam ? Number.parseInt(amountParam, 10) : NaN;
+
+    if (Number.isFinite(parsedAmount) && parsedAmount > 0) {
+      handleAmountSelect(parsedAmount);
+    }
+
+    if (location.hash === "#donate-form" || (Number.isFinite(parsedAmount) && parsedAmount > 0)) {
+      window.setTimeout(() => {
+        donateFormRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search, location.hash]);
 
   const onSubmit = async (data: DonationFormData) => {
     if (!isLoaded) {
@@ -268,7 +288,7 @@ export default function Donate() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
             {/* Form */}
-            <div>
+            <div id="donate-form" ref={donateFormRef}>
               <Card>
                 <CardHeader>
                   <CardTitle className="text-2xl">Make a Donation</CardTitle>
