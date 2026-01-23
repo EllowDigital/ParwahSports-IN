@@ -197,6 +197,10 @@ export type Database = {
           razorpay_order_id: string | null
           razorpay_payment_id: string | null
           razorpay_signature: string | null
+          refund_id: string | null
+          refund_requested_at: string | null
+          refunded_at: string | null
+          retry_of_donation_id: string | null
           updated_at: string
         }
         Insert: {
@@ -215,6 +219,10 @@ export type Database = {
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
           razorpay_signature?: string | null
+          refund_id?: string | null
+          refund_requested_at?: string | null
+          refunded_at?: string | null
+          retry_of_donation_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -233,6 +241,10 @@ export type Database = {
           razorpay_order_id?: string | null
           razorpay_payment_id?: string | null
           razorpay_signature?: string | null
+          refund_id?: string | null
+          refund_requested_at?: string | null
+          refunded_at?: string | null
+          retry_of_donation_id?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -486,6 +498,10 @@ export type Database = {
           razorpay_payment_id: string | null
           razorpay_signature: string | null
           receipt_url: string | null
+          refund_id: string | null
+          refund_requested_at: string | null
+          refunded_at: string | null
+          retry_of_payment_id: string | null
           subscription_id: string | null
           updated_at: string
         }
@@ -503,6 +519,10 @@ export type Database = {
           razorpay_payment_id?: string | null
           razorpay_signature?: string | null
           receipt_url?: string | null
+          refund_id?: string | null
+          refund_requested_at?: string | null
+          refunded_at?: string | null
+          retry_of_payment_id?: string | null
           subscription_id?: string | null
           updated_at?: string
         }
@@ -520,6 +540,10 @@ export type Database = {
           razorpay_payment_id?: string | null
           razorpay_signature?: string | null
           receipt_url?: string | null
+          refund_id?: string | null
+          refund_requested_at?: string | null
+          refunded_at?: string | null
+          retry_of_payment_id?: string | null
           subscription_id?: string | null
           updated_at?: string
         }
@@ -948,7 +972,7 @@ export type Database = {
     }
     Enums: {
       announcement_priority: "normal" | "important" | "urgent"
-      app_role: "admin" | "moderator" | "user" | "student"
+      app_role: "admin" | "moderator" | "user" | "student" | "finance"
       membership_type: "monthly" | "yearly" | "lifetime"
       participation_status:
         | "registered"
@@ -956,7 +980,13 @@ export type Database = {
         | "winner"
         | "runner_up"
         | "disqualified"
-      payment_status: "pending" | "success" | "failed" | "refunded"
+      payment_status:
+        | "pending"
+        | "success"
+        | "failed"
+        | "refunded"
+        | "refund_pending"
+        | "cancelled"
       plan_status: "active" | "inactive"
       subscription_status:
         | "active"
@@ -1092,7 +1122,7 @@ export const Constants = {
   public: {
     Enums: {
       announcement_priority: ["normal", "important", "urgent"],
-      app_role: ["admin", "moderator", "user", "student"],
+      app_role: ["admin", "moderator", "user", "student", "finance"],
       membership_type: ["monthly", "yearly", "lifetime"],
       participation_status: [
         "registered",
@@ -1101,7 +1131,14 @@ export const Constants = {
         "runner_up",
         "disqualified",
       ],
-      payment_status: ["pending", "success", "failed", "refunded"],
+      payment_status: [
+        "pending",
+        "success",
+        "failed",
+        "refunded",
+        "refund_pending",
+        "cancelled",
+      ],
       plan_status: ["active", "inactive"],
       subscription_status: [
         "active",
