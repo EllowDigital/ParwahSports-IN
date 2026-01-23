@@ -97,12 +97,19 @@ export default function Volunteer() {
       }]);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       setIsSubmitted(true);
       toast({
         title: "Application Submitted!",
         description: "Thank you for your interest. We'll be in touch soon!",
       });
+
+      // Fire-and-forget confirmation email
+      void supabase.functions
+        .invoke("volunteer-confirmation-email", {
+          body: { email: variables.email, full_name: variables.full_name },
+        })
+        .catch((e) => console.warn("Volunteer confirmation email failed:", e));
     },
     onError: (error) => {
       toast({

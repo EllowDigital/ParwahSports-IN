@@ -25,8 +25,10 @@ interface TeamMember {
   role: string;
   bio: string | null;
   image_url: string | null;
-  email: string | null;
-  phone: string | null;
+  email: string | null; // private (stored in team_member_private_contacts)
+  phone: string | null; // private (stored in team_member_private_contacts)
+  public_email: string | null;
+  public_phone: string | null;
   linkedin_url: string | null;
   twitter_url: string | null;
   display_order: number | null;
@@ -51,8 +53,10 @@ export default function TeamManager() {
     role: "",
     bio: "",
     image_url: "",
-    email: "",
-    phone: "",
+    email: "", // private
+    phone: "", // private
+    public_email: "",
+    public_phone: "",
     linkedin_url: "",
     twitter_url: "",
     display_order: 0,
@@ -63,11 +67,18 @@ export default function TeamManager() {
     try {
       const { data, error } = await supabase
         .from("team_members")
-        .select("*")
+        .select("*, team_member_private_contacts(email, phone)")
         .order("display_order", { ascending: true });
 
       if (error) throw error;
-      setMembers(data || []);
+
+      const normalized = (data || []).map((m: any) => ({
+        ...m,
+        email: m.team_member_private_contacts?.email ?? null,
+        phone: m.team_member_private_contacts?.phone ?? null,
+      }));
+
+      setMembers(normalized);
     } catch (error) {
       console.error("Error fetching team members:", error);
       toast({ title: "Error", description: "Failed to load team members", variant: "destructive" });
@@ -88,6 +99,8 @@ export default function TeamManager() {
       image_url: "",
       email: "",
       phone: "",
+      public_email: "",
+      public_phone: "",
       linkedin_url: "",
       twitter_url: "",
       display_order: 0,
@@ -107,6 +120,8 @@ export default function TeamManager() {
       image_url: member.image_url || "",
       email: member.email || "",
       phone: member.phone || "",
+      public_email: member.public_email || "",
+      public_phone: member.public_phone || "",
       linkedin_url: member.linkedin_url || "",
       twitter_url: member.twitter_url || "",
       display_order: member.display_order || 0,
@@ -164,8 +179,11 @@ export default function TeamManager() {
       const payload = {
         ...formData,
         image_url: imageUrl,
-        email: formData.email || null,
-        phone: formData.phone || null,
+        // keep legacy columns null to avoid public exposure
+        email: null,
+        phone: null,
+        public_email: formData.public_email || null,
+        public_phone: formData.public_phone || null,
         linkedin_url: formData.linkedin_url || null,
         twitter_url: formData.twitter_url || null,
         bio: formData.bio || null,
@@ -178,11 +196,37 @@ export default function TeamManager() {
           .eq("id", editingMember.id);
 
         if (error) throw error;
+
+        const { error: privateError } = await supabase
+          .from("team_member_private_contacts")
+          .upsert({
+            team_member_id: editingMember.id,
+            email: formData.email || null,
+            phone: formData.phone || null,
+          });
+        if (privateError) throw privateError;
+
         toast({ title: "Success", description: "Team member updated successfully" });
       } else {
-        const { error } = await supabase.from("team_members").insert([payload]);
+        const { data: inserted, error } = await supabase
+          .from("team_members")
+          .insert([payload])
+          .select("id")
+          .single();
 
         if (error) throw error;
+
+        if (inserted?.id) {
+          const { error: privateError } = await supabase
+            .from("team_member_private_contacts")
+            .upsert({
+              team_member_id: inserted.id,
+              email: formData.email || null,
+              phone: formData.phone || null,
+            });
+          if (privateError) throw privateError;
+        }
+
         toast({ title: "Success", description: "Team member added successfully" });
       }
 
@@ -333,7 +377,7 @@ export default function TeamManager() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">Private Email (admin-only)</Label>
                     <Input
                       id="email"
                       type="email"
@@ -342,11 +386,31 @@ export default function TeamManager() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="phone">Phone</Label>
+                    <Label htmlFor="phone">Private Phone (admin-only)</Label>
                     <Input
                       id="phone"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="public_email">Public Email (optional)</Label>
+                    <Input
+                      id="public_email"
+                      type="email"
+                      value={formData.public_email}
+                      onChange={(e) => setFormData({ ...formData, public_email: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="public_phone">Public Phone (optional)</Label>
+                    <Input
+                      id="public_phone"
+                      value={formData.public_phone}
+                      onChange={(e) => setFormData({ ...formData, public_phone: e.target.value })}
                     />
                   </div>
                 </div>
