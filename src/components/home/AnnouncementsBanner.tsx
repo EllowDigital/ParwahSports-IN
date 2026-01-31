@@ -22,12 +22,20 @@ export function AnnouncementsBanner() {
         .from("announcements")
         .select("*")
         .eq("is_active", true)
-        .or(`start_date.is.null,start_date.lte.${now}`)
-        .or(`end_date.is.null,end_date.gte.${now}`)
         .order("priority", { ascending: false })
-        .limit(1);
+        .order("created_at", { ascending: false })
+        .limit(5);
+      
       if (error) throw error;
-      return data as Announcement[];
+      
+      // Filter by date range in JavaScript for more reliable handling
+      const filtered = (data || []).filter((announcement) => {
+        const startOk = !announcement.start_date || new Date(announcement.start_date) <= new Date(now);
+        const endOk = !announcement.end_date || new Date(announcement.end_date) >= new Date(now);
+        return startOk && endOk;
+      });
+      
+      return filtered.slice(0, 1) as Announcement[];
     },
   });
 
