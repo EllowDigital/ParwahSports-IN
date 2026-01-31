@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { Target, Eye, Heart, Award, Shield, Users, Mail, Phone, Linkedin, Twitter, ArrowRight, CheckCircle } from "lucide-react";
+import { Target, Eye, Heart, Award, Shield, Users, Mail, Phone, Linkedin, Twitter, ArrowRight, CheckCircle, Code } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Link } from "react-router-dom";
+import { WebsiteCredit } from "@/components/layout/Footer";
 import trainingImage from "@/assets/training-session.jpg";
 import communityImage from "@/assets/community-event.jpg";
 
@@ -504,6 +505,21 @@ const About = () => {
               </Button>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Website Credits Section */}
+      <section className="py-8 bg-muted/30 border-t border-border">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Code className="h-4 w-4" />
+                <span className="text-sm">Website Credits:</span>
+              </div>
+              <WebsiteCredit />
+            </div>
+          </ScrollReveal>
         </div>
       </section>
     </Layout>

@@ -18,6 +18,12 @@ const sliderImages = [
   "/images/slider/P1.jpeg",
   "/images/slider/P2.jpeg",
   "/images/slider/P3.jpeg",
+  "/images/slider/P4.jpeg",
+  "/images/slider/P5.jpeg",
+  "/images/slider/P6.jpeg",
+  "/images/slider/P7.jpeg",
+  "/images/slider/P8.jpeg",
+  "/images/slider/P9.jpeg",
 ];
 
 const stats = [
