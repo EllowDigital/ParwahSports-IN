@@ -1,11 +1,15 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Trophy, Calendar, Users } from "lucide-react";
-import { format, isPast } from "date-fns";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Trophy, Calendar, Filter, Search, X, Grid, List, Medal, Users } from "lucide-react";
+import { format, isPast, isFuture, isToday } from "date-fns";
 
 interface Competition {
   id: string;
@@ -18,6 +22,11 @@ interface Competition {
 }
 
 export default function Competitions() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "open" | "upcoming" | "past">("all");
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [selectedCompetition, setSelectedCompetition] = useState<Competition | null>(null);
+
   const { data: competitions, isLoading } = useQuery({
     queryKey: ["competitions"],
     queryFn: async () => {
@@ -30,140 +39,338 @@ export default function Competitions() {
     },
   });
 
-  const upcomingCompetitions = competitions?.filter(
-    (c) => !isPast(new Date(c.event_date))
-  ) || [];
-  
-  const pastCompetitions = competitions?.filter(
-    (c) => isPast(new Date(c.event_date))
-  ) || [];
-
-  const CompetitionCard = ({ competition }: { competition: Competition }) => {
-    const isUpcoming = !isPast(new Date(competition.event_date));
+  // Filter competitions
+  const filteredCompetitions = competitions?.filter((competition) => {
+    const matchesSearch = !searchQuery || 
+      competition.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      competition.description?.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return (
-      <Card className="overflow-hidden hover:shadow-lg transition-shadow">
-        {competition.cover_image_url ? (
-          <div className="h-48 overflow-hidden">
-            <img
-              src={competition.cover_image_url}
-              alt={competition.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ) : (
-          <div className="h-48 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-            <Trophy className="w-16 h-16 text-primary/50" />
-          </div>
-        )}
-        <CardHeader className="pb-2">
-          <div className="flex items-start justify-between gap-2">
-            <CardTitle className="text-lg line-clamp-2">{competition.name}</CardTitle>
-            <Badge variant={isUpcoming ? "default" : "secondary"}>
-              {isUpcoming ? "Upcoming" : "Past"}
-            </Badge>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="w-4 h-4" />
-            {format(new Date(competition.event_date), "MMMM d, yyyy")}
-          </div>
-          {competition.is_participation_open && isUpcoming && (
-            <div className="flex items-center gap-2 text-sm text-primary">
-              <Users className="w-4 h-4" />
-              Registrations Open
-            </div>
-          )}
-          {competition.description && (
-            <p className="text-sm text-muted-foreground line-clamp-3">
-              {competition.description}
-            </p>
-          )}
-        </CardContent>
-      </Card>
-    );
+    const eventDate = new Date(competition.event_date);
+    let matchesStatus = true;
+    
+    if (statusFilter === "open") {
+      matchesStatus = competition.is_participation_open;
+    } else if (statusFilter === "upcoming") {
+      matchesStatus = isFuture(eventDate) || isToday(eventDate);
+    } else if (statusFilter === "past") {
+      matchesStatus = isPast(eventDate) && !isToday(eventDate);
+    }
+    
+    return matchesSearch && matchesStatus;
+  });
+
+  const clearFilters = () => {
+    setSearchQuery("");
+    setStatusFilter("all");
+  };
+
+  const hasFilters = searchQuery || statusFilter !== "all";
+
+  const getCompetitionStatus = (competition: Competition) => {
+    const eventDate = new Date(competition.event_date);
+    if (competition.is_participation_open) {
+      return { label: "Registrations Open", variant: "default" as const };
+    }
+    if (isToday(eventDate)) return { label: "Today", variant: "secondary" as const };
+    if (isFuture(eventDate)) return { label: "Upcoming", variant: "outline" as const };
+    return { label: "Completed", variant: "outline" as const };
   };
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 via-background to-background py-16 md:py-24">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-3xl mx-auto">
-            <Trophy className="w-16 h-16 text-primary mx-auto mb-6" />
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+      <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <span className="inline-flex items-center gap-2 bg-secondary/20 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6">
+              <Trophy className="h-4 w-4" />
               Competitions
+            </span>
+            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              Sports Competitions
             </h1>
-            <p className="text-lg text-muted-foreground">
-              Discover our sports competitions and tournaments. Join us to showcase your talent and compete with the best.
+            <p className="text-lg text-muted-foreground leading-relaxed">
+              Discover upcoming tournaments, championships, and competitive events for athletes.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Competitions List */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
+      {/* Filters Section */}
+      <section className="py-6 bg-background border-b border-border sticky top-16 lg:top-20 z-40">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Filter className="h-4 w-4" />
+              <span>Filter Competitions</span>
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+              {/* Search */}
+              <div className="relative flex-1 sm:flex-none sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search competitions..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+
+              {/* Status Filter */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
+                <Button
+                  variant={statusFilter === "all" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("all")}
+                  className="shrink-0"
+                >
+                  All
+                </Button>
+                <Button
+                  variant={statusFilter === "open" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("open")}
+                  className="shrink-0 gap-1"
+                >
+                  <Medal className="h-3 w-3" />
+                  Open
+                </Button>
+                <Button
+                  variant={statusFilter === "upcoming" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("upcoming")}
+                  className="shrink-0"
+                >
+                  Upcoming
+                </Button>
+                <Button
+                  variant={statusFilter === "past" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setStatusFilter("past")}
+                  className="shrink-0"
+                >
+                  Past
+                </Button>
+              </div>
+
+              {/* View Toggle */}
+              <div className="flex items-center border border-border rounded-lg p-1">
+                <Button
+                  variant={viewMode === "grid" ? "default" : "ghost"}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode("grid")}
+                >
+                  <Grid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === "list" ? "default" : "ghost"}
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setViewMode("list")}
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+
+              {/* Clear Filters */}
+              {hasFilters && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearFilters}
+                  className="gap-1 text-muted-foreground"
+                >
+                  <X className="h-4 w-4" />
+                  Clear
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Competitions Grid/List */}
+      <section className="py-16 lg:py-24">
+        <div className="container mx-auto px-4 lg:px-8">
           {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
+              {[...Array(6)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
                   <Skeleton className="h-48 w-full" />
-                  <CardHeader>
-                    <Skeleton className="h-6 w-3/4" />
-                  </CardHeader>
-                  <CardContent>
-                    <Skeleton className="h-4 w-1/2 mb-2" />
+                  <CardContent className="p-6">
+                    <Skeleton className="h-6 w-3/4 mb-3" />
                     <Skeleton className="h-4 w-full" />
                   </CardContent>
                 </Card>
               ))}
             </div>
-          ) : competitions?.length === 0 ? (
-            <div className="text-center py-16">
-              <Trophy className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h2 className="text-2xl font-semibold text-foreground mb-2">
-                No Competitions Yet
-              </h2>
-              <p className="text-muted-foreground">
-                Check back soon for upcoming competitions and tournaments.
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-12">
-              {/* Upcoming Competitions */}
-              {upcomingCompetitions.length > 0 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full bg-primary animate-pulse" />
-                    Upcoming Competitions
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {upcomingCompetitions.map((competition) => (
-                      <CompetitionCard key={competition.id} competition={competition} />
-                    ))}
-                  </div>
+          ) : filteredCompetitions && filteredCompetitions.length > 0 ? (
+            <>
+              <div className="flex items-center justify-between mb-8">
+                <p className="text-muted-foreground">
+                  Showing <span className="font-medium text-foreground">{filteredCompetitions.length}</span> competitions
+                </p>
+              </div>
+              
+              {viewMode === "grid" ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {filteredCompetitions.map((competition) => {
+                    const status = getCompetitionStatus(competition);
+                    return (
+                      <Card
+                        key={competition.id}
+                        className="group overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                        onClick={() => setSelectedCompetition(competition)}
+                      >
+                        <div className="relative">
+                          {competition.cover_image_url ? (
+                            <img
+                              src={competition.cover_image_url}
+                              alt={competition.name}
+                              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
+                              <Trophy className="h-16 w-16 text-primary/30" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+                          <div className="absolute top-4 left-4 flex gap-2">
+                            <Badge className="bg-primary text-primary-foreground">
+                              {format(new Date(competition.event_date), "MMM d")}
+                            </Badge>
+                            {competition.is_participation_open && (
+                              <Badge className="bg-accent text-accent-foreground">
+                                <Users className="h-3 w-3 mr-1" />
+                                Open
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="absolute bottom-4 left-4 right-4">
+                            <h3 className="font-semibold text-lg text-background line-clamp-2">
+                              {competition.name}
+                            </h3>
+                          </div>
+                        </div>
+                        <CardContent className="p-6">
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-3">
+                            <Calendar className="h-4 w-4" />
+                            {format(new Date(competition.event_date), "MMMM d, yyyy")}
+                          </div>
+                          {competition.description && (
+                            <p className="text-muted-foreground line-clamp-2">
+                              {competition.description}
+                            </p>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="space-y-6">
+                  {filteredCompetitions.map((competition) => {
+                    const status = getCompetitionStatus(competition);
+                    return (
+                      <Card
+                        key={competition.id}
+                        className="group overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
+                        onClick={() => setSelectedCompetition(competition)}
+                      >
+                        <div className="flex flex-col md:flex-row">
+                          {competition.cover_image_url ? (
+                            <div className="md:w-64 lg:w-80 shrink-0">
+                              <img
+                                src={competition.cover_image_url}
+                                alt={competition.name}
+                                className="w-full h-48 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              />
+                            </div>
+                          ) : (
+                            <div className="md:w-64 lg:w-80 shrink-0 h-48 md:h-auto bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                              <Trophy className="h-16 w-16 text-primary/30" />
+                            </div>
+                          )}
+                          <CardContent className="p-6 flex-1">
+                            <div className="flex flex-wrap gap-2 mb-3">
+                              <Badge className="bg-primary text-primary-foreground">
+                                {format(new Date(competition.event_date), "MMMM d, yyyy")}
+                              </Badge>
+                              <Badge variant={status.variant}>
+                                {status.label}
+                              </Badge>
+                            </div>
+                            <h3 className="text-2xl font-semibold text-foreground group-hover:text-primary transition-colors mb-3">
+                              {competition.name}
+                            </h3>
+                            {competition.description && (
+                              <p className="text-muted-foreground line-clamp-2">
+                                {competition.description}
+                              </p>
+                            )}
+                          </CardContent>
+                        </div>
+                      </Card>
+                    );
+                  })}
                 </div>
               )}
-
-              {/* Past Competitions */}
-              {pastCompetitions.length > 0 && (
-                <div>
-                  <h2 className="text-2xl font-bold text-foreground mb-6">
-                    Past Competitions
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pastCompetitions.map((competition) => (
-                      <CompetitionCard key={competition.id} competition={competition} />
-                    ))}
-                  </div>
-                </div>
+            </>
+          ) : (
+            <div className="text-center py-16">
+              <Trophy className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No Competitions Found</h3>
+              <p className="text-muted-foreground mb-4">
+                {hasFilters ? "Try adjusting your filters" : "Check back soon for upcoming competitions!"}
+              </p>
+              {hasFilters && (
+                <Button variant="outline" onClick={clearFilters}>
+                  Clear Filters
+                </Button>
               )}
             </div>
           )}
         </div>
       </section>
+
+      {/* Competition Detail Dialog */}
+      <Dialog open={!!selectedCompetition} onOpenChange={() => setSelectedCompetition(null)}>
+        <DialogContent className="max-w-2xl">
+          {selectedCompetition && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-serif pr-8">
+                  {selectedCompetition.name}
+                </DialogTitle>
+              </DialogHeader>
+              {selectedCompetition.cover_image_url && (
+                <img
+                  src={selectedCompetition.cover_image_url}
+                  alt={selectedCompetition.name}
+                  className="w-full h-64 object-cover rounded-xl"
+                />
+              )}
+              <div className="flex flex-wrap gap-2 mt-4">
+                <Badge className="bg-primary text-primary-foreground">
+                  {format(new Date(selectedCompetition.event_date), "MMMM d, yyyy")}
+                </Badge>
+                {selectedCompetition.is_participation_open && (
+                  <Badge className="bg-accent text-accent-foreground">
+                    Registrations Open
+                  </Badge>
+                )}
+              </div>
+              {selectedCompetition.description && (
+                <p className="text-muted-foreground mt-4 leading-relaxed">
+                  {selectedCompetition.description}
+                </p>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 }
