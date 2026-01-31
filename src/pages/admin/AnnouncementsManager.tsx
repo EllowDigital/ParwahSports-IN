@@ -1,26 +1,23 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { DataTable } from "@/components/admin/DataTable";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { ActionButtons } from "@/components/admin/ActionButtons";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -30,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Download, AlertTriangle, AlertCircle, Info } from "lucide-react";
+import { Bell, AlertTriangle, AlertCircle, Info, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -53,15 +50,11 @@ const priorityIcons = {
   urgent: AlertTriangle,
 };
 
-const priorityColors = {
-  normal: "bg-muted text-muted-foreground",
-  important: "bg-secondary/10 text-secondary",
-  urgent: "bg-destructive/10 text-destructive",
-};
-
 export default function AnnouncementsManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Announcement | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     message: "",
@@ -74,7 +67,7 @@ export default function AnnouncementsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: announcements, isLoading } = useQuery({
+  const { data: announcements, isLoading, refetch } = useQuery({
     queryKey: ["admin-announcements"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -85,6 +78,17 @@ export default function AnnouncementsManager() {
       return data as Announcement[];
     },
   });
+
+  const filteredItems = useMemo(() => {
+    if (!announcements) return [];
+    if (!searchQuery) return announcements;
+    const query = searchQuery.toLowerCase();
+    return announcements.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query) ||
+        item.message.toLowerCase().includes(query)
+    );
+  }, [announcements, searchQuery]);
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
@@ -98,6 +102,7 @@ export default function AnnouncementsManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-announcements"] });
+      queryClient.invalidateQueries({ queryKey: ["active-announcements"] });
       toast({ title: "Announcement created successfully" });
       resetForm();
     },
@@ -122,6 +127,7 @@ export default function AnnouncementsManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-announcements"] });
+      queryClient.invalidateQueries({ queryKey: ["active-announcements"] });
       toast({ title: "Announcement updated successfully" });
       resetForm();
     },
@@ -141,7 +147,9 @@ export default function AnnouncementsManager() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-announcements"] });
+      queryClient.invalidateQueries({ queryKey: ["active-announcements"] });
       toast({ title: "Announcement deleted successfully" });
+      setDeleteId(null);
     },
     onError: (error) => {
       toast({
@@ -219,187 +227,209 @@ export default function AnnouncementsManager() {
     a.click();
   };
 
+  const columns = [
+    {
+      key: "title",
+      header: "Announcement",
+      render: (item: Announcement) => {
+        const PriorityIcon = priorityIcons[item.priority];
+        return (
+          <div className="flex items-start gap-3 max-w-[300px]">
+            <div className="p-1.5 rounded-md bg-muted shrink-0 mt-0.5">
+              <PriorityIcon className="w-4 h-4 text-muted-foreground" />
+            </div>
+            <div className="min-w-0">
+              <p className="font-medium text-foreground truncate">{item.title}</p>
+              <p className="text-xs text-muted-foreground truncate mt-0.5">{item.message}</p>
+            </div>
+          </div>
+        );
+      },
+    },
+    {
+      key: "priority",
+      header: "Priority",
+      className: "hidden md:table-cell",
+      render: (item: Announcement) => <StatusBadge status={item.priority} />,
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (item: Announcement) => (
+        <StatusBadge status={item.is_active ? "active" : "inactive"} />
+      ),
+    },
+    {
+      key: "date_range",
+      header: "Date Range",
+      className: "hidden lg:table-cell",
+      render: (item: Announcement) => (
+        <span className="text-sm text-muted-foreground">
+          {item.start_date || item.end_date
+            ? `${item.start_date ? format(new Date(item.start_date), "MMM d") : "..."} - ${item.end_date ? format(new Date(item.end_date), "MMM d, yyyy") : "..."}`
+            : "Always"}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "",
+      className: "text-right",
+      render: (item: Announcement) => (
+        <ActionButtons
+          onEdit={() => handleEdit(item)}
+          onDelete={() => setDeleteId(item.id)}
+        />
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Announcements</h1>
-            <p className="text-muted-foreground">Manage notices and alerts</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={exportToCSV}>
-              <Download className="w-4 h-4 mr-2" /> Export CSV
-            </Button>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={() => resetForm()}>
-                  <Plus className="w-4 h-4 mr-2" /> Add Announcement
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg">
-                <DialogHeader>
-                  <DialogTitle>
-                    {editingItem ? "Edit Announcement" : "Add Announcement"}
-                  </DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="message">Message *</Label>
-                    <Textarea
-                      id="message"
-                      value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      rows={4}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="priority">Priority</Label>
-                    <Select
-                      value={formData.priority}
-                      onValueChange={(value: AnnouncementPriority) =>
-                        setFormData({ ...formData, priority: value })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="normal">Normal</SelectItem>
-                        <SelectItem value="important">Important</SelectItem>
-                        <SelectItem value="urgent">Urgent</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="start_date">Start Date (Optional)</Label>
-                      <Input
-                        id="start_date"
-                        type="date"
-                        value={formData.start_date}
-                        onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="end_date">End Date (Optional)</Label>
-                      <Input
-                        id="end_date"
-                        type="date"
-                        value={formData.end_date}
-                        onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      id="is_active"
-                      checked={formData.is_active}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, is_active: checked })
-                      }
-                    />
-                    <Label htmlFor="is_active">Active</Label>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={resetForm}>
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={createMutation.isPending || updateMutation.isPending}
-                    >
-                      {editingItem ? "Update" : "Create"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+        <PageHeader
+          title="Announcements"
+          description="Manage notices and alerts displayed to users"
+          searchPlaceholder="Search announcements..."
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          onExport={exportToCSV}
+          onAdd={() => {
+            resetForm();
+            setIsDialogOpen(true);
+          }}
+          addLabel="Add Announcement"
+          onRefresh={() => refetch()}
+          isRefreshing={isLoading}
+        />
 
-        <div className="bg-card rounded-lg border border-border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Priority</TableHead>
-                <TableHead>Active</TableHead>
-                <TableHead>Date Range</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : announcements?.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                    No announcements found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                announcements?.map((item) => {
-                  const PriorityIcon = priorityIcons[item.priority];
-                  return (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium max-w-[200px] truncate">
-                        {item.title}
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs flex items-center gap-1 w-fit ${priorityColors[item.priority]}`}
-                        >
-                          <PriorityIcon className="w-3 h-3" />
-                          {item.priority}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-xs ${item.is_active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}
-                        >
-                          {item.is_active ? "Active" : "Inactive"}
-                        </span>
-                      </TableCell>
-                      <TableCell>
-                        {item.start_date || item.end_date
-                          ? `${item.start_date ? format(new Date(item.start_date), "MMM d") : "..."} - ${item.end_date ? format(new Date(item.end_date), "MMM d, yyyy") : "..."}`
-                          : "Always"}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => deleteMutation.mutate(item.id)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          <Trash2 className="w-4 h-4 text-destructive" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={filteredItems}
+          isLoading={isLoading}
+          keyExtractor={(item) => item.id}
+          emptyIcon={Bell}
+          emptyTitle="No announcements yet"
+          emptyDescription="Create your first announcement to notify users"
+          emptyActionLabel="Add Announcement"
+          onEmptyAction={() => setIsDialogOpen(true)}
+        />
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>
+                {editingItem ? "Edit Announcement" : "Add Announcement"}
+              </DialogTitle>
+              <DialogDescription>
+                {editingItem
+                  ? "Update the announcement details"
+                  : "Create a new announcement for your users"}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Enter announcement title"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="message">Message *</Label>
+                <Textarea
+                  id="message"
+                  value={formData.message}
+                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                  placeholder="The main announcement message"
+                  rows={4}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="priority">Priority</Label>
+                <Select
+                  value={formData.priority}
+                  onValueChange={(value: AnnouncementPriority) =>
+                    setFormData({ ...formData, priority: value })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="normal">Normal</SelectItem>
+                    <SelectItem value="important">Important</SelectItem>
+                    <SelectItem value="urgent">Urgent</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="start_date">Start Date (Optional)</Label>
+                  <Input
+                    id="start_date"
+                    type="date"
+                    value={formData.start_date}
+                    onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="end_date">End Date (Optional)</Label>
+                  <Input
+                    id="end_date"
+                    type="date"
+                    value={formData.end_date}
+                    onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Switch
+                  id="is_active"
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, is_active: checked })
+                  }
+                />
+                <div>
+                  <Label htmlFor="is_active" className="cursor-pointer">Active</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Active announcements are displayed to users
+                  </p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={resetForm}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                >
+                  {(createMutation.isPending || updateMutation.isPending) && (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  )}
+                  {editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <ConfirmDialog
+          open={!!deleteId}
+          onOpenChange={(open) => !open && setDeleteId(null)}
+          title="Delete Announcement"
+          description="Are you sure you want to delete this announcement? This action cannot be undone."
+          confirmLabel="Delete"
+          onConfirm={() => deleteId && deleteMutation.mutate(deleteId)}
+          isLoading={deleteMutation.isPending}
+          variant="destructive"
+        />
       </div>
     </AdminLayout>
   );

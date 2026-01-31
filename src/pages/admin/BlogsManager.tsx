@@ -1,24 +1,21 @@
-import { useState } from "react";
+import { useState, useMemo, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { DataTable } from "@/components/admin/DataTable";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { ActionButtons } from "@/components/admin/ActionButtons";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -28,10 +25,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Download, Image as ImageIcon, Upload, X, Loader2 } from "lucide-react";
+import { FileText, Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
 import { format } from "date-fns";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
-import { useRef } from "react";
 
 interface BlogItem {
   id: string;
@@ -47,6 +43,8 @@ interface BlogItem {
 export default function BlogsManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<BlogItem | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -62,7 +60,7 @@ export default function BlogsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: blogs, isLoading } = useQuery({
+  const { data: blogs, isLoading, refetch } = useQuery({
     queryKey: ["admin-blogs"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -73,6 +71,17 @@ export default function BlogsManager() {
       return data as BlogItem[];
     },
   });
+
+  const filteredItems = useMemo(() => {
+    if (!blogs) return [];
+    if (!searchQuery) return blogs;
+    const query = searchQuery.toLowerCase();
+    return blogs.filter(
+      (item) =>
+        item.title.toLowerCase().includes(query) ||
+        item.author?.toLowerCase().includes(query)
+    );
+  }, [blogs, searchQuery]);
 
   const uploadImage = async (file: File): Promise<string> => {
     const fileExt = file.name.split(".").pop();
@@ -140,6 +149,7 @@ export default function BlogsManager() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-blogs"] });
       toast({ title: "Blog deleted successfully" });
+      setDeleteId(null);
     },
     onError: (error) => {
       toast({ title: "Error deleting blog", description: error.message, variant: "destructive" });
@@ -227,220 +237,229 @@ export default function BlogsManager() {
     a.click();
   };
 
+  const columns = [
+    {
+      key: "image",
+      header: "",
+      className: "w-16",
+      render: (item: BlogItem) =>
+        item.featured_image_url ? (
+          <img
+            src={item.featured_image_url}
+            alt={item.title}
+            className="w-12 h-12 object-cover rounded-lg"
+          />
+        ) : (
+          <div className="w-12 h-12 bg-muted rounded-lg flex items-center justify-center">
+            <ImageIcon className="w-5 h-5 text-muted-foreground" />
+          </div>
+        ),
+    },
+    {
+      key: "title",
+      header: "Blog",
+      render: (item: BlogItem) => (
+        <div className="max-w-[250px]">
+          <p className="font-medium text-foreground truncate">{item.title}</p>
+          {item.author && (
+            <p className="text-xs text-muted-foreground mt-0.5">by {item.author}</p>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      render: (item: BlogItem) => <StatusBadge status={item.status} />,
+    },
+    {
+      key: "publish_date",
+      header: "Publish Date",
+      className: "hidden sm:table-cell",
+      render: (item: BlogItem) => (
+        <span className="text-muted-foreground">
+          {format(new Date(item.publish_date), "MMM d, yyyy")}
+        </span>
+      ),
+    },
+    {
+      key: "actions",
+      header: "",
+      className: "text-right",
+      render: (item: BlogItem) => (
+        <ActionButtons
+          onEdit={() => handleEdit(item)}
+          onDelete={() => setDeleteId(item.id)}
+        />
+      ),
+    },
+  ];
+
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Blogs & Articles</h1>
-            <p className="text-muted-foreground">Manage blog posts and articles</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={exportToCSV}>
-              <Download className="w-4 h-4 mr-2" /> Export CSV
-            </Button>
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button onClick={() => resetForm()}>
-                  <Plus className="w-4 h-4 mr-2" /> Add Blog
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>{editingItem ? "Edit Blog" : "Add Blog"}</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div>
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="author">Author</Label>
-                    <Input
-                      id="author"
-                      value={formData.author}
-                      onChange={(e) => setFormData({ ...formData, author: e.target.value })}
-                    />
-                  </div>
-                  <div>
-                    <Label>Content</Label>
-                    <RichTextEditor
-                      content={formData.content}
-                      onChange={(content) => setFormData({ ...formData, content })}
-                      placeholder="Write your blog content here..."
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Featured Image</Label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-4">
-                      {imagePreview ? (
-                        <div className="relative">
-                          <img
-                            src={imagePreview}
-                            alt="Preview"
-                            className="w-full h-40 object-cover rounded-lg"
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            className="absolute top-2 right-2"
-                            onClick={handleRemoveImage}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                          {isUploading && (
-                            <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
-                              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div
-                          className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-                          <p className="text-sm text-muted-foreground">Click to upload image</p>
-                          <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
-                        </div>
-                      )}
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="publish_date">Publish Date</Label>
-                      <Input
-                        id="publish_date"
-                        type="date"
-                        value={formData.publish_date}
-                        onChange={(e) => setFormData({ ...formData, publish_date: e.target.value })}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="status">Status</Label>
-                      <Select
-                        value={formData.status}
-                        onValueChange={(value) => setFormData({ ...formData, status: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="draft">Draft</SelectItem>
-                          <SelectItem value="published">Published</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={resetForm}>
-                      Cancel
-                    </Button>
-                    <Button
-                      type="submit"
-                      disabled={createMutation.isPending || updateMutation.isPending || isUploading}
-                    >
-                      {(createMutation.isPending || updateMutation.isPending || isUploading) && (
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      )}
-                      {isUploading ? "Uploading..." : editingItem ? "Update" : "Create"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
+        <PageHeader
+          title="Blogs & Articles"
+          description="Manage blog posts and articles"
+          searchPlaceholder="Search blogs..."
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          onExport={exportToCSV}
+          onAdd={() => {
+            resetForm();
+            setIsDialogOpen(true);
+          }}
+          addLabel="Add Blog"
+          onRefresh={() => refetch()}
+          isRefreshing={isLoading}
+        />
 
-        <div className="bg-card rounded-lg border border-border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Image</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Author</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Publish Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
-                    Loading...
-                  </TableCell>
-                </TableRow>
-              ) : blogs?.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                    No blogs found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                blogs?.map((item) => (
-                  <TableRow key={item.id}>
-                    <TableCell>
-                      {item.featured_image_url ? (
-                        <img
-                          src={item.featured_image_url}
-                          alt={item.title}
-                          className="w-12 h-12 object-cover rounded"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
-                          <ImageIcon className="w-6 h-6 text-muted-foreground" />
+        <DataTable
+          columns={columns}
+          data={filteredItems}
+          isLoading={isLoading}
+          keyExtractor={(item) => item.id}
+          emptyIcon={FileText}
+          emptyTitle="No blog posts yet"
+          emptyDescription="Create your first blog post to get started"
+          emptyActionLabel="Add Blog"
+          onEmptyAction={() => setIsDialogOpen(true)}
+        />
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingItem ? "Edit Blog" : "Add Blog"}</DialogTitle>
+              <DialogDescription>
+                {editingItem ? "Update the blog post details" : "Create a new blog post"}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Enter blog title"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="author">Author</Label>
+                <Input
+                  id="author"
+                  value={formData.author}
+                  onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                  placeholder="Author name"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Content</Label>
+                <RichTextEditor
+                  content={formData.content}
+                  onChange={(content) => setFormData({ ...formData, content })}
+                  placeholder="Write your blog content here..."
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Featured Image</Label>
+                <div className="border-2 border-dashed border-border rounded-lg p-4">
+                  {imagePreview ? (
+                    <div className="relative">
+                      <img
+                        src={imagePreview}
+                        alt="Preview"
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        className="absolute top-2 right-2"
+                        onClick={handleRemoveImage}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-background/80 flex items-center justify-center rounded-lg">
+                          <Loader2 className="w-8 h-8 animate-spin text-primary" />
                         </div>
                       )}
-                    </TableCell>
-                    <TableCell className="font-medium max-w-[200px] truncate">
-                      {item.title}
-                    </TableCell>
-                    <TableCell>{item.author || "-"}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          item.status === "published"
-                            ? "bg-primary/10 text-primary"
-                            : "bg-muted text-muted-foreground"
-                        }`}
-                      >
-                        {item.status}
-                      </span>
-                    </TableCell>
-                    <TableCell>{format(new Date(item.publish_date), "MMM d, yyyy")}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
-                        <Pencil className="w-4 h-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => deleteMutation.mutate(item.id)}
-                        disabled={deleteMutation.isPending}
-                      >
-                        <Trash2 className="w-4 h-4 text-destructive" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                    </div>
+                  ) : (
+                    <div
+                      className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Click to upload image</p>
+                      <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
+                    </div>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="publish_date">Publish Date</Label>
+                  <Input
+                    id="publish_date"
+                    type="date"
+                    value={formData.publish_date}
+                    onChange={(e) => setFormData({ ...formData, publish_date: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => setFormData({ ...formData, status: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="published">Published</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={resetForm}>
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={createMutation.isPending || updateMutation.isPending || isUploading}
+                >
+                  {(createMutation.isPending || updateMutation.isPending || isUploading) && (
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  )}
+                  {isUploading ? "Uploading..." : editingItem ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        <ConfirmDialog
+          open={!!deleteId}
+          onOpenChange={(open) => !open && setDeleteId(null)}
+          title="Delete Blog Post"
+          description="Are you sure you want to delete this blog post? This action cannot be undone."
+          confirmLabel="Delete"
+          onConfirm={() => deleteId && deleteMutation.mutate(deleteId)}
+          isLoading={deleteMutation.isPending}
+          variant="destructive"
+        />
       </div>
     </AdminLayout>
   );

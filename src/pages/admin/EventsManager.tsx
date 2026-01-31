@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { StatusBadge } from "@/components/admin/StatusBadge";
+import { ActionButtons } from "@/components/admin/ActionButtons";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { EmptyState } from "@/components/admin/EmptyState";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,12 +24,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Calendar, MapPin, Clock, Upload, X } from "lucide-react";
+import { Calendar, MapPin, Clock, Upload, X, Loader2, Star } from "lucide-react";
 import { format } from "date-fns";
 
 interface Event {
@@ -42,10 +47,10 @@ interface Event {
 }
 
 const statusOptions = [
-  { value: "upcoming", label: "Upcoming", color: "bg-blue-500" },
-  { value: "ongoing", label: "Ongoing", color: "bg-green-500" },
-  { value: "completed", label: "Completed", color: "bg-gray-500" },
-  { value: "cancelled", label: "Cancelled", color: "bg-red-500" },
+  { value: "upcoming", label: "Upcoming" },
+  { value: "ongoing", label: "Ongoing" },
+  { value: "completed", label: "Completed" },
+  { value: "cancelled", label: "Cancelled" },
 ];
 
 export default function EventsManager() {
@@ -53,10 +58,13 @@ export default function EventsManager() {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -74,6 +82,7 @@ export default function EventsManager() {
 
   const fetchEvents = useCallback(async () => {
     try {
+      setIsLoading(true);
       const { data, error } = await supabase
         .from("events")
         .select("*")
@@ -93,6 +102,12 @@ export default function EventsManager() {
     void fetchEvents();
   }, [fetchEvents]);
 
+  const filteredEvents = events.filter(
+    (event) =>
+      event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      event.location?.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -108,6 +123,7 @@ export default function EventsManager() {
     setEditingEvent(null);
     setSelectedFile(null);
     setPreviewUrl(null);
+    setIsDialogOpen(false);
   };
 
   const openEditDialog = (event: Event) => {
@@ -191,7 +207,6 @@ export default function EventsManager() {
         toast({ title: "Success", description: "Event created successfully" });
       }
 
-      setIsDialogOpen(false);
       resetForm();
       fetchEvents();
     } catch (error) {
@@ -203,301 +218,320 @@ export default function EventsManager() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setIsDeleting(true);
 
     try {
-      const { error } = await supabase.from("events").delete().eq("id", id);
+      const { error } = await supabase.from("events").delete().eq("id", deleteId);
 
       if (error) throw error;
       toast({ title: "Success", description: "Event deleted successfully" });
+      setDeleteId(null);
       fetchEvents();
     } catch (error) {
       console.error("Error deleting event:", error);
       toast({ title: "Error", description: "Failed to delete event", variant: "destructive" });
+    } finally {
+      setIsDeleting(false);
     }
-  };
-
-  const getStatusBadge = (status: string | null) => {
-    const option = statusOptions.find((s) => s.value === status) || statusOptions[0];
-    return (
-      <Badge variant="secondary" className={`${option.color} text-white`}>
-        {option.label}
-      </Badge>
-    );
   };
 
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Events Manager</h1>
-            <p className="text-muted-foreground mt-1">Manage your events and calendar</p>
-          </div>
-          <Dialog
-            open={isDialogOpen}
-            onOpenChange={(open) => {
-              setIsDialogOpen(open);
-              if (!open) resetForm();
-            }}
-          >
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Event
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>{editingEvent ? "Edit Event" : "Add New Event"}</DialogTitle>
-                <DialogDescription>
-                  {editingEvent
-                    ? "Update the event details below"
-                    : "Fill in the details for the new event"}
-                </DialogDescription>
-              </DialogHeader>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    value={formData.description}
-                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    rows={3}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="event_date">Date *</Label>
-                    <Input
-                      id="event_date"
-                      type="date"
-                      value={formData.event_date}
-                      onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={formData.status}
-                      onValueChange={(value) => setFormData({ ...formData, status: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {statusOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="start_time">Start Time</Label>
-                    <Input
-                      id="start_time"
-                      type="time"
-                      value={formData.start_time}
-                      onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="end_time">End Time</Label>
-                    <Input
-                      id="end_time"
-                      type="time"
-                      value={formData.end_time}
-                      onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="location">Location</Label>
-                  <Input
-                    id="location"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="Event venue or address"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Cover Image</Label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-4">
-                    {previewUrl ? (
-                      <div className="relative">
-                        <img
-                          src={previewUrl}
-                          alt="Preview"
-                          className="w-full h-40 object-cover rounded-lg"
-                        />
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="destructive"
-                          className="absolute top-2 right-2"
-                          onClick={() => {
-                            setPreviewUrl(null);
-                            setSelectedFile(null);
-                            setFormData((prev) => ({ ...prev, image_url: "" }));
-                          }}
-                        >
-                          <X className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ) : (
-                      <div
-                        className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
-                        onClick={() => fileInputRef.current?.click()}
-                      >
-                        <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-                        <p className="text-sm text-muted-foreground">Click to upload image</p>
-                        <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
-                      </div>
-                    )}
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Switch
-                    id="is_featured"
-                    checked={formData.is_featured}
-                    onCheckedChange={(checked) =>
-                      setFormData({ ...formData, is_featured: checked })
-                    }
-                  />
-                  <Label htmlFor="is_featured">Featured Event</Label>
-                </div>
-                <div className="flex gap-2 pt-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => { setIsDialogOpen(false); resetForm(); }}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                  <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
-                    {(isSaving || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
-                    {isUploading ? "Uploading..." : editingEvent ? "Update" : "Create"}
-                  </Button>
-                </div>
-              </form>
-            </DialogContent>
-          </Dialog>
-        </div>
+        <PageHeader
+          title="Events Manager"
+          description="Manage your events and calendar"
+          searchPlaceholder="Search events..."
+          searchValue={searchQuery}
+          onSearchChange={setSearchQuery}
+          onAdd={() => {
+            resetForm();
+            setIsDialogOpen(true);
+          }}
+          addLabel="Add Event"
+          onRefresh={fetchEvents}
+          isRefreshing={isLoading}
+        />
 
-        {/* Events List */}
+        {/* Events Grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="h-40 w-full" />
+                <CardContent className="p-4 space-y-3">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-2/3" />
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        ) : events.length === 0 ? (
+        ) : filteredEvents.length === 0 ? (
           <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <Calendar className="w-12 h-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-1">No events yet</h3>
-              <p className="text-muted-foreground text-sm mb-4">Create your first event</p>
-              <Button onClick={() => setIsDialogOpen(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Add Event
-              </Button>
-            </CardContent>
+            <EmptyState
+              icon={Calendar}
+              title="No events yet"
+              description="Create your first event to get started"
+              actionLabel="Add Event"
+              onAction={() => setIsDialogOpen(true)}
+            />
           </Card>
         ) : (
-          <div className="space-y-4">
-            {events.map((event) => (
-              <Card key={event.id} className="overflow-hidden">
-                <div className="flex flex-col sm:flex-row">
-                  {event.image_url && (
-                    <div className="sm:w-48 h-32 sm:h-auto flex-shrink-0">
-                      <img
-                        src={event.image_url}
-                        alt={event.title}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).style.display = "none";
-                        }}
-                      />
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {filteredEvents.map((event) => (
+              <Card key={event.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+                {/* Event Image */}
+                <div className="relative h-40 bg-muted">
+                  {event.image_url ? (
+                    <img
+                      src={event.image_url}
+                      alt={event.title}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <Calendar className="w-12 h-12 text-muted-foreground/30" />
                     </div>
                   )}
-                  <div className="flex-1 p-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-2">
-                          <CardTitle className="text-lg">{event.title}</CardTitle>
-                          {getStatusBadge(event.status)}
-                          {event.is_featured && (
-                            <Badge variant="outline" className="border-primary text-primary">
-                              Featured
-                            </Badge>
-                          )}
-                        </div>
-                        {event.description && (
-                          <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-                            {event.description}
-                          </p>
-                        )}
-                        <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {format(new Date(event.event_date), "MMM d, yyyy")}
-                          </div>
-                          {event.start_time && (
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
-                              {event.start_time}
-                              {event.end_time && ` - ${event.end_time}`}
-                            </div>
-                          )}
-                          {event.location && (
-                            <div className="flex items-center gap-1">
-                              <MapPin className="w-4 h-4" />
-                              {event.location}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" onClick={() => openEditDialog(event)}>
-                          <Pencil className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
-                          onClick={() => handleDelete(event.id)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
+                  {/* Badges */}
+                  <div className="absolute top-2 left-2 flex gap-1">
+                    <StatusBadge status={event.status || "upcoming"} />
+                    {event.is_featured && (
+                      <Badge className="bg-amber-500 text-white border-0">
+                        <Star className="w-3 h-3 mr-1" />
+                        Featured
+                      </Badge>
+                    )}
+                  </div>
+                  {/* Actions */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ActionButtons
+                      onEdit={() => openEditDialog(event)}
+                      onDelete={() => setDeleteId(event.id)}
+                      showMobileMenu={false}
+                    />
                   </div>
                 </div>
+
+                {/* Event Content */}
+                <CardContent className="p-4">
+                  <h3 className="font-semibold text-foreground truncate mb-2">{event.title}</h3>
+                  {event.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                      {event.description}
+                    </p>
+                  )}
+                  <div className="space-y-1.5 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 shrink-0" />
+                      <span>{format(new Date(event.event_date), "MMM d, yyyy")}</span>
+                    </div>
+                    {event.start_time && (
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 shrink-0" />
+                        <span>
+                          {event.start_time}
+                          {event.end_time && ` - ${event.end_time}`}
+                        </span>
+                      </div>
+                    )}
+                    {event.location && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="w-4 h-4 shrink-0" />
+                        <span className="truncate">{event.location}</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
               </Card>
             ))}
           </div>
         )}
+
+        {/* Add/Edit Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingEvent ? "Edit Event" : "Add New Event"}</DialogTitle>
+              <DialogDescription>
+                {editingEvent
+                  ? "Update the event details below"
+                  : "Fill in the details for the new event"}
+              </DialogDescription>
+            </DialogHeader>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="title">Title *</Label>
+                <Input
+                  id="title"
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  placeholder="Event title"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea
+                  id="description"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  placeholder="Event description"
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="event_date">Date *</Label>
+                  <Input
+                    id="event_date"
+                    type="date"
+                    value={formData.event_date}
+                    onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="status">Status</Label>
+                  <Select
+                    value={formData.status}
+                    onValueChange={(value) => setFormData({ ...formData, status: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="start_time">Start Time</Label>
+                  <Input
+                    id="start_time"
+                    type="time"
+                    value={formData.start_time}
+                    onChange={(e) => setFormData({ ...formData, start_time: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="end_time">End Time</Label>
+                  <Input
+                    id="end_time"
+                    type="time"
+                    value={formData.end_time}
+                    onChange={(e) => setFormData({ ...formData, end_time: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="Event venue or address"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Cover Image</Label>
+                <div className="border-2 border-dashed border-border rounded-lg p-4">
+                  {previewUrl ? (
+                    <div className="relative">
+                      <img
+                        src={previewUrl}
+                        alt="Preview"
+                        className="w-full h-40 object-cover rounded-lg"
+                      />
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="destructive"
+                        className="absolute top-2 right-2"
+                        onClick={() => {
+                          setPreviewUrl(null);
+                          setSelectedFile(null);
+                          setFormData((prev) => ({ ...prev, image_url: "" }));
+                        }}
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div
+                      className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                      <p className="text-sm text-muted-foreground">Click to upload image</p>
+                      <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
+                    </div>
+                  )}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <Switch
+                  id="is_featured"
+                  checked={formData.is_featured}
+                  onCheckedChange={(checked) =>
+                    setFormData({ ...formData, is_featured: checked })
+                  }
+                />
+                <div>
+                  <Label htmlFor="is_featured" className="cursor-pointer">Featured Event</Label>
+                  <p className="text-xs text-muted-foreground">
+                    Featured events are highlighted on the homepage
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={resetForm}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
+                  {(isSaving || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                  {isUploading ? "Uploading..." : editingEvent ? "Update" : "Create"}
+                </Button>
+              </div>
+            </form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Confirmation */}
+        <ConfirmDialog
+          open={!!deleteId}
+          onOpenChange={(open) => !open && setDeleteId(null)}
+          title="Delete Event"
+          description="Are you sure you want to delete this event? This action cannot be undone."
+          confirmLabel="Delete"
+          onConfirm={handleDelete}
+          isLoading={isDeleting}
+          variant="destructive"
+        />
       </div>
     </AdminLayout>
   );
