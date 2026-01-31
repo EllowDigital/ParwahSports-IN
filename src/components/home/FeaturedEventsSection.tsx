@@ -1,11 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, ArrowRight, MapPin } from "lucide-react";
-import { format, isFuture, isToday } from "date-fns";
+import { Calendar, ArrowRight, MapPin, Clock } from "lucide-react";
+import { format, isFuture, isToday, differenceInDays } from "date-fns";
 import { Link } from "react-router-dom";
 
 interface Event {
@@ -16,6 +16,7 @@ interface Event {
   location: string | null;
   image_url: string | null;
   is_featured: boolean | null;
+  start_time: string | null;
 }
 
 export function FeaturedEventsSection() {
@@ -27,7 +28,7 @@ export function FeaturedEventsSection() {
         .select("*")
         .or(`is_featured.eq.true,event_date.gte.${new Date().toISOString().split("T")[0]}`)
         .order("event_date", { ascending: true })
-        .limit(3);
+        .limit(4);
       if (error) throw error;
       return data as Event[];
     },
@@ -35,24 +36,25 @@ export function FeaturedEventsSection() {
 
   const upcomingEvents = events?.filter(
     (e) => isFuture(new Date(e.event_date)) || isToday(new Date(e.event_date))
-  ).slice(0, 3) || [];
+  ).slice(0, 4) || [];
 
   if (isLoading) {
     return (
-      <section className="py-16 lg:py-24 bg-muted/30">
+      <section className="py-20 lg:py-28 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-12">
-            <Skeleton className="h-8 w-48 mx-auto mb-4" />
-            <Skeleton className="h-6 w-96 mx-auto" />
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <Skeleton className="h-4 w-32 mb-4" />
+              <Skeleton className="h-10 w-64" />
+            </div>
+            <Skeleton className="h-10 w-40" />
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[...Array(3)].map((_, i) => (
-              <Card key={i}>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i} className="overflow-hidden">
                 <Skeleton className="h-48 w-full" />
-                <CardHeader>
-                  <Skeleton className="h-6 w-3/4" />
-                </CardHeader>
-                <CardContent>
+                <CardContent className="p-6">
+                  <Skeleton className="h-6 w-3/4 mb-3" />
                   <Skeleton className="h-4 w-full" />
                 </CardContent>
               </Card>
@@ -67,15 +69,22 @@ export function FeaturedEventsSection() {
     return null;
   }
 
+  const getDaysUntil = (dateStr: string) => {
+    const days = differenceInDays(new Date(dateStr), new Date());
+    if (days === 0) return "Today";
+    if (days === 1) return "Tomorrow";
+    return `In ${days} days`;
+  };
+
   return (
-    <section className="py-16 lg:py-24 bg-muted/30">
+    <section className="py-20 lg:py-28 bg-muted/30">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
             <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-2">
               Upcoming Events
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               Join Us at Our Events
             </h2>
           </div>
@@ -86,45 +95,61 @@ export function FeaturedEventsSection() {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {upcomingEvents.map((event) => (
-            <Card key={event.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {upcomingEvents.map((event, index) => (
+            <Card
+              key={event.id}
+              className={`overflow-hidden group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 ${
+                index === 0 ? "md:col-span-2 md:row-span-2" : ""
+              }`}
+            >
               <div className="relative">
                 {event.image_url ? (
                   <img
                     src={event.image_url}
                     alt={event.title}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className={`w-full object-cover group-hover:scale-105 transition-transform duration-500 ${
+                      index === 0 ? "h-64 md:h-80" : "h-48"
+                    }`}
                   />
                 ) : (
-                  <div className="w-full h-48 bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center">
-                    <Calendar className="h-12 w-12 text-primary/40" />
+                  <div className={`w-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center ${
+                    index === 0 ? "h-64 md:h-80" : "h-48"
+                  }`}>
+                    <Calendar className="h-16 w-16 text-primary/30" />
                   </div>
                 )}
-                <div className="absolute top-3 left-3">
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
+                <div className="absolute top-4 left-4 flex gap-2">
                   <Badge className="bg-primary text-primary-foreground">
                     {format(new Date(event.event_date), "MMM d")}
                   </Badge>
+                  <Badge variant="secondary" className="bg-secondary/90 text-secondary-foreground">
+                    {getDaysUntil(event.event_date)}
+                  </Badge>
+                </div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h3 className={`font-semibold text-background mb-2 line-clamp-2 ${
+                    index === 0 ? "text-2xl" : "text-lg"
+                  }`}>
+                    {event.title}
+                  </h3>
+                  <div className="flex flex-wrap items-center gap-3 text-background/80">
+                    {event.location && (
+                      <span className="flex items-center gap-1 text-sm">
+                        <MapPin className="h-4 w-4" />
+                        {event.location}
+                      </span>
+                    )}
+                    {event.start_time && (
+                      <span className="flex items-center gap-1 text-sm">
+                        <Clock className="h-4 w-4" />
+                        {event.start_time}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg line-clamp-2 group-hover:text-primary transition-colors">
-                  {event.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {event.location && (
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {event.location}
-                  </p>
-                )}
-                {event.description && (
-                  <p className="text-sm text-muted-foreground line-clamp-2">
-                    {event.description}
-                  </p>
-                )}
-              </CardContent>
             </Card>
           ))}
         </div>

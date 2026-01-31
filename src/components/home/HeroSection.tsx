@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Heart, Users, Trophy } from "lucide-react";
+import { ArrowRight, Heart, Users, Trophy, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -27,9 +27,9 @@ const sliderImages = [
 ];
 
 const stats = [
-  { value: "150+", label: "Athletes Supported" },
-  { value: "25+", label: "Partner Schools" },
-  { value: "10+", label: "Districts Reached" },
+  { value: "150+", label: "Athletes Supported", icon: Users },
+  { value: "25+", label: "Partner Schools", icon: Trophy },
+  { value: "10+", label: "Districts Reached", icon: Heart },
 ];
 
 export function HeroSection() {
@@ -44,6 +44,14 @@ export function HeroSection() {
     },
     [api],
   );
+
+  const scrollPrev = useCallback(() => {
+    api?.scrollPrev();
+  }, [api]);
+
+  const scrollNext = useCallback(() => {
+    api?.scrollNext();
+  }, [api]);
 
   useEffect(() => {
     if (!api) return;
@@ -62,7 +70,7 @@ export function HeroSection() {
 
     const intervalId = setInterval(() => {
       api.scrollNext();
-    }, 5000);
+    }, 6000);
 
     return () => clearInterval(intervalId);
   }, [api, isPaused]);
@@ -92,7 +100,6 @@ export function HeroSection() {
           <CarouselContent className="h-full ml-0">
             {sliderImages.map((src, index) => (
               <CarouselItem key={src} className="h-full pl-0 relative">
-                <div className="absolute inset-0 bg-foreground/20" />
                 <img
                   src={src}
                   alt={`Parwah Sports highlight ${index + 1}`}
@@ -107,14 +114,30 @@ export function HeroSection() {
           </CarouselContent>
         </Carousel>
 
-        {/* Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/75 to-foreground/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-foreground/20" />
+        {/* Modern Gradient Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-foreground/20" />
       </div>
 
-      {/* Slide Indicators (auto-scrolls to active button) */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 max-w-[92vw] overflow-x-auto scroll-smooth px-2">
-        <div className="flex items-center gap-2 w-max mx-auto">
+      {/* Navigation Arrows */}
+      <button
+        onClick={scrollPrev}
+        className="absolute left-4 lg:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/10 backdrop-blur-sm border border-background/20 flex items-center justify-center text-background hover:bg-background/20 transition-all opacity-0 group-hover:opacity-100 hover:opacity-100 focus:opacity-100"
+        aria-label="Previous slide"
+      >
+        <ChevronLeft className="h-6 w-6" />
+      </button>
+      <button
+        onClick={scrollNext}
+        className="absolute right-4 lg:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-background/10 backdrop-blur-sm border border-background/20 flex items-center justify-center text-background hover:bg-background/20 transition-all opacity-0 group-hover:opacity-100 hover:opacity-100 focus:opacity-100"
+        aria-label="Next slide"
+      >
+        <ChevronRight className="h-6 w-6" />
+      </button>
+
+      {/* Slide Indicators */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
+        <div className="flex items-center gap-2 bg-background/10 backdrop-blur-sm rounded-full px-4 py-2">
           {sliderImages.map((_, index) => (
             <button
               key={index}
@@ -145,26 +168,11 @@ export function HeroSection() {
 
           {/* Headline */}
           <h1
-            className="font-serif text-3xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-tight mb-6 animate-fade-in"
+            className="font-serif text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-[1.1] mb-6 animate-fade-in"
             style={{ animationDelay: "0.1s" }}
           >
             Empowering Athletes.{" "}
-            <span className="text-secondary relative">
-              Transforming Dreams
-              <svg
-                className="absolute -bottom-2 left-0 w-full h-3 text-secondary/50"
-                viewBox="0 0 200 12"
-                fill="none"
-                preserveAspectRatio="none"
-              >
-                <path
-                  d="M1 8.5C30 3 70 1 100 4C130 7 170 9 199 5"
-                  stroke="currentColor"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>{" "}
+            <span className="text-secondary">Transforming Dreams</span>{" "}
             into Champions.
           </h1>
 
@@ -180,7 +188,7 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div
-            className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-10 lg:mb-12 animate-fade-in"
+            className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 mb-12 animate-fade-in"
             style={{ animationDelay: "0.3s" }}
           >
             <Button
@@ -188,7 +196,7 @@ export function HeroSection() {
               size="lg"
               className="w-full sm:w-auto bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2 text-base px-8 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5"
             >
-              <Link to="/get-involved">
+              <Link to="/donate">
                 <Heart className="h-5 w-5" />
                 Donate Now
               </Link>
@@ -200,7 +208,7 @@ export function HeroSection() {
               variant="outline"
               className="w-full sm:w-auto border-background/40 bg-background/10 backdrop-blur-sm text-background hover:bg-background/20 hover:border-background/60 gap-2 text-base px-8 transition-all duration-300"
             >
-              <Link to="/get-involved">
+              <Link to="/volunteer">
                 <Users className="h-5 w-5" />
                 Become a Volunteer
               </Link>
@@ -213,26 +221,32 @@ export function HeroSection() {
               className="w-full sm:w-auto text-background hover:bg-background/10 gap-2 text-base group transition-all duration-300"
             >
               <Link to="/what-we-do">
-                Explore Our Work
+                <Play className="h-5 w-5" />
+                Our Mission
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
           </div>
 
-          {/* Quick Stats */}
+          {/* Quick Stats - Modern Glassmorphism Card */}
           <div
-            className="inline-flex flex-wrap gap-6 sm:gap-10 rounded-2xl bg-background/90 backdrop-blur-md border border-border/50 shadow-xl px-6 py-5 animate-fade-in"
+            className="inline-flex flex-wrap gap-8 rounded-2xl bg-background/95 backdrop-blur-md border border-border/50 shadow-2xl px-8 py-6 animate-fade-in"
             style={{ animationDelay: "0.4s" }}
           >
             {stats.map((stat, i) => (
               <div
                 key={i}
-                className={`text-foreground ${i !== 0 ? "border-l border-border pl-6 sm:pl-10" : ""}`}
+                className={`flex items-center gap-4 ${i !== 0 ? "border-l border-border pl-8" : ""}`}
               >
-                <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-secondary">
-                  {stat.value}
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                  <stat.icon className="h-6 w-6 text-primary" />
                 </div>
-                <div className="text-sm text-muted-foreground whitespace-nowrap">{stat.label}</div>
+                <div>
+                  <div className="text-2xl sm:text-3xl font-bold text-foreground">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-muted-foreground whitespace-nowrap">{stat.label}</div>
+                </div>
               </div>
             ))}
           </div>

@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Newspaper, ArrowRight, Calendar } from "lucide-react";
+import { ArrowRight, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
@@ -31,24 +31,35 @@ export function LatestNewsSection() {
 
   if (isLoading) {
     return (
-      <section className="py-16 lg:py-24 bg-background">
+      <section className="py-20 lg:py-28 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-12">
-            <Skeleton className="h-8 w-48 mx-auto mb-4" />
-            <Skeleton className="h-6 w-96 mx-auto" />
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <Skeleton className="h-4 w-32 mb-4" />
+              <Skeleton className="h-10 w-64" />
+            </div>
+            <Skeleton className="h-10 w-40" />
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardHeader>
-                  <Skeleton className="h-4 w-24 mb-2" />
-                  <Skeleton className="h-6 w-full" />
-                </CardHeader>
-                <CardContent>
-                  <Skeleton className="h-16 w-full" />
+          <div className="grid lg:grid-cols-12 gap-6">
+            <div className="lg:col-span-6">
+              <Card>
+                <CardContent className="p-8">
+                  <Skeleton className="h-4 w-32 mb-4" />
+                  <Skeleton className="h-8 w-full mb-4" />
+                  <Skeleton className="h-24 w-full" />
                 </CardContent>
               </Card>
-            ))}
+            </div>
+            <div className="lg:col-span-6 space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <Skeleton className="h-4 w-24 mb-2" />
+                    <Skeleton className="h-6 w-full" />
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -59,15 +70,17 @@ export function LatestNewsSection() {
     return null;
   }
 
+  const [featuredNews, ...otherNews] = newsItems;
+
   return (
-    <section className="py-16 lg:py-24 bg-background">
+    <section className="py-20 lg:py-28 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
             <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-2">
               Latest Updates
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               News & Announcements
             </h2>
           </div>
@@ -78,37 +91,50 @@ export function LatestNewsSection() {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {newsItems.map((item, index) => (
-            <Card 
-              key={item.id} 
-              className={`group hover:shadow-lg transition-shadow ${
-                index === 0 ? "md:col-span-2 lg:col-span-2 lg:row-span-2" : ""
-              }`}
-            >
-              <CardHeader className={index === 0 ? "pb-4" : "pb-2"}>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                  <Calendar className="h-4 w-4" />
-                  {format(new Date(item.publish_date), "MMMM d, yyyy")}
-                </div>
-                <CardTitle className={`${index === 0 ? "text-2xl" : "text-lg"} line-clamp-2 group-hover:text-primary transition-colors`}>
-                  {item.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className={`text-muted-foreground ${index === 0 ? "line-clamp-4" : "line-clamp-3"}`}>
-                  {item.description || "No description available."}
-                </p>
-                {index === 0 && (
-                  <Button asChild variant="link" className="px-0 mt-4 gap-1">
-                    <Link to="/news">
-                      Read More <ArrowRight className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+        <div className="grid lg:grid-cols-12 gap-8">
+          {/* Featured News */}
+          <Card className="lg:col-span-7 group hover:shadow-xl transition-all duration-300 overflow-hidden border-0 bg-gradient-to-br from-primary/5 to-secondary/5">
+            <CardContent className="p-8 lg:p-10">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                <Calendar className="h-4 w-4" />
+                {format(new Date(featuredNews.publish_date), "MMMM d, yyyy")}
+              </div>
+              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors leading-tight">
+                {featuredNews.title}
+              </h3>
+              <p className="text-muted-foreground text-lg leading-relaxed line-clamp-4">
+                {featuredNews.description || "No description available."}
+              </p>
+              <Button asChild variant="link" className="px-0 mt-6 gap-2 text-primary">
+                <Link to="/news">
+                  Read Full Story <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Other News */}
+          <div className="lg:col-span-5 space-y-4">
+            {otherNews.map((item) => (
+              <Card
+                key={item.id}
+                className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                    <Calendar className="h-4 w-4" />
+                    {format(new Date(item.publish_date), "MMM d, yyyy")}
+                  </div>
+                  <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                    {item.description || "No description available."}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
     </section>

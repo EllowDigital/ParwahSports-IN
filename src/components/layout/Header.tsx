@@ -60,7 +60,7 @@ export function Header() {
         <div className="flex h-16 lg:h-20 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-full bg-card flex items-center justify-center overflow-hidden border border-border shadow-sm transition-transform group-hover:scale-105">
+            <div className="w-10 h-10 lg:w-12 lg:h-12 rounded-xl bg-card flex items-center justify-center overflow-hidden border border-border shadow-sm transition-all group-hover:shadow-md group-hover:border-primary/30">
               <img
                 src="/logo.png"
                 alt="Parwah Sports"
@@ -69,7 +69,7 @@ export function Header() {
               />
             </div>
             <div className="leading-tight max-w-[170px] sm:max-w-none">
-              <span className="font-serif font-bold text-sm sm:text-lg lg:text-xl text-foreground truncate">
+              <span className="font-serif font-bold text-sm sm:text-lg lg:text-xl text-foreground">
                 Parwah Sports
               </span>
               <span className="block text-[10px] sm:text-xs text-muted-foreground">
