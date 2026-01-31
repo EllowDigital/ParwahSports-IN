@@ -46,7 +46,9 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const runInBackground = (promise: Promise<unknown>) => {
-      const edgeRuntime = (globalThis as unknown as { EdgeRuntime?: { waitUntil: (p: Promise<unknown>) => void } }).EdgeRuntime;
+      const edgeRuntime = (
+        globalThis as unknown as { EdgeRuntime?: { waitUntil: (p: Promise<unknown>) => void } }
+      ).EdgeRuntime;
       if (edgeRuntime?.waitUntil) {
         edgeRuntime.waitUntil(promise);
         return;

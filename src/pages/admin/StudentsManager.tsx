@@ -89,16 +89,14 @@ export default function StudentsManager() {
 
       // Create auth account if requested
       if (data.create_account && data.password) {
-        const { data: created, error: createErr } = await supabase.functions.invoke<CreateUserResponse>(
-          "admin-create-student-user",
-          {
+        const { data: created, error: createErr } =
+          await supabase.functions.invoke<CreateUserResponse>("admin-create-student-user", {
             body: {
               email: data.email,
               password: data.password,
               full_name: data.name,
             },
-          },
-        );
+          });
         if (createErr) throw createErr;
         user_id = created?.user_id ?? null;
       }
@@ -136,16 +134,14 @@ export default function StudentsManager() {
         throw new Error(parsed.error.errors[0]?.message || "Invalid password");
       }
 
-      const { data: created, error: createErr } = await supabase.functions.invoke<CreateUserResponse>(
-        "admin-create-student-user",
-        {
+      const { data: created, error: createErr } =
+        await supabase.functions.invoke<CreateUserResponse>("admin-create-student-user", {
           body: {
             email: student.email,
             password,
             full_name: student.name,
           },
-        },
-      );
+        });
       if (createErr) throw createErr;
 
       const user_id = created?.user_id;
@@ -451,10 +447,11 @@ export default function StudentsManager() {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs ${item.is_active
+                        className={`px-2 py-1 rounded-full text-xs ${
+                          item.is_active
                             ? "bg-primary/10 text-primary"
                             : "bg-muted text-muted-foreground"
-                          }`}
+                        }`}
                       >
                         {item.is_active ? "Active" : "Inactive"}
                       </span>
