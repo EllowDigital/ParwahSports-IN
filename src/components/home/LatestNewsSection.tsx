@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { ArrowRight, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
@@ -75,64 +76,67 @@ export function LatestNewsSection() {
   return (
     <section className="py-20 lg:py-28 bg-background">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
-          <div>
-            <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-2">
-              Latest Updates
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-              News & Announcements
-            </h2>
+        <ScrollReveal>
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+            <div>
+              <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-2">
+                Latest Updates
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+                News & Announcements
+              </h2>
+            </div>
+            <Button asChild variant="outline" className="gap-2 self-start md:self-auto">
+              <Link to="/news">
+                View All News <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
-          <Button asChild variant="outline" className="gap-2 self-start md:self-auto">
-            <Link to="/news">
-              View All News <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
+        </ScrollReveal>
 
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Featured News */}
-          <Card className="lg:col-span-7 group hover:shadow-xl transition-all duration-300 overflow-hidden border-0 bg-gradient-to-br from-primary/5 to-secondary/5">
-            <CardContent className="p-8 lg:p-10">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                <Calendar className="h-4 w-4" />
-                {format(new Date(featuredNews.publish_date), "MMMM d, yyyy")}
-              </div>
-              <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors leading-tight">
-                {featuredNews.title}
-              </h3>
-              <p className="text-muted-foreground text-lg leading-relaxed line-clamp-4">
-                {featuredNews.description || "No description available."}
-              </p>
-              <Button asChild variant="link" className="px-0 mt-6 gap-2 text-primary">
-                <Link to="/news">
-                  Read Full Story <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
+          <ScrollReveal className="lg:col-span-7" animation="fade-right">
+            <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0 bg-gradient-to-br from-primary/5 to-secondary/5 h-full">
+              <CardContent className="p-8 lg:p-10">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
+                  <Calendar className="h-4 w-4" />
+                  {format(new Date(featuredNews.publish_date), "MMMM d, yyyy")}
+                </div>
+                <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors leading-tight">
+                  {featuredNews.title}
+                </h3>
+                <p className="text-muted-foreground text-lg leading-relaxed line-clamp-4">
+                  {featuredNews.description || "No description available."}
+                </p>
+                <Button asChild variant="link" className="px-0 mt-6 gap-2 text-primary">
+                  <Link to="/news">
+                    Read Full Story <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </ScrollReveal>
 
           {/* Other News */}
           <div className="lg:col-span-5 space-y-4">
-            {otherNews.map((item) => (
-              <Card
-                key={item.id}
-                className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20"
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                    <Calendar className="h-4 w-4" />
-                    {format(new Date(item.publish_date), "MMM d, yyyy")}
-                  </div>
-                  <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
-                    {item.description || "No description available."}
-                  </p>
-                </CardContent>
-              </Card>
+            {otherNews.map((item, index) => (
+              <ScrollReveal key={item.id} delay={index * 100} animation="fade-left">
+                <Card className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20">
+                  <CardContent className="p-6">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
+                      <Calendar className="h-4 w-4" />
+                      {format(new Date(item.publish_date), "MMM d, yyyy")}
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                      {item.description || "No description available."}
+                    </p>
+                  </CardContent>
+                </Card>
+              </ScrollReveal>
             ))}
           </div>
         </div>

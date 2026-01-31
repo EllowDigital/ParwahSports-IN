@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Heart, ChevronDown, Newspaper, FileText, CalendarDays, Trophy, Megaphone, FolderOpen, Image, Users } from "lucide-react";
+import { Menu, X, Heart, ChevronDown, Newspaper, FileText, CalendarDays, Trophy, Megaphone, Users, Image, Handshake, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,9 +13,10 @@ import {
 
 const mainNavigation = [
   { name: "Home", href: "/" },
-  { name: "About Us", href: "/about" },
+  { name: "About", href: "/about" },
   { name: "What We Do", href: "/what-we-do" },
   { name: "Projects", href: "/projects" },
+  { name: "Gallery", href: "/gallery" },
 ];
 
 const contentLinks = [
@@ -24,28 +25,33 @@ const contentLinks = [
   { name: "Events", href: "/events", icon: CalendarDays },
   { name: "Competitions", href: "/competitions", icon: Trophy },
   { name: "Announcements", href: "/announcements", icon: Megaphone },
+  { name: "Calendar", href: "/calendar", icon: CalendarDays },
 ];
 
-const moreLinks = [
-  { name: "Get Involved", href: "/get-involved", icon: FolderOpen },
+const getInvolvedLinks = [
+  { name: "Get Involved", href: "/get-involved", icon: Handshake },
   { name: "Donate", href: "/donate", icon: Heart },
   { name: "Volunteer", href: "/volunteer", icon: Users },
-  { name: "Portals", href: "/portals", icon: Users },
   { name: "Membership", href: "/membership", icon: Trophy },
-  { name: "Member Login", href: "/member/login", icon: Users },
-  { name: "Student Login", href: "/student/login", icon: Trophy },
-  { name: "Gallery", href: "/gallery", icon: Image },
-  { name: "Team", href: "/team", icon: Users },
-  { name: "Calendar", href: "/calendar", icon: CalendarDays },
-  { name: "Resources", href: "/resources", icon: FolderOpen },
-  { name: "Contact", href: "/contact", icon: FolderOpen },
+];
+
+const aboutLinks = [
+  { name: "Our Team", href: "/team", icon: Users },
+  { name: "Contact Us", href: "/contact", icon: Phone },
+  { name: "Resources", href: "/resources", icon: FileText },
+];
+
+const portalLinks = [
+  { name: "Portals", href: "/portals" },
+  { name: "Member Login", href: "/member/login" },
+  { name: "Student Login", href: "/student/login" },
 ];
 
 const policyLinks = [
-  { name: "Shipping Policy", href: "/shipping-policy" },
+  { name: "Privacy Policy", href: "/privacy-policy" },
   { name: "Terms & Conditions", href: "/terms-and-conditions" },
   { name: "Refund Policy", href: "/refund-policy" },
-  { name: "Privacy Policy", href: "/privacy-policy" },
+  { name: "Shipping Policy", href: "/shipping-policy" },
 ];
 
 export function Header() {
@@ -97,10 +103,10 @@ export function Header() {
             {/* Content Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex items-center gap-1">
-                Content <ChevronDown className="h-4 w-4" />
+                Updates <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="center" className="w-48">
-                <DropdownMenuLabel className="text-xs text-muted-foreground">Updates & Media</DropdownMenuLabel>
+                <DropdownMenuLabel className="text-xs text-muted-foreground">News & Media</DropdownMenuLabel>
                 {contentLinks.map((item) => (
                   <DropdownMenuItem key={item.name} asChild>
                     <Link to={item.href} className={`flex items-center gap-2 ${isActive(item.href) ? "text-primary" : ""}`}>
@@ -112,24 +118,27 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* More Dropdown */}
+            {/* Get Involved Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors flex items-center gap-1">
-                More <ChevronDown className="h-4 w-4" />
+                Support <ChevronDown className="h-4 w-4" />
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                {moreLinks.map((item) => (
+              <DropdownMenuContent align="center" className="w-48">
+                <DropdownMenuLabel className="text-xs text-muted-foreground">Get Involved</DropdownMenuLabel>
+                {getInvolvedLinks.map((item) => (
                   <DropdownMenuItem key={item.name} asChild>
-                    <Link to={item.href} className={isActive(item.href) ? "text-primary" : ""}>
+                    <Link to={item.href} className={`flex items-center gap-2 ${isActive(item.href) ? "text-primary" : ""}`}>
+                      <item.icon className="h-4 w-4" />
                       {item.name}
                     </Link>
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs text-muted-foreground">Policies</DropdownMenuLabel>
-                {policyLinks.map((item) => (
+                <DropdownMenuLabel className="text-xs text-muted-foreground">About Us</DropdownMenuLabel>
+                {aboutLinks.map((item) => (
                   <DropdownMenuItem key={item.name} asChild>
-                    <Link to={item.href} className={`text-xs ${isActive(item.href) ? "text-primary" : ""}`}>
+                    <Link to={item.href} className={`flex items-center gap-2 ${isActive(item.href) ? "text-primary" : ""}`}>
+                      <item.icon className="h-4 w-4" />
                       {item.name}
                     </Link>
                   </DropdownMenuItem>
@@ -184,7 +193,7 @@ export function Header() {
               {/* Content Section */}
               <div className="mt-3 pt-3 border-t border-border">
                 <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Content
+                  Updates & Media
                 </p>
                 {contentLinks.map((item) => (
                   <Link
@@ -203,12 +212,56 @@ export function Header() {
                 ))}
               </div>
 
-              {/* More Section */}
+              {/* Get Involved Section */}
               <div className="mt-3 pt-3 border-t border-border">
                 <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  More
+                  Get Involved
                 </p>
-                {moreLinks.map((item) => (
+                {getInvolvedLinks.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* About Section */}
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  About
+                </p>
+                {aboutLinks.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium rounded-md transition-colors flex items-center gap-2 ${
+                      isActive(item.href)
+                        ? "text-primary bg-primary/10"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                    }`}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Portals Section */}
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="px-4 pb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                  Portals
+                </p>
+                {portalLinks.map((item) => (
                   <Link
                     key={item.name}
                     to={item.href}
