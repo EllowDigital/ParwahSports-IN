@@ -62,11 +62,11 @@ export function HeroSection() {
     >
       {/* Background Image Carousel */}
       <div className="absolute inset-0">
-        <Carousel setApi={setApi} opts={{ loop: true }} className="h-full w-full">
+        <Carousel setApi={setApi} opts={{ loop: true }} className="h-full w-full [&>div]:h-full [&>div>div]:h-full">
           <CarouselContent className="h-full ml-0">
             {sliderImages.map((src, index) => (
-              <CarouselItem key={src} className="h-full pl-0">
-                <div className="relative h-full w-full">
+              <CarouselItem key={src} className="h-full pl-0 basis-full">
+                <div className="relative h-full w-full min-h-[100svh]">
                   <img
                     src={src}
                     alt={`Sports highlight ${index + 1}`}
