@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Target, Eye, Heart, Award, Shield, Users, Mail, Phone, Linkedin, Twitter, ArrowRight, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -111,19 +112,21 @@ const About = () => {
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
         
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <span className="inline-flex items-center gap-2 bg-secondary/20 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              About Us
-            </span>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-              Nurturing Champions, <span className="text-primary">Building Futures</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
-              Parwah Sports Charitable Trust is a non-profit organization dedicated to empowering
-              young and underprivileged athletes across India through comprehensive support,
-              training, and opportunities.
-            </p>
-          </div>
+          <ScrollReveal>
+            <div className="max-w-4xl mx-auto text-center">
+              <span className="inline-flex items-center gap-2 bg-secondary/20 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6">
+                About Us
+              </span>
+              <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
+                Nurturing Champions, <span className="text-primary">Building Futures</span>
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+                Parwah Sports Charitable Trust is a non-profit organization dedicated to empowering
+                young and underprivileged athletes across India through comprehensive support,
+                training, and opportunities.
+              </p>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
@@ -132,57 +135,61 @@ const About = () => {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12">
             {/* Mission */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-3xl transform group-hover:scale-105 transition-transform duration-300" />
-              <div className="relative bg-card p-8 lg:p-10 rounded-3xl shadow-xl border border-border">
-                <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                  <Target className="h-8 w-8 text-secondary-foreground" />
+            <ScrollReveal animation="fade-right">
+              <div className="relative group h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-secondary/20 to-secondary/5 rounded-3xl transform group-hover:scale-105 transition-transform duration-300" />
+                <div className="relative bg-card p-8 lg:p-10 rounded-3xl shadow-xl border border-border h-full">
+                  <div className="w-16 h-16 bg-secondary rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Target className="h-8 w-8 text-secondary-foreground" />
+                  </div>
+                  <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                    Our Mission
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed mb-6">
+                    To support young and underprivileged athletes emotionally, financially, and
+                    professionally. We provide world-class training, mentorship, and resources to help
+                    them achieve their full potential and represent India on national and
+                    international stages.
+                  </p>
+                  <ul className="space-y-3">
+                    {["Provide world-class training", "Financial assistance", "Mental wellness support", "Career guidance"].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <CheckCircle className="h-5 w-5 text-secondary shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                  Our Mission
-                </h2>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  To support young and underprivileged athletes emotionally, financially, and
-                  professionally. We provide world-class training, mentorship, and resources to help
-                  them achieve their full potential and represent India on national and
-                  international stages.
-                </p>
-                <ul className="space-y-3">
-                  {["Provide world-class training", "Financial assistance", "Mental wellness support", "Career guidance"].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <CheckCircle className="h-5 w-5 text-secondary shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
+            </ScrollReveal>
 
             {/* Vision */}
-            <div className="relative group">
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl transform group-hover:scale-105 transition-transform duration-300" />
-              <div className="relative bg-card p-8 lg:p-10 rounded-3xl shadow-xl border border-border">
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-                  <Eye className="h-8 w-8 text-primary-foreground" />
+            <ScrollReveal animation="fade-left">
+              <div className="relative group h-full">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl transform group-hover:scale-105 transition-transform duration-300" />
+                <div className="relative bg-card p-8 lg:p-10 rounded-3xl shadow-xl border border-border h-full">
+                  <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                    <Eye className="h-8 w-8 text-primary-foreground" />
+                  </div>
+                  <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">
+                    Our Vision
+                  </h2>
+                  <p className="text-muted-foreground leading-relaxed mb-6">
+                    To create a world where every talented athlete, regardless of their background,
+                    has equal opportunities to shine at district, state, national, and international
+                    levels. We envision sports as a powerful tool for social transformation.
+                  </p>
+                  <ul className="space-y-3">
+                    {["Equal opportunities for all", "Sports as social change", "District to international", "Holistic development"].map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                        <CheckCircle className="h-5 w-5 text-primary shrink-0" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <h2 className="font-serif text-2xl lg:text-3xl font-bold text-foreground mb-4">
-                  Our Vision
-                </h2>
-                <p className="text-muted-foreground leading-relaxed mb-6">
-                  To create a world where every talented athlete, regardless of their background,
-                  has equal opportunities to shine at district, state, national, and international
-                  levels. We envision sports as a powerful tool for social transformation.
-                </p>
-                <ul className="space-y-3">
-                  {["Equal opportunities for all", "Sports as social change", "District to international", "Holistic development"].map((item, i) => (
-                    <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <CheckCircle className="h-5 w-5 text-primary shrink-0" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </section>

@@ -1,5 +1,6 @@
 import { Users, School, MapPin, Trophy, Calendar, TrendingUp } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import trainingImage from "@/assets/training-session.jpg";
 
 const stats = [
@@ -109,28 +110,30 @@ export function ImpactSection() {
       <div className="container mx-auto px-4 lg:px-8 relative z-10">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Image */}
-          <div className="relative order-2 lg:order-1">
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl">
-              <img
-                src={trainingImage}
-                alt="Training session with young athletes"
-                className="w-full h-auto object-cover aspect-[4/3]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
+          <ScrollReveal animation="fade-right" className="order-2 lg:order-1">
+            <div className="relative">
+              <div className="relative rounded-3xl overflow-hidden shadow-2xl">
+                <img
+                  src={trainingImage}
+                  alt="Training session with young athletes"
+                  className="w-full h-auto object-cover aspect-[4/3]"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-foreground/50 via-transparent to-transparent" />
+              </div>
+              {/* Floating Badge */}
+              <div className="absolute -bottom-6 -right-6 bg-secondary text-secondary-foreground p-6 rounded-2xl shadow-xl hidden sm:block">
+                <div className="text-4xl font-bold">9+</div>
+                <div className="text-sm opacity-90">Years of Impact</div>
+              </div>
+              {/* Secondary Badge */}
+              <div className="absolute -top-4 -left-4 bg-primary text-primary-foreground p-4 rounded-xl shadow-lg hidden sm:block">
+                <Trophy className="h-8 w-8" />
+              </div>
             </div>
-            {/* Floating Badge */}
-            <div className="absolute -bottom-6 -right-6 bg-secondary text-secondary-foreground p-6 rounded-2xl shadow-xl hidden sm:block">
-              <div className="text-4xl font-bold">9+</div>
-              <div className="text-sm opacity-90">Years of Impact</div>
-            </div>
-            {/* Secondary Badge */}
-            <div className="absolute -top-4 -left-4 bg-primary text-primary-foreground p-4 rounded-xl shadow-lg hidden sm:block">
-              <Trophy className="h-8 w-8" />
-            </div>
-          </div>
+          </ScrollReveal>
 
           {/* Content */}
-          <div className="order-1 lg:order-2">
+          <ScrollReveal animation="fade-left" className="order-1 lg:order-2">
             <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-4">
               Our Impact
             </span>
@@ -160,7 +163,7 @@ export function ImpactSection() {
                 </div>
               ))}
             </div>
-          </div>
+          </ScrollReveal>
         </div>
       </div>
     </section>
