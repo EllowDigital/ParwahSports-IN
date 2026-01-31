@@ -59,26 +59,34 @@ export function AnnouncementsBanner() {
   const Icon = style.icon;
 
   return (
-    <div className={`${style.bg} ${style.text}`}>
-      <div className="container mx-auto px-4 py-3">
+    <div className={`${style.bg} ${style.text} relative overflow-hidden`}>
+      {/* Subtle pattern */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='20' height='20' viewBox='0 0 20 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Ccircle cx='3' cy='3' r='1'/%3E%3C/g%3E%3C/svg%3E")`,
+        }} />
+      </div>
+      <div className="container mx-auto px-4 py-3 relative z-10">
         <div className="flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0 flex-1">
-            <Icon className="h-5 w-5 shrink-0" />
+            <div className="w-8 h-8 rounded-lg bg-background/20 flex items-center justify-center shrink-0">
+              <Icon className="h-4 w-4" />
+            </div>
             <div className="min-w-0 flex-1">
               <span className="font-semibold">{topAnnouncement.title}:</span>{" "}
               <span className="opacity-90 line-clamp-1">{topAnnouncement.message}</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-3 shrink-0">
             <Link
               to="/announcements"
-              className="text-sm underline underline-offset-2 hover:opacity-80 hidden sm:inline"
+              className="text-sm font-medium px-3 py-1 rounded-full bg-background/20 hover:bg-background/30 transition-colors hidden sm:inline"
             >
               View All
             </Link>
             <button
               onClick={() => setDismissedIds([...dismissedIds, topAnnouncement.id])}
-              className="p-1 hover:opacity-70 transition-opacity"
+              className="p-1.5 rounded-full hover:bg-background/20 transition-colors"
               aria-label="Dismiss"
             >
               <X className="h-4 w-4" />

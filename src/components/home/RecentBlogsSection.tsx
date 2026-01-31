@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import {
   Dialog,
   DialogContent,
@@ -42,20 +43,21 @@ export function RecentBlogsSection() {
 
   if (isLoading) {
     return (
-      <section className="py-16 lg:py-24 bg-muted/30">
+      <section className="py-20 lg:py-28 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">
-          <div className="text-center mb-12">
-            <Skeleton className="h-8 w-48 mx-auto mb-4" />
-            <Skeleton className="h-6 w-96 mx-auto" />
+          <div className="flex justify-between items-end mb-12">
+            <div>
+              <Skeleton className="h-4 w-32 mb-4" />
+              <Skeleton className="h-10 w-64" />
+            </div>
+            <Skeleton className="h-10 w-40" />
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[...Array(3)].map((_, i) => (
-              <Card key={i}>
-                <Skeleton className="h-48 w-full" />
-                <CardHeader>
-                  <Skeleton className="h-6 w-3/4" />
-                </CardHeader>
-                <CardContent>
+              <Card key={i} className="overflow-hidden">
+                <Skeleton className="h-56 w-full" />
+                <CardContent className="p-6">
+                  <Skeleton className="h-6 w-3/4 mb-3" />
                   <Skeleton className="h-16 w-full" />
                 </CardContent>
               </Card>
@@ -71,14 +73,14 @@ export function RecentBlogsSection() {
   }
 
   return (
-    <section className="py-16 lg:py-24 bg-muted/30">
+    <section className="py-20 lg:py-28 bg-muted/30">
       <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-12">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
             <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-2">
               From Our Blog
             </span>
-            <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
               Stories & Insights
             </h2>
           </div>
@@ -90,27 +92,34 @@ export function RecentBlogsSection() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogs.map((blog) => (
-            <Card 
-              key={blog.id} 
-              className="group overflow-hidden hover:shadow-xl transition-all cursor-pointer"
+          {blogs.map((blog, index) => (
+            <Card
+              key={blog.id}
+              className="group overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer hover:-translate-y-1 border-0 bg-card"
               onClick={() => setSelectedBlog(blog)}
             >
-              {blog.featured_image_url ? (
-                <div className="aspect-video overflow-hidden">
-                  <img
-                    src={blog.featured_image_url}
-                    alt={blog.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
+              <div className="relative">
+                {blog.featured_image_url ? (
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img
+                      src={blog.featured_image_url}
+                      alt={blog.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="aspect-[16/10] bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
+                    <FileText className="h-16 w-16 text-primary/30" />
+                  </div>
+                )}
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-background/90 text-foreground backdrop-blur-sm">
+                    {format(new Date(blog.publish_date), "MMM d")}
+                  </Badge>
                 </div>
-              ) : (
-                <div className="aspect-video bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                  <FileText className="h-12 w-12 text-primary/30" />
-                </div>
-              )}
-              <CardHeader className="pb-2">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-2">
+              </div>
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mb-3">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     {format(new Date(blog.publish_date), "MMM d, yyyy")}
@@ -122,17 +131,15 @@ export function RecentBlogsSection() {
                     </span>
                   )}
                 </div>
-                <CardTitle className="text-xl line-clamp-2 group-hover:text-primary transition-colors">
+                <h3 className="text-xl font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors mb-3">
                   {blog.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground line-clamp-3">
+                </h3>
+                <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
                   {blog.content?.replace(/<[^>]*>/g, "").substring(0, 150) || "No content available."}...
                 </p>
-                <Button variant="link" className="px-0 mt-3 gap-1 text-primary">
-                  Read More <ArrowRight className="h-4 w-4" />
-                </Button>
+                <div className="mt-4 flex items-center gap-2 text-sm font-medium text-primary">
+                  Read More <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                </div>
               </CardContent>
             </Card>
           ))}
@@ -145,10 +152,10 @@ export function RecentBlogsSection() {
           {selectedBlog && (
             <>
               <DialogHeader>
-                <DialogTitle className="text-2xl font-serif pr-8">
+                <DialogTitle className="text-2xl font-serif pr-8 leading-tight">
                   {selectedBlog.title}
                 </DialogTitle>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground mt-2">
+                <div className="flex items-center gap-4 text-sm text-muted-foreground mt-3">
                   <span className="flex items-center gap-1">
                     <Calendar className="h-4 w-4" />
                     {format(new Date(selectedBlog.publish_date), "MMMM d, yyyy")}
@@ -165,11 +172,11 @@ export function RecentBlogsSection() {
                 <img
                   src={selectedBlog.featured_image_url}
                   alt={selectedBlog.title}
-                  className="w-full h-64 object-cover rounded-lg mt-4"
+                  className="w-full h-64 object-cover rounded-xl mt-4"
                 />
               )}
               <div
-                className="prose prose-neutral dark:prose-invert max-w-none mt-4"
+                className="prose prose-neutral dark:prose-invert max-w-none mt-6"
                 dangerouslySetInnerHTML={{
                   __html: selectedBlog.content || "<p>No content available.</p>",
                 }}
