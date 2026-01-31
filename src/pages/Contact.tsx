@@ -1,8 +1,9 @@
 import { Layout } from "@/components/layout/Layout";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { MapPin, Phone, Mail, Clock, Send, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useEffect } from "react";
+import { WebsiteCredit } from "@/components/layout/Footer";
 
 const Contact = () => {
   const headquartersAddress = "Mahak Complex, Delhi Road, Rampur Maniharan, Saharanpur 247451";
@@ -131,6 +132,19 @@ const Contact = () => {
                 />
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Website Credits Section */}
+      <section className="py-8 bg-muted/30 border-t border-border">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Code className="h-4 w-4" />
+              <span className="text-sm">Website Credits:</span>
+            </div>
+            <WebsiteCredit />
           </div>
         </div>
       </section>

@@ -2,6 +2,11 @@ import { Link } from "react-router-dom";
 import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Heart, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const mainLinks = [
   { name: "About", href: "/about" },
@@ -49,6 +54,31 @@ const socialLinks = [
     Icon: Youtube,
   },
 ];
+
+export function WebsiteCredit() {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+          Designed & developed with{" "}
+          <Heart className="h-3 w-3 text-red-500 fill-red-500" />{" "}
+          by{" "}
+          <a
+            href="https://ellowdigital.space"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-muted-foreground hover:text-primary transition-colors underline-offset-2 hover:underline"
+          >
+            EllowDigital
+          </a>
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-xs">
+        Website design & development partner
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function Footer() {
   return (
@@ -204,26 +234,32 @@ export function Footer() {
 
       {/* Bottom Bar */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted-foreground text-center sm:text-left">
-            © {new Date().getFullYear()} Parwah Sports Charitable Trust. All rights reserved.
-          </p>
-          
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
-            {policies.map((link, idx) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="text-xs text-muted-foreground hover:text-primary transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
+        <div className="flex flex-col gap-4">
+          {/* Top row - Copyright & Policies */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-muted-foreground text-center sm:text-left">
+              © {new Date().getFullYear()} Parwah Sports Charitable Trust. All rights reserved.
+            </p>
+            
+            <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+              {policies.map((link) => (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="text-xs text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
           </div>
 
-          <p className="text-xs text-muted-foreground flex items-center gap-1">
-            Made with <Heart className="h-3 w-3 text-secondary fill-secondary" /> in India
-          </p>
+          <Separator className="my-1" />
+
+          {/* Bottom row - Credits */}
+          <div className="flex justify-center">
+            <WebsiteCredit />
+          </div>
         </div>
       </div>
     </footer>
