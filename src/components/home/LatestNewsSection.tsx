@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { ArrowRight, Calendar } from "lucide-react";
+import { Newspaper, ArrowRight, Calendar } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
 
@@ -16,7 +16,7 @@ interface NewsItem {
 }
 
 export function LatestNewsSection() {
-  const { data: newsItems, isLoading } = useQuery({
+  const { data: news, isLoading } = useQuery({
     queryKey: ["latest-news"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -32,113 +32,88 @@ export function LatestNewsSection() {
 
   if (isLoading) {
     return (
-      <section className="py-20 lg:py-28 bg-background">
-        <div className="container mx-auto px-4 lg:px-8">
-          <div className="flex justify-between items-end mb-12">
+      <section className="py-16 lg:py-24 bg-background">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-end mb-10">
             <div>
-              <Skeleton className="h-4 w-32 mb-4" />
-              <Skeleton className="h-10 w-64" />
+              <Skeleton className="h-4 w-24 mb-3" />
+              <Skeleton className="h-8 w-48" />
             </div>
-            <Skeleton className="h-10 w-40" />
+            <Skeleton className="h-10 w-32" />
           </div>
-          <div className="grid lg:grid-cols-12 gap-6">
-            <div className="lg:col-span-6">
-              <Card>
-                <CardContent className="p-8">
-                  <Skeleton className="h-4 w-32 mb-4" />
-                  <Skeleton className="h-8 w-full mb-4" />
-                  <Skeleton className="h-24 w-full" />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[...Array(4)].map((_, i) => (
+              <Card key={i}>
+                <CardContent className="p-5">
+                  <Skeleton className="h-5 w-3/4 mb-3" />
+                  <Skeleton className="h-16 w-full mb-3" />
+                  <Skeleton className="h-4 w-24" />
                 </CardContent>
               </Card>
-            </div>
-            <div className="lg:col-span-6 space-y-4">
-              {[...Array(3)].map((_, i) => (
-                <Card key={i}>
-                  <CardContent className="p-6">
-                    <Skeleton className="h-4 w-24 mb-2" />
-                    <Skeleton className="h-6 w-full" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            ))}
           </div>
         </div>
       </section>
     );
   }
 
-  if (!newsItems || newsItems.length === 0) {
-    return null;
-  }
-
-  const [featuredNews, ...otherNews] = newsItems;
+  if (!news || news.length === 0) return null;
 
   return (
-    <section className="py-20 lg:py-28 bg-background">
-      <div className="container mx-auto px-4 lg:px-8">
+    <section className="py-16 lg:py-24 bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
             <div>
               <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-2">
-                Latest Updates
+                Latest News
               </span>
-              <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-                News & Announcements
+              <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-foreground">
+                Stay Updated
               </h2>
             </div>
-            <Button asChild variant="outline" className="gap-2 self-start md:self-auto">
+            <Button asChild variant="outline" size="sm" className="gap-2 self-start sm:self-auto">
               <Link to="/news">
-                View All News <ArrowRight className="h-4 w-4" />
+                All News <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
         </ScrollReveal>
 
-        <div className="grid lg:grid-cols-12 gap-8">
-          {/* Featured News */}
-          <ScrollReveal className="lg:col-span-7" animation="fade-right">
-            <Card className="group hover:shadow-xl transition-all duration-300 overflow-hidden border-0 bg-gradient-to-br from-primary/5 to-secondary/5 h-full">
-              <CardContent className="p-8 lg:p-10">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground mb-4">
-                  <Calendar className="h-4 w-4" />
-                  {format(new Date(featuredNews.publish_date), "MMMM d, yyyy")}
-                </div>
-                <h3 className="text-2xl lg:text-3xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors leading-tight">
-                  {featuredNews.title}
-                </h3>
-                <p className="text-muted-foreground text-lg leading-relaxed line-clamp-4">
-                  {featuredNews.description || "No description available."}
-                </p>
-                <Button asChild variant="link" className="px-0 mt-6 gap-2 text-primary">
-                  <Link to="/news">
-                    Read Full Story <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
-          </ScrollReveal>
-
-          {/* Other News */}
-          <div className="lg:col-span-5 space-y-4">
-            {otherNews.map((item, index) => (
-              <ScrollReveal key={item.id} delay={index * 100} animation="fade-left">
-                <Card className="group hover:shadow-lg transition-all duration-300 hover:border-primary/20">
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">
-                      <Calendar className="h-4 w-4" />
-                      {format(new Date(item.publish_date), "MMM d, yyyy")}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+          {news.map((item, index) => (
+            <ScrollReveal key={item.id} delay={index * 80}>
+              <Card className={`group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full border-border hover:border-primary/20 ${
+                index === 0 ? "sm:col-span-2" : ""
+              }`}>
+                <CardContent className={`p-5 lg:p-6 h-full flex flex-col ${index === 0 ? "sm:flex-row sm:gap-6" : ""}`}>
+                  {index === 0 && (
+                    <div className="sm:w-16 sm:shrink-0 mb-4 sm:mb-0">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-secondary/10 flex items-center justify-center">
+                        <Newspaper className="h-6 w-6 text-secondary" />
+                      </div>
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors">
+                  )}
+                  <div className="flex-1 flex flex-col">
+                    <h3 className={`font-semibold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2 ${
+                      index === 0 ? "text-lg lg:text-xl" : "text-base"
+                    }`}>
                       {item.title}
                     </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mt-2">
+                    <p className={`text-muted-foreground line-clamp-3 flex-1 ${
+                      index === 0 ? "text-sm lg:text-base" : "text-sm"
+                    }`}>
                       {item.description || "No description available."}
                     </p>
-                  </CardContent>
-                </Card>
-              </ScrollReveal>
-            ))}
-          </div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground mt-3 pt-3 border-t border-border">
+                      <Calendar className="h-3 w-3" />
+                      {format(new Date(item.publish_date), "MMM d, yyyy")}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </ScrollReveal>
+          ))}
         </div>
       </div>
     </section>
