@@ -315,44 +315,42 @@ export default function Blogs() {
       </section>
 
       {/* Blog Detail Dialog */}
-      <Dialog open={!!selectedBlog} onOpenChange={() => setSelectedBlog(null)}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-          {selectedBlog && (
-            <>
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-serif pr-8 leading-tight">
-                  {selectedBlog.title}
-                </DialogTitle>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground mt-3">
+      {selectedBlog && (
+        <Dialog open={true} onOpenChange={() => setSelectedBlog(null)}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-serif pr-8 leading-tight">
+                {selectedBlog.title}
+              </DialogTitle>
+              <div className="flex items-center gap-4 text-sm text-muted-foreground mt-3">
+                <span className="flex items-center gap-1">
+                  <Calendar className="h-4 w-4" />
+                  {format(new Date(selectedBlog.publish_date), "MMMM d, yyyy")}
+                </span>
+                {selectedBlog.author && (
                   <span className="flex items-center gap-1">
-                    <Calendar className="h-4 w-4" />
-                    {format(new Date(selectedBlog.publish_date), "MMMM d, yyyy")}
+                    <User className="h-4 w-4" />
+                    {selectedBlog.author}
                   </span>
-                  {selectedBlog.author && (
-                    <span className="flex items-center gap-1">
-                      <User className="h-4 w-4" />
-                      {selectedBlog.author}
-                    </span>
-                  )}
-                </div>
-              </DialogHeader>
-              {selectedBlog.featured_image_url && (
-                <img
-                  src={selectedBlog.featured_image_url}
-                  alt={selectedBlog.title}
-                  className="w-full h-64 object-cover rounded-xl mt-4"
-                />
-              )}
-              <div
-                className="prose prose-neutral dark:prose-invert max-w-none mt-6"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(selectedBlog.content || "<p>No content available.</p>"),
-                }}
+                )}
+              </div>
+            </DialogHeader>
+            {selectedBlog.featured_image_url && (
+              <img
+                src={selectedBlog.featured_image_url}
+                alt={selectedBlog.title}
+                className="w-full h-64 object-cover rounded-xl mt-4"
               />
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+            )}
+            <div
+              className="prose prose-neutral dark:prose-invert max-w-none mt-6"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(selectedBlog.content || "<p>No content available.</p>"),
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
     </Layout>
   );
 }
