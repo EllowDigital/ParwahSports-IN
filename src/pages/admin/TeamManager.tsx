@@ -84,7 +84,7 @@ export default function TeamManager() {
 
       if (error) throw error;
 
-      const normalized = (data || []).map((m: any) => ({
+      const normalized = (data || []).map((m: TeamMember & { team_member_private_contacts: { email: string | null; phone: string | null } | null }) => ({
         ...m,
         email: m.team_member_private_contacts?.email ?? null,
         phone: m.team_member_private_contacts?.phone ?? null,

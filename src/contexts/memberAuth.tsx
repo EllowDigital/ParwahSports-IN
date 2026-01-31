@@ -49,6 +49,7 @@ export function MemberAuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useMemberAuth() {
   const ctx = useContext(MemberAuthContext);
   if (!ctx) throw new Error("useMemberAuth must be used within MemberAuthProvider");

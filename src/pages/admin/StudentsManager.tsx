@@ -47,6 +47,10 @@ interface Student {
   created_at: string;
 }
 
+interface CreateUserResponse {
+  user_id: string;
+}
+
 export default function StudentsManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Student | null>(null);
@@ -85,7 +89,7 @@ export default function StudentsManager() {
 
       // Create auth account if requested
       if (data.create_account && data.password) {
-        const { data: created, error: createErr } = await supabase.functions.invoke(
+        const { data: created, error: createErr } = await supabase.functions.invoke<CreateUserResponse>(
           "admin-create-student-user",
           {
             body: {
@@ -96,7 +100,7 @@ export default function StudentsManager() {
           },
         );
         if (createErr) throw createErr;
-        user_id = (created as any)?.user_id ?? null;
+        user_id = created?.user_id ?? null;
       }
 
       const { error } = await supabase.from("students").insert([
@@ -132,7 +136,7 @@ export default function StudentsManager() {
         throw new Error(parsed.error.errors[0]?.message || "Invalid password");
       }
 
-      const { data: created, error: createErr } = await supabase.functions.invoke(
+      const { data: created, error: createErr } = await supabase.functions.invoke<CreateUserResponse>(
         "admin-create-student-user",
         {
           body: {
@@ -144,7 +148,7 @@ export default function StudentsManager() {
       );
       if (createErr) throw createErr;
 
-      const user_id = (created as any)?.user_id as string | undefined;
+      const user_id = created?.user_id;
       if (!user_id) throw new Error("User creation failed (missing user_id)");
 
       const { error: updErr } = await supabase
@@ -164,7 +168,7 @@ export default function StudentsManager() {
       setLinkPassword("");
       setLinkingStudent(null);
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({
         title: "Failed to activate/link",
         description: error?.message || "Unknown error",
@@ -447,11 +451,10 @@ export default function StudentsManager() {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          item.is_active
+                        className={`px-2 py-1 rounded-full text-xs ${item.is_active
                             ? "bg-primary/10 text-primary"
                             : "bg-muted text-muted-foreground"
-                        }`}
+                          }`}
                       >
                         {item.is_active ? "Active" : "Inactive"}
                       </span>

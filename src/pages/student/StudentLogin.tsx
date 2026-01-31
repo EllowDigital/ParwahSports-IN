@@ -93,10 +93,10 @@ export default function StudentLogin() {
       if (authData.session) {
         navigate("/student/dashboard");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast({
         title: "Signup failed",
-        description: err?.message || "Unable to sign up",
+        description: err instanceof Error ? err.message : "Unable to sign up",
         variant: "destructive",
       });
     } finally {
