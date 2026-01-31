@@ -112,7 +112,9 @@ serve(async (req) => {
           if (resendApiKey) {
             const { data: donation } = await supabase
               .from("donations")
-              .select("donor_name, donor_email, amount, payment_reference, confirmation_email_sent_at")
+              .select(
+                "donor_name, donor_email, amount, payment_reference, confirmation_email_sent_at",
+              )
               .eq("razorpay_order_id", payment.order_id)
               .maybeSingle();
 
@@ -151,7 +153,11 @@ serve(async (req) => {
 
           // If it's a membership order (no autopay), activate the subscription entitlement
           const membershipType = payment.notes?.type;
-          if (membershipType === "lifetime" || membershipType === "monthly" || membershipType === "yearly") {
+          if (
+            membershipType === "lifetime" ||
+            membershipType === "monthly" ||
+            membershipType === "yearly"
+          ) {
             const { data: payRow, error: payErr } = await supabase
               .from("payments")
               .select("subscription_id")

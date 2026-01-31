@@ -43,7 +43,15 @@ interface Project {
 }
 
 const statusOptions = ["upcoming", "ongoing", "completed"];
-const categoryOptions = ["Championship", "Training Camp", "Talent Trial", "Community Event", "Workshop", "Outreach", "Other"];
+const categoryOptions = [
+  "Championship",
+  "Training Camp",
+  "Talent Trial",
+  "Community Event",
+  "Workshop",
+  "Outreach",
+  "Other",
+];
 
 export default function ProjectsManager() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -86,7 +94,11 @@ export default function ProjectsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error creating project", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error creating project",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -101,7 +113,11 @@ export default function ProjectsManager() {
       resetForm();
     },
     onError: (error) => {
-      toast({ title: "Error updating project", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error updating project",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -115,7 +131,11 @@ export default function ProjectsManager() {
       toast({ title: "Project deleted successfully" });
     },
     onError: (error) => {
-      toast({ title: "Error deleting project", description: error.message, variant: "destructive" });
+      toast({
+        title: "Error deleting project",
+        description: error.message,
+        variant: "destructive",
+      });
     },
   });
 
@@ -251,7 +271,9 @@ export default function ProjectsManager() {
                       id="display_order"
                       type="number"
                       value={formData.display_order}
-                      onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })
+                      }
                     />
                   </div>
                 </div>
@@ -299,7 +321,9 @@ export default function ProjectsManager() {
                   <Switch
                     id="is_featured"
                     checked={formData.is_featured}
-                    onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
+                    onCheckedChange={(checked) =>
+                      setFormData({ ...formData, is_featured: checked })
+                    }
                   />
                   <Label htmlFor="is_featured">Featured Project</Label>
                 </div>
@@ -308,7 +332,10 @@ export default function ProjectsManager() {
                   <Button type="button" variant="outline" onClick={resetForm}>
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                  <Button
+                    type="submit"
+                    disabled={createMutation.isPending || updateMutation.isPending}
+                  >
                     {editingProject ? "Update" : "Create"} Project
                   </Button>
                 </div>
@@ -358,15 +385,15 @@ export default function ProjectsManager() {
                         {project.status}
                       </Badge>
                     )}
-                    {project.is_featured && (
-                      <Badge variant="secondary">Featured</Badge>
-                    )}
+                    {project.is_featured && <Badge variant="secondary">Featured</Badge>}
                   </div>
                 </div>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg line-clamp-1">{project.title}</CardTitle>
                   {project.category && (
-                    <Badge variant="outline" className="w-fit">{project.category}</Badge>
+                    <Badge variant="outline" className="w-fit">
+                      {project.category}
+                    </Badge>
                   )}
                 </CardHeader>
                 <CardContent>

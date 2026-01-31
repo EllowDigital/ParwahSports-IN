@@ -77,8 +77,8 @@ export default function StudentDashboard() {
             <CardHeader>
               <CardTitle>Account Pending Approval</CardTitle>
               <CardDescription>
-                Your student account exists but is not active yet. Please wait for an admin to activate your
-                profile.
+                Your student account exists but is not active yet. Please wait for an admin to
+                activate your profile.
               </CardDescription>
             </CardHeader>
             <CardContent className="flex items-center justify-between gap-4">

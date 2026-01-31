@@ -57,7 +57,7 @@ export function ScrollReveal({
       className={cn(
         "transition-all will-change-transform",
         isVisible ? visible : hidden,
-        className
+        className,
       )}
       style={{
         transitionDuration: `${duration}ms`,
@@ -101,7 +101,7 @@ export function StaggerReveal({
           className={cn(
             "transition-all will-change-transform",
             isVisible ? visible : hidden,
-            childClassName
+            childClassName,
           )}
           style={{
             transitionDuration: `${duration}ms`,

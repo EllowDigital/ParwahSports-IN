@@ -86,22 +86,24 @@ export function WhatWeDoSection() {
                 >
                   <program.icon className="h-6 w-6 lg:h-7 lg:w-7" />
                 </div>
-                
+
                 <h3 className="text-lg lg:text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
                   {program.title}
                 </h3>
                 <p className="text-sm lg:text-base text-muted-foreground leading-relaxed">
                   {program.description}
                 </p>
-                
+
                 <div className="mt-5 flex items-center gap-2 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                   Learn More <ArrowRight className="h-4 w-4" />
                 </div>
-                
+
                 {/* Hover accent line */}
-                <div className={`absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left ${
-                  program.color === "primary" ? "bg-primary" : "bg-secondary"
-                }`} />
+                <div
+                  className={`absolute bottom-0 left-0 right-0 h-1 rounded-b-2xl transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left ${
+                    program.color === "primary" ? "bg-primary" : "bg-secondary"
+                  }`}
+                />
               </Link>
             </ScrollReveal>
           ))}

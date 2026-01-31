@@ -67,7 +67,11 @@ export default function AnnouncementsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: announcements, isLoading, refetch } = useQuery({
+  const {
+    data: announcements,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["admin-announcements"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -85,8 +89,7 @@ export default function AnnouncementsManager() {
     const query = searchQuery.toLowerCase();
     return announcements.filter(
       (item) =>
-        item.title.toLowerCase().includes(query) ||
-        item.message.toLowerCase().includes(query)
+        item.title.toLowerCase().includes(query) || item.message.toLowerCase().includes(query),
     );
   }, [announcements, searchQuery]);
 
@@ -276,10 +279,7 @@ export default function AnnouncementsManager() {
       header: "",
       className: "text-right",
       render: (item: Announcement) => (
-        <ActionButtons
-          onEdit={() => handleEdit(item)}
-          onDelete={() => setDeleteId(item.id)}
-        />
+        <ActionButtons onEdit={() => handleEdit(item)} onDelete={() => setDeleteId(item.id)} />
       ),
     },
   ];
@@ -318,9 +318,7 @@ export default function AnnouncementsManager() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
-              <DialogTitle>
-                {editingItem ? "Edit Announcement" : "Add Announcement"}
-              </DialogTitle>
+              <DialogTitle>{editingItem ? "Edit Announcement" : "Add Announcement"}</DialogTitle>
               <DialogDescription>
                 {editingItem
                   ? "Update the announcement details"
@@ -391,12 +389,12 @@ export default function AnnouncementsManager() {
                 <Switch
                   id="is_active"
                   checked={formData.is_active}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, is_active: checked })
-                  }
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_active: checked })}
                 />
                 <div>
-                  <Label htmlFor="is_active" className="cursor-pointer">Active</Label>
+                  <Label htmlFor="is_active" className="cursor-pointer">
+                    Active
+                  </Label>
                   <p className="text-xs text-muted-foreground">
                     Active announcements are displayed to users
                   </p>

@@ -12,12 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -185,9 +180,7 @@ export default function VolunteersManager() {
                         </SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell>
-                      {format(new Date(volunteer.created_at), "MMM d, yyyy")}
-                    </TableCell>
+                    <TableCell>{format(new Date(volunteer.created_at), "MMM d, yyyy")}</TableCell>
                     <TableCell className="text-right">
                       <Button
                         variant="ghost"
@@ -270,7 +263,8 @@ export default function VolunteersManager() {
               )}
 
               <p className="text-xs text-muted-foreground">
-                Submitted on {format(new Date(viewingVolunteer.created_at), "MMMM d, yyyy 'at' h:mm a")}
+                Submitted on{" "}
+                {format(new Date(viewingVolunteer.created_at), "MMMM d, yyyy 'at' h:mm a")}
               </p>
             </div>
           )}

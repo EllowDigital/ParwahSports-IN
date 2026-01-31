@@ -573,10 +573,10 @@ export default function MemberDashboard() {
       {/* Plan Selection Dialog */}
       <Dialog open={showPlanDialog} onOpenChange={setShowPlanDialog}>
         <DialogContent className="max-w-2xl">
-            <DialogHeader>
+          <DialogHeader>
             <DialogTitle>Choose a Membership Plan</DialogTitle>
             <DialogDescription>
-                Select a plan that suits you best. Monthly/yearly are pay-as-needed (no autopay).
+              Select a plan that suits you best. Monthly/yearly are pay-as-needed (no autopay).
             </DialogDescription>
           </DialogHeader>
           <div className="grid md:grid-cols-3 gap-4 py-4">

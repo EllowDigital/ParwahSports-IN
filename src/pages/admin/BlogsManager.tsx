@@ -60,7 +60,11 @@ export default function BlogsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: blogs, isLoading, refetch } = useQuery({
+  const {
+    data: blogs,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["admin-blogs"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -78,8 +82,7 @@ export default function BlogsManager() {
     const query = searchQuery.toLowerCase();
     return blogs.filter(
       (item) =>
-        item.title.toLowerCase().includes(query) ||
-        item.author?.toLowerCase().includes(query)
+        item.title.toLowerCase().includes(query) || item.author?.toLowerCase().includes(query),
     );
   }, [blogs, searchQuery]);
 
@@ -261,9 +264,7 @@ export default function BlogsManager() {
       render: (item: BlogItem) => (
         <div className="max-w-[250px]">
           <p className="font-medium text-foreground truncate">{item.title}</p>
-          {item.author && (
-            <p className="text-xs text-muted-foreground mt-0.5">by {item.author}</p>
-          )}
+          {item.author && <p className="text-xs text-muted-foreground mt-0.5">by {item.author}</p>}
         </div>
       ),
     },
@@ -287,10 +288,7 @@ export default function BlogsManager() {
       header: "",
       className: "text-right",
       render: (item: BlogItem) => (
-        <ActionButtons
-          onEdit={() => handleEdit(item)}
-          onDelete={() => setDeleteId(item.id)}
-        />
+        <ActionButtons onEdit={() => handleEdit(item)} onDelete={() => setDeleteId(item.id)} />
       ),
     },
   ];

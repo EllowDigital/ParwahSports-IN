@@ -56,20 +56,46 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [gallery, events, team, news, blogs, announcements, competitions, students, donations, members, volunteers] =
-          await Promise.all([
-            supabase.from("gallery_images").select("id", { count: "exact", head: true }),
-            supabase.from("events").select("id", { count: "exact", head: true }),
-            supabase.from("team_members").select("id", { count: "exact", head: true }).eq("is_active", true),
-            supabase.from("news").select("id", { count: "exact", head: true }),
-            supabase.from("blogs").select("id", { count: "exact", head: true }),
-            supabase.from("announcements").select("id", { count: "exact", head: true }).eq("is_active", true),
-            supabase.from("competitions").select("id", { count: "exact", head: true }),
-            supabase.from("students").select("id", { count: "exact", head: true }).eq("is_active", true),
-            supabase.from("donations").select("id", { count: "exact", head: true }).eq("payment_status", "success"),
-            supabase.from("members").select("id", { count: "exact", head: true }).eq("is_active", true),
-            supabase.from("volunteers").select("id", { count: "exact", head: true }),
-          ]);
+        const [
+          gallery,
+          events,
+          team,
+          news,
+          blogs,
+          announcements,
+          competitions,
+          students,
+          donations,
+          members,
+          volunteers,
+        ] = await Promise.all([
+          supabase.from("gallery_images").select("id", { count: "exact", head: true }),
+          supabase.from("events").select("id", { count: "exact", head: true }),
+          supabase
+            .from("team_members")
+            .select("id", { count: "exact", head: true })
+            .eq("is_active", true),
+          supabase.from("news").select("id", { count: "exact", head: true }),
+          supabase.from("blogs").select("id", { count: "exact", head: true }),
+          supabase
+            .from("announcements")
+            .select("id", { count: "exact", head: true })
+            .eq("is_active", true),
+          supabase.from("competitions").select("id", { count: "exact", head: true }),
+          supabase
+            .from("students")
+            .select("id", { count: "exact", head: true })
+            .eq("is_active", true),
+          supabase
+            .from("donations")
+            .select("id", { count: "exact", head: true })
+            .eq("payment_status", "success"),
+          supabase
+            .from("members")
+            .select("id", { count: "exact", head: true })
+            .eq("is_active", true),
+          supabase.from("volunteers").select("id", { count: "exact", head: true }),
+        ]);
 
         setStats({
           gallery: gallery.count ?? 0,
@@ -95,17 +121,94 @@ export default function AdminDashboard() {
   }, []);
 
   const statCards = [
-    { title: "News Articles", value: stats.news, icon: Newspaper, href: "/admin/news", color: "text-blue-500", bg: "bg-blue-500/10" },
-    { title: "Blog Posts", value: stats.blogs, icon: FileText, href: "/admin/blogs", color: "text-violet-500", bg: "bg-violet-500/10" },
-    { title: "Announcements", value: stats.announcements, icon: Bell, href: "/admin/announcements", color: "text-amber-500", bg: "bg-amber-500/10" },
-    { title: "Events", value: stats.events, icon: Calendar, href: "/admin/events", color: "text-emerald-500", bg: "bg-emerald-500/10" },
-    { title: "Gallery Images", value: stats.gallery, icon: Image, href: "/admin/gallery", color: "text-pink-500", bg: "bg-pink-500/10" },
-    { title: "Competitions", value: stats.competitions, icon: Trophy, href: "/admin/competitions", color: "text-orange-500", bg: "bg-orange-500/10" },
-    { title: "Team Members", value: stats.team, icon: Users, href: "/admin/team", color: "text-cyan-500", bg: "bg-cyan-500/10" },
-    { title: "Students", value: stats.students, icon: GraduationCap, href: "/admin/students", color: "text-indigo-500", bg: "bg-indigo-500/10" },
-    { title: "Donations", value: stats.donations, icon: Heart, href: "/admin/donations", color: "text-red-500", bg: "bg-red-500/10" },
-    { title: "Members", value: stats.members, icon: UserCheck, href: "/admin/members", color: "text-teal-500", bg: "bg-teal-500/10" },
-    { title: "Volunteers", value: stats.volunteers, icon: CreditCard, href: "/admin/volunteers", color: "text-lime-500", bg: "bg-lime-500/10" },
+    {
+      title: "News Articles",
+      value: stats.news,
+      icon: Newspaper,
+      href: "/admin/news",
+      color: "text-blue-500",
+      bg: "bg-blue-500/10",
+    },
+    {
+      title: "Blog Posts",
+      value: stats.blogs,
+      icon: FileText,
+      href: "/admin/blogs",
+      color: "text-violet-500",
+      bg: "bg-violet-500/10",
+    },
+    {
+      title: "Announcements",
+      value: stats.announcements,
+      icon: Bell,
+      href: "/admin/announcements",
+      color: "text-amber-500",
+      bg: "bg-amber-500/10",
+    },
+    {
+      title: "Events",
+      value: stats.events,
+      icon: Calendar,
+      href: "/admin/events",
+      color: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+    },
+    {
+      title: "Gallery Images",
+      value: stats.gallery,
+      icon: Image,
+      href: "/admin/gallery",
+      color: "text-pink-500",
+      bg: "bg-pink-500/10",
+    },
+    {
+      title: "Competitions",
+      value: stats.competitions,
+      icon: Trophy,
+      href: "/admin/competitions",
+      color: "text-orange-500",
+      bg: "bg-orange-500/10",
+    },
+    {
+      title: "Team Members",
+      value: stats.team,
+      icon: Users,
+      href: "/admin/team",
+      color: "text-cyan-500",
+      bg: "bg-cyan-500/10",
+    },
+    {
+      title: "Students",
+      value: stats.students,
+      icon: GraduationCap,
+      href: "/admin/students",
+      color: "text-indigo-500",
+      bg: "bg-indigo-500/10",
+    },
+    {
+      title: "Donations",
+      value: stats.donations,
+      icon: Heart,
+      href: "/admin/donations",
+      color: "text-red-500",
+      bg: "bg-red-500/10",
+    },
+    {
+      title: "Members",
+      value: stats.members,
+      icon: UserCheck,
+      href: "/admin/members",
+      color: "text-teal-500",
+      bg: "bg-teal-500/10",
+    },
+    {
+      title: "Volunteers",
+      value: stats.volunteers,
+      icon: CreditCard,
+      href: "/admin/volunteers",
+      color: "text-lime-500",
+      bg: "bg-lime-500/10",
+    },
   ];
 
   const quickActions = [
@@ -155,9 +258,7 @@ export default function AdminDashboard() {
                     {isLoading ? (
                       <Skeleton className="h-8 w-16 mb-1" />
                     ) : (
-                      <div className="text-2xl font-bold text-foreground mb-1">
-                        {stat.value}
-                      </div>
+                      <div className="text-2xl font-bold text-foreground mb-1">{stat.value}</div>
                     )}
                     <p className="text-xs text-muted-foreground truncate">{stat.title}</p>
                   </CardContent>
@@ -184,7 +285,9 @@ export default function AdminDashboard() {
                   className="group flex flex-col items-center justify-center p-4 rounded-xl border border-border hover:border-primary/30 hover:bg-accent/50 transition-all duration-300 text-center"
                 >
                   <div className="p-3 rounded-full bg-muted group-hover:bg-primary/10 transition-colors mb-2">
-                    <action.icon className={`w-5 h-5 ${action.color} group-hover:scale-110 transition-transform`} />
+                    <action.icon
+                      className={`w-5 h-5 ${action.color} group-hover:scale-110 transition-transform`}
+                    />
                   </div>
                   <span className="text-sm font-medium text-foreground">{action.title}</span>
                 </Link>

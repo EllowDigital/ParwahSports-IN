@@ -131,11 +131,11 @@ export default function GalleryManager() {
 
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
-    
+
     // Auto-fill title from filename if empty
     if (!formData.title) {
       const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
-      setFormData(prev => ({ ...prev, title: nameWithoutExt }));
+      setFormData((prev) => ({ ...prev, title: nameWithoutExt }));
     }
   };
 
@@ -204,7 +204,7 @@ export default function GalleryManager() {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
-    const validFiles = Array.from(files).filter(file => {
+    const validFiles = Array.from(files).filter((file) => {
       if (!file.type.startsWith("image/")) return false;
       if (file.size > 5 * 1024 * 1024) return false;
       return true;
@@ -233,14 +233,18 @@ export default function GalleryManager() {
       const { error } = await supabase.from("gallery_images").insert(uploaded);
       if (error) throw error;
 
-      toast({ 
-        title: "Success", 
-        description: `${uploaded.length} images uploaded successfully` 
+      toast({
+        title: "Success",
+        description: `${uploaded.length} images uploaded successfully`,
       });
       fetchImages();
     } catch (error) {
       console.error("Error uploading images:", error);
-      toast({ title: "Error", description: "Failed to upload some images", variant: "destructive" });
+      toast({
+        title: "Error",
+        description: "Failed to upload some images",
+        variant: "destructive",
+      });
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -284,8 +288,8 @@ export default function GalleryManager() {
               onChange={handleMultipleUpload}
               className="hidden"
             />
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               onClick={() => multiFileInputRef.current?.click()}
               disabled={isUploading}
             >
@@ -332,9 +336,9 @@ export default function GalleryManager() {
                     <div className="border-2 border-dashed border-border rounded-lg p-4">
                       {previewUrl ? (
                         <div className="relative">
-                          <img 
-                            src={previewUrl} 
-                            alt="Preview" 
+                          <img
+                            src={previewUrl}
+                            alt="Preview"
                             className="w-full h-48 object-cover rounded-lg"
                           />
                           <Button
@@ -345,20 +349,22 @@ export default function GalleryManager() {
                             onClick={() => {
                               setPreviewUrl(null);
                               setSelectedFile(null);
-                              setFormData(prev => ({ ...prev, image_url: "" }));
+                              setFormData((prev) => ({ ...prev, image_url: "" }));
                             }}
                           >
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
                       ) : (
-                        <div 
+                        <div
                           className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
                           onClick={() => fileInputRef.current?.click()}
                         >
                           <Upload className="w-8 h-8 text-muted-foreground mb-2" />
                           <p className="text-sm text-muted-foreground">Click to upload image</p>
-                          <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Max 5MB • JPG, PNG, GIF
+                          </p>
                         </div>
                       )}
                       <input
@@ -454,7 +460,9 @@ export default function GalleryManager() {
                       Cancel
                     </Button>
                     <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
-                      {(isSaving || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                      {(isSaving || isUploading) && (
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      )}
                       {isUploading ? "Uploading..." : editingImage ? "Update" : "Add"}
                     </Button>
                   </div>

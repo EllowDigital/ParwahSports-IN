@@ -2,7 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { Target, Eye, Heart, Award, Shield, Users, Mail, Phone, Linkedin, Twitter, ArrowRight, CheckCircle, Code } from "lucide-react";
+import {
+  Target,
+  Eye,
+  Heart,
+  Award,
+  Shield,
+  Users,
+  Mail,
+  Phone,
+  Linkedin,
+  Twitter,
+  ArrowRight,
+  CheckCircle,
+  Code,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -55,7 +69,8 @@ const milestones = [
   {
     year: "2015",
     title: "Trust Established",
-    description: "Parwah Sports Charitable Trust was registered with a vision to support young athletes.",
+    description:
+      "Parwah Sports Charitable Trust was registered with a vision to support young athletes.",
     icon: "🏛️",
   },
   {
@@ -96,7 +111,9 @@ const About = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("team_members")
-        .select("id,name,role,bio,image_url,public_email,public_phone,linkedin_url,twitter_url,display_order")
+        .select(
+          "id,name,role,bio,image_url,public_email,public_phone,linkedin_url,twitter_url,display_order",
+        )
         .eq("is_active", true)
         .order("display_order", { ascending: true })
         .limit(4);
@@ -111,7 +128,7 @@ const About = () => {
       <section className="py-20 lg:py-28 bg-gradient-to-br from-primary/5 via-background to-secondary/5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-        
+
         <div className="container mx-auto px-4 lg:px-8 relative z-10">
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center">
@@ -148,12 +165,17 @@ const About = () => {
                   </h2>
                   <p className="text-muted-foreground leading-relaxed mb-6">
                     To support young and underprivileged athletes emotionally, financially, and
-                    professionally. We provide world-class training, mentorship, and resources to help
-                    them achieve their full potential and represent India on national and
+                    professionally. We provide world-class training, mentorship, and resources to
+                    help them achieve their full potential and represent India on national and
                     international stages.
                   </p>
                   <ul className="space-y-3">
-                    {["Provide world-class training", "Financial assistance", "Mental wellness support", "Career guidance"].map((item, i) => (
+                    {[
+                      "Provide world-class training",
+                      "Financial assistance",
+                      "Mental wellness support",
+                      "Career guidance",
+                    ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
                         <CheckCircle className="h-5 w-5 text-secondary shrink-0" />
                         {item}
@@ -181,7 +203,12 @@ const About = () => {
                     levels. We envision sports as a powerful tool for social transformation.
                   </p>
                   <ul className="space-y-3">
-                    {["Equal opportunities for all", "Sports as social change", "District to international", "Holistic development"].map((item, i) => (
+                    {[
+                      "Equal opportunities for all",
+                      "Sports as social change",
+                      "District to international",
+                      "Holistic development",
+                    ].map((item, i) => (
                       <li key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
                         <CheckCircle className="h-5 w-5 text-primary shrink-0" />
                         {item}
@@ -212,13 +239,20 @@ const About = () => {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {values.map((value, index) => (
-              <Card key={index} className="group text-center p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-card">
+              <Card
+                key={index}
+                className="group text-center p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-0 bg-card"
+              >
                 <CardContent className="pt-6">
-                  <div className={`w-16 h-16 mx-auto ${value.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}>
+                  <div
+                    className={`w-16 h-16 mx-auto ${value.color} rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-lg`}
+                  >
                     <value.icon className="h-8 w-8 text-primary-foreground" />
                   </div>
                   <h3 className="font-semibold text-xl text-foreground mb-3">{value.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{value.description}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    {value.description}
+                  </p>
                 </CardContent>
               </Card>
             ))}
@@ -239,14 +273,14 @@ const About = () => {
               </h2>
               <p className="text-muted-foreground leading-relaxed mb-6">
                 Founded in 2015 by a group of passionate sports enthusiasts and former athletes,
-                Parwah Sports Charitable Trust began with a simple vision: no talented athlete should be
-                left behind due to lack of resources.
+                Parwah Sports Charitable Trust began with a simple vision: no talented athlete
+                should be left behind due to lack of resources.
               </p>
               <p className="text-muted-foreground leading-relaxed mb-6">
-                What started as a small initiative has now grown into a comprehensive
-                support system reaching over 10 districts across Uttarakhand and neighboring states.
-                We have trained more than 150 athletes, many of whom have gone on to compete at
-                national and international levels.
+                What started as a small initiative has now grown into a comprehensive support system
+                reaching over 10 districts across Uttarakhand and neighboring states. We have
+                trained more than 150 athletes, many of whom have gone on to compete at national and
+                international levels.
               </p>
               <Button asChild className="gap-2">
                 <Link to="/what-we-do">
@@ -307,8 +341,12 @@ const About = () => {
                   </div>
                   <div className="pt-6">
                     <span className="text-sm font-bold text-secondary">{milestone.year}</span>
-                    <h3 className="font-semibold text-lg text-foreground mt-1 mb-2">{milestone.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{milestone.description}</p>
+                    <h3 className="font-semibold text-lg text-foreground mt-1 mb-2">
+                      {milestone.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {milestone.description}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -438,11 +476,11 @@ const About = () => {
               </h2>
               <p className="text-muted-foreground leading-relaxed text-lg max-w-2xl mx-auto">
                 Parwah Sports Charitable Trust is a registered charitable trust operating under the
-                Indian Trusts Act. We maintain complete transparency in our operations, finances, and
-                impact.
+                Indian Trusts Act. We maintain complete transparency in our operations, finances,
+                and impact.
               </p>
             </div>
-            
+
             <div className="grid sm:grid-cols-3 gap-6">
               <div className="bg-card p-6 rounded-2xl shadow-lg text-center border border-border hover:shadow-xl transition-shadow">
                 <div className="w-12 h-12 mx-auto bg-primary/10 rounded-xl flex items-center justify-center mb-4">
@@ -478,8 +516,8 @@ const About = () => {
               Ready to Make a Difference?
             </h2>
             <p className="text-lg opacity-80 mb-8 max-w-2xl mx-auto">
-              Join us in our mission to empower young athletes. Whether through donations, volunteering,
-              or partnerships, every contribution counts.
+              Join us in our mission to empower young athletes. Whether through donations,
+              volunteering, or partnerships, every contribution counts.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button

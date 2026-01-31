@@ -105,7 +105,7 @@ export default function EventsManager() {
   const filteredEvents = events.filter(
     (event) =>
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      event.location?.toLowerCase().includes(searchQuery.toLowerCase())
+      event.location?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   const resetForm = () => {
@@ -282,7 +282,10 @@ export default function EventsManager() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {filteredEvents.map((event) => (
-              <Card key={event.id} className="overflow-hidden group hover:shadow-lg transition-shadow">
+              <Card
+                key={event.id}
+                className="overflow-hidden group hover:shadow-lg transition-shadow"
+              >
                 {/* Event Image */}
                 <div className="relative h-40 bg-muted">
                   {event.image_url ? (
@@ -492,24 +495,19 @@ export default function EventsManager() {
                 <Switch
                   id="is_featured"
                   checked={formData.is_featured}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, is_featured: checked })
-                  }
+                  onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })}
                 />
                 <div>
-                  <Label htmlFor="is_featured" className="cursor-pointer">Featured Event</Label>
+                  <Label htmlFor="is_featured" className="cursor-pointer">
+                    Featured Event
+                  </Label>
                   <p className="text-xs text-muted-foreground">
                     Featured events are highlighted on the homepage
                   </p>
                 </div>
               </div>
               <div className="flex gap-2 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={resetForm}
-                  className="flex-1"
-                >
+                <Button type="button" variant="outline" onClick={resetForm} className="flex-1">
                   Cancel
                 </Button>
                 <Button type="submit" disabled={isSaving || isUploading} className="flex-1">

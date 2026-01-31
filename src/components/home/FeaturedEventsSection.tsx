@@ -35,9 +35,10 @@ export function FeaturedEventsSection() {
     },
   });
 
-  const upcomingEvents = events?.filter(
-    (e) => isFuture(new Date(e.event_date)) || isToday(new Date(e.event_date))
-  ).slice(0, 4) || [];
+  const upcomingEvents =
+    events
+      ?.filter((e) => isFuture(new Date(e.event_date)) || isToday(new Date(e.event_date)))
+      .slice(0, 4) || [];
 
   const getDaysUntil = (dateStr: string) => {
     const days = differenceInDays(new Date(dateStr), new Date());
@@ -99,9 +100,11 @@ export function FeaturedEventsSection() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
           {upcomingEvents.map((event, index) => (
             <ScrollReveal key={event.id} delay={index * 80}>
-              <Card className={`overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full ${
-                index === 0 ? "sm:col-span-2 lg:col-span-2 sm:row-span-2 lg:row-span-1" : ""
-              }`}>
+              <Card
+                className={`overflow-hidden group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 h-full ${
+                  index === 0 ? "sm:col-span-2 lg:col-span-2 sm:row-span-2 lg:row-span-1" : ""
+                }`}
+              >
                 <div className="relative h-full">
                   {event.image_url ? (
                     <img
@@ -112,27 +115,34 @@ export function FeaturedEventsSection() {
                       }`}
                     />
                   ) : (
-                    <div className={`w-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center ${
-                      index === 0 ? "h-52 sm:h-64" : "h-44"
-                    }`}>
+                    <div
+                      className={`w-full bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center ${
+                        index === 0 ? "h-52 sm:h-64" : "h-44"
+                      }`}
+                    >
                       <Calendar className="h-12 w-12 text-primary/30" />
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
-                  
+
                   <div className="absolute top-3 left-3 flex gap-2">
                     <Badge className="bg-primary text-primary-foreground text-xs">
                       {format(new Date(event.event_date), "MMM d")}
                     </Badge>
-                    <Badge variant="secondary" className="bg-secondary/90 text-secondary-foreground text-xs">
+                    <Badge
+                      variant="secondary"
+                      className="bg-secondary/90 text-secondary-foreground text-xs"
+                    >
                       {getDaysUntil(event.event_date)}
                     </Badge>
                   </div>
-                  
+
                   <div className="absolute bottom-3 left-3 right-3">
-                    <h3 className={`font-semibold text-background mb-1 line-clamp-2 ${
-                      index === 0 ? "text-lg sm:text-xl" : "text-base"
-                    }`}>
+                    <h3
+                      className={`font-semibold text-background mb-1 line-clamp-2 ${
+                        index === 0 ? "text-lg sm:text-xl" : "text-base"
+                      }`}
+                    >
                       {event.title}
                     </h3>
                     <div className="flex flex-wrap items-center gap-2 text-background/80 text-xs">

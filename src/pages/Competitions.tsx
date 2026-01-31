@@ -41,13 +41,14 @@ export default function Competitions() {
 
   // Filter competitions
   const filteredCompetitions = competitions?.filter((competition) => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch =
+      !searchQuery ||
       competition.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       competition.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const eventDate = new Date(competition.event_date);
     let matchesStatus = true;
-    
+
     if (statusFilter === "open") {
       matchesStatus = competition.is_participation_open;
     } else if (statusFilter === "upcoming") {
@@ -55,7 +56,7 @@ export default function Competitions() {
     } else if (statusFilter === "past") {
       matchesStatus = isPast(eventDate) && !isToday(eventDate);
     }
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -104,7 +105,7 @@ export default function Competitions() {
               <Filter className="h-4 w-4" />
               <span>Filter Competitions</span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               {/* Search */}
               <div className="relative flex-1 sm:flex-none sm:w-64">
@@ -195,7 +196,11 @@ export default function Competitions() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 lg:px-8">
           {isLoading ? (
-            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
+            <div
+              className={
+                viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"
+              }
+            >
               {[...Array(6)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
                   <Skeleton className="h-48 w-full" />
@@ -210,10 +215,12 @@ export default function Competitions() {
             <>
               <div className="flex items-center justify-between mb-8">
                 <p className="text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredCompetitions.length}</span> competitions
+                  Showing{" "}
+                  <span className="font-medium text-foreground">{filteredCompetitions.length}</span>{" "}
+                  competitions
                 </p>
               </div>
-              
+
               {viewMode === "grid" ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredCompetitions.map((competition) => {
@@ -298,9 +305,7 @@ export default function Competitions() {
                               <Badge className="bg-primary text-primary-foreground">
                                 {format(new Date(competition.event_date), "MMMM d, yyyy")}
                               </Badge>
-                              <Badge variant={status.variant}>
-                                {status.label}
-                              </Badge>
+                              <Badge variant={status.variant}>{status.label}</Badge>
                             </div>
                             <h3 className="text-2xl font-semibold text-foreground group-hover:text-primary transition-colors mb-3">
                               {competition.name}
@@ -323,7 +328,9 @@ export default function Competitions() {
               <Trophy className="h-16 w-16 mx-auto text-muted-foreground/50 mb-4" />
               <h3 className="text-xl font-semibold text-foreground mb-2">No Competitions Found</h3>
               <p className="text-muted-foreground mb-4">
-                {hasFilters ? "Try adjusting your filters" : "Check back soon for upcoming competitions!"}
+                {hasFilters
+                  ? "Try adjusting your filters"
+                  : "Check back soon for upcoming competitions!"}
               </p>
               {hasFilters && (
                 <Button variant="outline" onClick={clearFilters}>
@@ -357,9 +364,7 @@ export default function Competitions() {
                   {format(new Date(selectedCompetition.event_date), "MMMM d, yyyy")}
                 </Badge>
                 {selectedCompetition.is_participation_open && (
-                  <Badge className="bg-accent text-accent-foreground">
-                    Registrations Open
-                  </Badge>
+                  <Badge className="bg-accent text-accent-foreground">Registrations Open</Badge>
                 )}
               </div>
               {selectedCompetition.description && (

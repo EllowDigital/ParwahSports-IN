@@ -17,7 +17,19 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Pencil, Trash2, Loader2, Users, Mail, Phone, Linkedin, Twitter, Upload, X } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Loader2,
+  Users,
+  Mail,
+  Phone,
+  Linkedin,
+  Twitter,
+  Upload,
+  X,
+} from "lucide-react";
 
 interface TeamMember {
   id: string;
@@ -197,13 +209,11 @@ export default function TeamManager() {
 
         if (error) throw error;
 
-        const { error: privateError } = await supabase
-          .from("team_member_private_contacts")
-          .upsert({
-            team_member_id: editingMember.id,
-            email: formData.email || null,
-            phone: formData.phone || null,
-          });
+        const { error: privateError } = await supabase.from("team_member_private_contacts").upsert({
+          team_member_id: editingMember.id,
+          email: formData.email || null,
+          phone: formData.phone || null,
+        });
         if (privateError) throw privateError;
 
         toast({ title: "Success", description: "Team member updated successfully" });

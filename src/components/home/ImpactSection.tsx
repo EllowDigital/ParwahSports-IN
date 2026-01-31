@@ -19,8 +19,10 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setIsVisible(true); },
-      { threshold: 0.3 }
+      ([entry]) => {
+        if (entry.isIntersecting) setIsVisible(true);
+      },
+      { threshold: 0.3 },
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
@@ -48,7 +50,8 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 
   return (
     <span ref={ref} className="tabular-nums">
-      {count}{suffix}
+      {count}
+      {suffix}
     </span>
   );
 }
@@ -75,7 +78,7 @@ export function ImpactSection() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-foreground/40 via-transparent to-transparent" />
               </div>
-              
+
               {/* Floating Badge */}
               <div className="absolute -bottom-4 -right-4 lg:-bottom-6 lg:-right-6 bg-secondary text-secondary-foreground p-4 lg:p-5 rounded-xl lg:rounded-2xl shadow-lg">
                 <div className="text-2xl lg:text-3xl font-bold">9+</div>
@@ -93,13 +96,17 @@ export function ImpactSection() {
               Building Champions Across India
             </h2>
             <p className="text-muted-foreground mb-8 leading-relaxed">
-              Since 2015, we've been nurturing talented athletes from underserved backgrounds. Our impact spans across districts, transforming lives through the power of sports.
+              Since 2015, we've been nurturing talented athletes from underserved backgrounds. Our
+              impact spans across districts, transforming lives through the power of sports.
             </p>
 
             {/* Stats Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 lg:gap-6">
               {stats.map((stat, index) => (
-                <div key={index} className="group p-4 rounded-xl bg-background border border-border hover:border-primary/20 hover:shadow-md transition-all">
+                <div
+                  key={index}
+                  className="group p-4 rounded-xl bg-background border border-border hover:border-primary/20 hover:shadow-md transition-all"
+                >
                   <div className="flex items-center gap-2 mb-2">
                     <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
                       <stat.icon className="h-4 w-4" />

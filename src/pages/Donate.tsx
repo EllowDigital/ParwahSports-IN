@@ -2,7 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Heart, Check, AlertCircle, Loader2, QrCode, Shield, Users, Trophy, Utensils } from "lucide-react";
+import {
+  Heart,
+  Check,
+  AlertCircle,
+  Loader2,
+  QrCode,
+  Shield,
+  Users,
+  Trophy,
+  Utensils,
+} from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -219,7 +229,8 @@ export default function Donate() {
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-2">Thank You!</h2>
               <p className="text-muted-foreground mb-4">
-                Your generosity means the world to us. Every contribution helps a young athlete move closer to their dreams.
+                Your generosity means the world to us. Every contribution helps a young athlete move
+                closer to their dreams.
               </p>
               <div className="bg-muted p-4 rounded-lg mb-6">
                 <p className="text-sm text-muted-foreground">Payment Reference</p>
@@ -250,7 +261,8 @@ export default function Donate() {
               <span className="text-primary">Donate Today</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-              Every contribution, no matter how small, creates ripples of change. Your donation empowers young athletes to pursue their dreams and overcome barriers.
+              Every contribution, no matter how small, creates ripples of change. Your donation
+              empowers young athletes to pursue their dreams and overcome barriers.
             </p>
           </div>
         </div>
@@ -264,12 +276,16 @@ export default function Donate() {
               How Your Donation Helps
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Your generous contribution directly impacts the lives of young athletes. Here's how we use your donations:
+              Your generous contribution directly impacts the lives of young athletes. Here's how we
+              use your donations:
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {impactItems.map((item, index) => (
-              <Card key={index} className="text-center border-border/50 hover:shadow-lg transition-shadow">
+              <Card
+                key={index}
+                className="text-center border-border/50 hover:shadow-lg transition-shadow"
+              >
                 <CardContent className="pt-6">
                   <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <item.icon className="h-7 w-7 text-primary" />
@@ -428,7 +444,8 @@ export default function Donate() {
                       </Button>
 
                       <p className="text-xs text-center text-muted-foreground">
-                        Your payment is processed securely via Razorpay. We do not store your card details.
+                        Your payment is processed securely via Razorpay. We do not store your card
+                        details.
                       </p>
                     </form>
                   </Form>
@@ -445,9 +462,7 @@ export default function Donate() {
                     <QrCode className="h-5 w-5 text-primary" />
                     Scan to Donate via UPI
                   </CardTitle>
-                  <CardDescription>
-                    Quick & secure payment using any UPI app
-                  </CardDescription>
+                  <CardDescription>Quick & secure payment using any UPI app</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col items-center">
@@ -479,7 +494,8 @@ export default function Donate() {
                       <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">100% Donation Utilized</strong> — Every rupee goes directly towards athlete development programs
+                      <strong className="text-foreground">100% Donation Utilized</strong> — Every
+                      rupee goes directly towards athlete development programs
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -487,7 +503,8 @@ export default function Donate() {
                       <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">Tax Benefits</strong> — Donations are eligible for tax deduction under Section 80G
+                      <strong className="text-foreground">Tax Benefits</strong> — Donations are
+                      eligible for tax deduction under Section 80G
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -495,7 +512,8 @@ export default function Donate() {
                       <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">Regular Updates</strong> — Receive updates on how your donation is making an impact
+                      <strong className="text-foreground">Regular Updates</strong> — Receive updates
+                      on how your donation is making an impact
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -503,7 +521,8 @@ export default function Donate() {
                       <Check className="h-4 w-4 text-green-600" />
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      <strong className="text-foreground">Secure Payments</strong> — All transactions are encrypted and processed by Razorpay
+                      <strong className="text-foreground">Secure Payments</strong> — All
+                      transactions are encrypted and processed by Razorpay
                     </p>
                   </div>
                 </CardContent>
@@ -515,9 +534,7 @@ export default function Donate() {
                 <p className="text-lg font-medium mb-2">
                   "Every contribution helps an athlete move closer to their goal"
                 </p>
-                <p className="text-sm opacity-80">
-                  Your support today shapes tomorrow's champions
-                </p>
+                <p className="text-sm opacity-80">Your support today shapes tomorrow's champions</p>
               </div>
             </div>
           </div>

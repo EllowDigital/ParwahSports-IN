@@ -40,11 +40,12 @@ export default function News() {
 
   // Filter news items
   const filteredNews = newsItems?.filter((item) => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch =
+      !searchQuery ||
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesYear = !selectedYear || 
-      new Date(item.publish_date).getFullYear().toString() === selectedYear;
+    const matchesYear =
+      !selectedYear || new Date(item.publish_date).getFullYear().toString() === selectedYear;
     return matchesSearch && matchesYear;
   });
 
@@ -83,7 +84,7 @@ export default function News() {
               <Filter className="h-4 w-4" />
               <span>Filter News</span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               {/* Search */}
               <div className="relative flex-1 sm:flex-none sm:w-64">
@@ -157,7 +158,8 @@ export default function News() {
             <>
               <div className="flex items-center justify-between mb-8">
                 <p className="text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredNews.length}</span> results
+                  Showing <span className="font-medium text-foreground">{filteredNews.length}</span>{" "}
+                  results
                 </p>
               </div>
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -173,14 +175,18 @@ export default function News() {
                         <Calendar className="h-4 w-4" />
                         {format(new Date(item.publish_date), "MMMM d, yyyy")}
                       </div>
-                      <h3 className={`font-semibold text-foreground mb-3 group-hover:text-primary transition-colors ${
-                        index === 0 ? "text-2xl lg:text-3xl" : "text-xl"
-                      }`}>
+                      <h3
+                        className={`font-semibold text-foreground mb-3 group-hover:text-primary transition-colors ${
+                          index === 0 ? "text-2xl lg:text-3xl" : "text-xl"
+                        }`}
+                      >
                         {item.title}
                       </h3>
-                      <p className={`text-muted-foreground leading-relaxed ${
-                        index === 0 ? "line-clamp-4" : "line-clamp-3"
-                      }`}>
+                      <p
+                        className={`text-muted-foreground leading-relaxed ${
+                          index === 0 ? "line-clamp-4" : "line-clamp-3"
+                        }`}
+                      >
                         {item.description || "No description available."}
                       </p>
                       {index === 0 && (

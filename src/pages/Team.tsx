@@ -37,10 +37,29 @@ const Team = () => {
   // Group team members by role category
   const groupMembers = (members: TeamMember[]) => {
     const categories: { title: string; roles: string[]; members: TeamMember[] }[] = [
-      { title: "Executive Committee", roles: ["Chairman", "Vice Chairperson", "Secretary", "Treasurer", "President", "Vice President"], members: [] },
+      {
+        title: "Executive Committee",
+        roles: [
+          "Chairman",
+          "Vice Chairperson",
+          "Secretary",
+          "Treasurer",
+          "President",
+          "Vice President",
+        ],
+        members: [],
+      },
       { title: "Board Members", roles: ["Board Member", "Director", "Advisor"], members: [] },
-      { title: "Coaching & Development", roles: ["Head Coach", "Coach", "Trainer", "Youth Coordinator", "Fitness Trainer"], members: [] },
-      { title: "Medical & Support", roles: ["Sports Physician", "Physiotherapist", "Nutritionist", "Doctor"], members: [] },
+      {
+        title: "Coaching & Development",
+        roles: ["Head Coach", "Coach", "Trainer", "Youth Coordinator", "Fitness Trainer"],
+        members: [],
+      },
+      {
+        title: "Medical & Support",
+        roles: ["Sports Physician", "Physiotherapist", "Nutritionist", "Doctor"],
+        members: [],
+      },
       { title: "Team Members", roles: [], members: [] },
     ];
 

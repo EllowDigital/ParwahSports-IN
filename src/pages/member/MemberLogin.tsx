@@ -123,10 +123,10 @@ export default function MemberLogin() {
         // Create member record
         const { error: memberError } = await client.from("members").upsert(
           {
-          user_id: authData.user.id,
-          full_name: data.full_name,
-          email: data.email,
-          phone: data.phone || null,
+            user_id: authData.user.id,
+            full_name: data.full_name,
+            email: data.email,
+            phone: data.phone || null,
           },
           { onConflict: "user_id", ignoreDuplicates: true },
         );

@@ -53,7 +53,11 @@ export default function NewsManager() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const { data: newsItems, isLoading, refetch } = useQuery({
+  const {
+    data: newsItems,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["admin-news"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -71,8 +75,7 @@ export default function NewsManager() {
     const query = searchQuery.toLowerCase();
     return newsItems.filter(
       (item) =>
-        item.title.toLowerCase().includes(query) ||
-        item.description?.toLowerCase().includes(query)
+        item.title.toLowerCase().includes(query) || item.description?.toLowerCase().includes(query),
     );
   }, [newsItems, searchQuery]);
 
@@ -207,10 +210,7 @@ export default function NewsManager() {
       header: "",
       className: "text-right",
       render: (item: NewsItem) => (
-        <ActionButtons
-          onEdit={() => handleEdit(item)}
-          onDelete={() => setDeleteId(item.id)}
-        />
+        <ActionButtons onEdit={() => handleEdit(item)} onDelete={() => setDeleteId(item.id)} />
       ),
     },
   ];

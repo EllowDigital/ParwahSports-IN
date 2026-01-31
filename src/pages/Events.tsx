@@ -42,16 +42,17 @@ export default function Events() {
 
   // Filter events
   const filteredEvents = events?.filter((event) => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch =
+      !searchQuery ||
       event.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       event.location?.toLowerCase().includes(searchQuery.toLowerCase());
-    
+
     const eventDate = new Date(event.event_date);
-    const matchesStatus = 
+    const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "upcoming" && (isFuture(eventDate) || isToday(eventDate))) ||
       (statusFilter === "past" && isPast(eventDate) && !isToday(eventDate));
-    
+
     return matchesSearch && matchesStatus;
   });
 
@@ -105,7 +106,7 @@ export default function Events() {
               <Filter className="h-4 w-4" />
               <span>Filter Events</span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               {/* Search */}
               <div className="relative flex-1 sm:flex-none sm:w-64">
@@ -184,7 +185,11 @@ export default function Events() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 lg:px-8">
           {isLoading ? (
-            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
+            <div
+              className={
+                viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"
+              }
+            >
               {[...Array(6)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
                   <Skeleton className="h-48 w-full" />
@@ -199,10 +204,12 @@ export default function Events() {
             <>
               <div className="flex items-center justify-between mb-8">
                 <p className="text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredEvents.length}</span> events
+                  Showing{" "}
+                  <span className="font-medium text-foreground">{filteredEvents.length}</span>{" "}
+                  events
                 </p>
               </div>
-              
+
               {viewMode === "grid" ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredEvents.map((event) => {
@@ -229,9 +236,7 @@ export default function Events() {
                             <Badge className="bg-primary text-primary-foreground">
                               {format(new Date(event.event_date), "MMM d")}
                             </Badge>
-                            <Badge variant={status.variant}>
-                              {getDaysUntil(event.event_date)}
-                            </Badge>
+                            <Badge variant={status.variant}>{getDaysUntil(event.event_date)}</Badge>
                           </div>
                           <div className="absolute bottom-4 left-4 right-4">
                             <h3 className="font-semibold text-lg text-background line-clamp-2">
@@ -293,9 +298,7 @@ export default function Events() {
                               <Badge className="bg-primary text-primary-foreground">
                                 {format(new Date(event.event_date), "MMMM d, yyyy")}
                               </Badge>
-                              <Badge variant={status.variant}>
-                                {status.label}
-                              </Badge>
+                              <Badge variant={status.variant}>{status.label}</Badge>
                             </div>
                             <h3 className="text-2xl font-semibold text-foreground group-hover:text-primary transition-colors mb-3">
                               {event.title}

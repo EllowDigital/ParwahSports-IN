@@ -87,14 +87,16 @@ export default function Volunteer() {
 
   const mutation = useMutation({
     mutationFn: async (data: VolunteerFormData) => {
-      const { error } = await supabase.from("volunteers").insert([{
-        full_name: data.full_name,
-        email: data.email,
-        phone: data.phone || null,
-        city: data.city || null,
-        area_of_interest: data.area_of_interest,
-        message: data.message || null,
-      }]);
+      const { error } = await supabase.from("volunteers").insert([
+        {
+          full_name: data.full_name,
+          email: data.email,
+          phone: data.phone || null,
+          city: data.city || null,
+          area_of_interest: data.area_of_interest,
+          message: data.message || null,
+        },
+      ]);
       if (error) throw error;
     },
     onSuccess: (_data, variables) => {

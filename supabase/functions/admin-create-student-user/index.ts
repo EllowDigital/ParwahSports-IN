@@ -80,10 +80,13 @@ serve(async (req) => {
 
     if (createErr || !created.user) {
       console.error("Failed to create auth user:", createErr);
-      return new Response(JSON.stringify({ error: createErr?.message || "Failed to create user" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: createErr?.message || "Failed to create user" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     // Assign student role (service role bypasses RLS)

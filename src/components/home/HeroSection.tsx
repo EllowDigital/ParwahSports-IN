@@ -1,6 +1,14 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Heart, Users, Trophy, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Heart,
+  Users,
+  Trophy,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -45,7 +53,9 @@ export function HeroSection() {
     const onSelect = () => setActiveIndex(api.selectedScrollSnap());
     api.on("select", onSelect);
     onSelect();
-    return () => { api.off("select", onSelect); };
+    return () => {
+      api.off("select", onSelect);
+    };
   }, [api]);
 
   useEffect(() => {
@@ -62,7 +72,11 @@ export function HeroSection() {
     >
       {/* Background Image Carousel */}
       <div className="absolute inset-0">
-        <Carousel setApi={setApi} opts={{ loop: true }} className="h-full w-full [&>div]:h-full [&>div>div]:h-full">
+        <Carousel
+          setApi={setApi}
+          opts={{ loop: true }}
+          className="h-full w-full [&>div]:h-full [&>div>div]:h-full"
+        >
           <CarouselContent className="h-full ml-0">
             {sliderImages.map((src, index) => (
               <CarouselItem key={src} className="h-full pl-0 basis-full">
@@ -80,7 +94,7 @@ export function HeroSection() {
             ))}
           </CarouselContent>
         </Carousel>
-        
+
         {/* Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/75 to-foreground/40" />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/30 via-transparent to-foreground/70" />
@@ -132,7 +146,10 @@ export function HeroSection() {
           </div>
 
           {/* Headline */}
-          <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-[1.1] mb-6 animate-fade-in" style={{ animationDelay: "100ms" }}>
+          <h1
+            className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-background leading-[1.1] mb-6 animate-fade-in"
+            style={{ animationDelay: "100ms" }}
+          >
             Transforming Dreams{" "}
             <span className="relative">
               <span className="text-secondary">Into Champions</span>
@@ -141,12 +158,19 @@ export function HeroSection() {
           </h1>
 
           {/* Subtext */}
-          <p className="text-base sm:text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl animate-fade-in" style={{ animationDelay: "200ms" }}>
-            Supporting young athletes across India with world-class training, resources, and mentorship to help them shine on national and international stages.
+          <p
+            className="text-base sm:text-lg md:text-xl text-background/80 leading-relaxed mb-8 max-w-2xl animate-fade-in"
+            style={{ animationDelay: "200ms" }}
+          >
+            Supporting young athletes across India with world-class training, resources, and
+            mentorship to help them shine on national and international stages.
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10 animate-fade-in" style={{ animationDelay: "300ms" }}>
+          <div
+            className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-10 animate-fade-in"
+            style={{ animationDelay: "300ms" }}
+          >
             <Button
               asChild
               size="lg"

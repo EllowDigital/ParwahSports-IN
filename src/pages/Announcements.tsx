@@ -44,7 +44,9 @@ const priorityConfig = {
 };
 
 export default function Announcements() {
-  const [priorityFilter, setPriorityFilter] = useState<"all" | "urgent" | "important" | "normal">("all");
+  const [priorityFilter, setPriorityFilter] = useState<"all" | "urgent" | "important" | "normal">(
+    "all",
+  );
 
   const { data: announcements, isLoading } = useQuery({
     queryKey: ["public-announcements"],
@@ -102,7 +104,7 @@ export default function Announcements() {
               <Filter className="h-4 w-4" />
               <span>Filter by Priority</span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3">
               {/* Priority Filter */}
               <div className="flex items-center gap-2">
@@ -177,7 +179,11 @@ export default function Announcements() {
             <>
               <div className="flex items-center justify-between mb-8 max-w-4xl mx-auto">
                 <p className="text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredAnnouncements.length}</span> announcements
+                  Showing{" "}
+                  <span className="font-medium text-foreground">
+                    {filteredAnnouncements.length}
+                  </span>{" "}
+                  announcements
                 </p>
               </div>
               <div className="space-y-6 max-w-4xl mx-auto">
@@ -191,13 +197,16 @@ export default function Announcements() {
                     >
                       <CardContent className="p-6">
                         <div className="flex items-start gap-4">
-                          <div className={`w-12 h-12 rounded-xl ${config.bg} flex items-center justify-center shrink-0`}>
+                          <div
+                            className={`w-12 h-12 rounded-xl ${config.bg} flex items-center justify-center shrink-0`}
+                          >
                             <Icon className={`h-6 w-6 ${config.text}`} />
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center gap-2 mb-2">
                               <Badge className={config.badge}>
-                                {announcement.priority.charAt(0).toUpperCase() + announcement.priority.slice(1)}
+                                {announcement.priority.charAt(0).toUpperCase() +
+                                  announcement.priority.slice(1)}
                               </Badge>
                               <span className="text-sm text-muted-foreground flex items-center gap-1">
                                 <Calendar className="h-3 w-3" />
@@ -214,12 +223,14 @@ export default function Announcements() {
                               <div className="mt-4 pt-4 border-t border-border flex flex-wrap gap-4 text-sm text-muted-foreground">
                                 {announcement.start_date && (
                                   <span>
-                                    <strong>From:</strong> {format(new Date(announcement.start_date), "MMM d, yyyy")}
+                                    <strong>From:</strong>{" "}
+                                    {format(new Date(announcement.start_date), "MMM d, yyyy")}
                                   </span>
                                 )}
                                 {announcement.end_date && (
                                   <span>
-                                    <strong>Until:</strong> {format(new Date(announcement.end_date), "MMM d, yyyy")}
+                                    <strong>Until:</strong>{" "}
+                                    {format(new Date(announcement.end_date), "MMM d, yyyy")}
                                   </span>
                                 )}
                               </div>

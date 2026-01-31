@@ -25,23 +25,22 @@ export function AnnouncementsBanner() {
         .order("priority", { ascending: false })
         .order("created_at", { ascending: false })
         .limit(5);
-      
+
       if (error) throw error;
-      
+
       // Filter by date range in JavaScript for more reliable handling
       const filtered = (data || []).filter((announcement) => {
-        const startOk = !announcement.start_date || new Date(announcement.start_date) <= new Date(now);
+        const startOk =
+          !announcement.start_date || new Date(announcement.start_date) <= new Date(now);
         const endOk = !announcement.end_date || new Date(announcement.end_date) >= new Date(now);
         return startOk && endOk;
       });
-      
+
       return filtered.slice(0, 1) as Announcement[];
     },
   });
 
-  const visibleAnnouncements = announcements?.filter(
-    (a) => !dismissed.includes(a.id)
-  );
+  const visibleAnnouncements = announcements?.filter((a) => !dismissed.includes(a.id));
 
   if (!visibleAnnouncements || visibleAnnouncements.length === 0) return null;
 

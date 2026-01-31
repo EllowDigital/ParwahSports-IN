@@ -25,38 +25,38 @@ const statusToVariant: Record<string, StatusVariant> = {
   participated: "success",
   winner: "success",
   runner_up: "success",
-  
+
   // Pending/Warning
   pending: "warning",
   draft: "warning",
   upcoming: "warning",
   registered: "warning",
   paused: "warning",
-  
+
   // Error
   failed: "error",
   cancelled: "error",
   expired: "error",
   inactive: "error",
   disqualified: "error",
-  
+
   // Info
   ongoing: "info",
   important: "info",
-  
+
   // Urgent
   urgent: "error",
 };
 
 export function StatusBadge({ status, variant, className }: StatusBadgeProps) {
   const resolvedVariant = variant || statusToVariant[status.toLowerCase()] || "default";
-  
+
   return (
     <span
       className={cn(
         "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border capitalize",
         variantStyles[resolvedVariant],
-        className
+        className,
       )}
     >
       {status}

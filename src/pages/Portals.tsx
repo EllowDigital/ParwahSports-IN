@@ -18,7 +18,8 @@ export default function Portals() {
               Portals
             </h1>
             <p className="text-lg text-muted-foreground">
-              Choose the right portal to access memberships, certificates, and participation records.
+              Choose the right portal to access memberships, certificates, and participation
+              records.
             </p>
           </div>
         </div>

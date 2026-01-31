@@ -1,14 +1,7 @@
 import { Layout } from "@/components/layout/Layout";
 import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import {
-  Heart,
-  Clock,
-  Handshake,
-  Share2,
-  Users,
-  ArrowRight,
-} from "lucide-react";
+import { Heart, Clock, Handshake, Share2, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import victoryImage from "@/assets/victory-moment.jpg";
@@ -93,8 +86,8 @@ const GetInvolved = () => {
                 Be the Reason Someone <span className="text-secondary">Never Gives Up</span>
               </h1>
               <p className="text-xl text-background/80 leading-relaxed mb-8">
-                Your support can transform the life of a young athlete. Join us in building champions
-                and changing lives through the power of sports.
+                Your support can transform the life of a young athlete. Join us in building
+                champions and changing lives through the power of sports.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Button
@@ -136,7 +129,8 @@ const GetInvolved = () => {
                 Ways to Help
               </h2>
               <p className="text-lg text-muted-foreground">
-                There are many ways you can contribute to our mission. Choose what works best for you.
+                There are many ways you can contribute to our mission. Choose what works best for
+                you.
               </p>
             </div>
           </ScrollReveal>
@@ -147,7 +141,9 @@ const GetInvolved = () => {
                 <Card className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 h-full group">
                   <CardHeader>
                     <div className="flex items-start gap-4">
-                      <div className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${way.color} group-hover:scale-110 transition-transform`}>
+                      <div
+                        className={`w-14 h-14 rounded-xl flex items-center justify-center shrink-0 ${way.color} group-hover:scale-110 transition-transform`}
+                      >
                         <way.icon className="h-7 w-7" />
                       </div>
                       <div>
@@ -168,7 +164,11 @@ const GetInvolved = () => {
                         </li>
                       ))}
                     </ul>
-                    <Button asChild variant="outline" className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                    <Button
+                      asChild
+                      variant="outline"
+                      className="w-full gap-2 group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                    >
                       <Link to={way.link}>
                         {way.cta}
                         <ArrowRight className="h-4 w-4" />

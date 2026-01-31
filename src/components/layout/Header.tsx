@@ -8,18 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const mainNavigation = [
   { name: "Home", href: "/" },
@@ -185,7 +175,11 @@ export function Header() {
             </DropdownMenu>
 
             {/* Donate CTA */}
-            <Button asChild size="sm" className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+            <Button
+              asChild
+              size="sm"
+              className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+            >
               <Link to="/donate">
                 <Heart className="h-4 w-4" />
                 Donate
@@ -195,7 +189,12 @@ export function Header() {
 
           {/* Mobile Menu */}
           <div className="lg:hidden flex items-center gap-2">
-            <Button asChild variant="default" size="sm" className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+            <Button
+              asChild
+              variant="default"
+              size="sm"
+              className="gap-1.5 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+            >
               <Link to="/donate">
                 <Heart className="h-4 w-4" />
                 <span className="hidden sm:inline">Donate</span>
@@ -236,7 +235,9 @@ export function Header() {
                   <Collapsible open={moreOpen} onOpenChange={setMoreOpen}>
                     <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors">
                       <span>More</span>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${moreOpen ? "rotate-90" : ""}`} />
+                      <ChevronRight
+                        className={`h-4 w-4 transition-transform ${moreOpen ? "rotate-90" : ""}`}
+                      />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 space-y-1 mt-1">
                       {moreLinks.map((item) => (
@@ -259,7 +260,9 @@ export function Header() {
                   <Collapsible open={supportOpen} onOpenChange={setSupportOpen}>
                     <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors">
                       <span>Support Us</span>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${supportOpen ? "rotate-90" : ""}`} />
+                      <ChevronRight
+                        className={`h-4 w-4 transition-transform ${supportOpen ? "rotate-90" : ""}`}
+                      />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 space-y-1 mt-1">
                       {supportLinks.map((item) => (
@@ -282,7 +285,9 @@ export function Header() {
                   <Collapsible open={portalsOpen} onOpenChange={setPortalsOpen}>
                     <CollapsibleTrigger className="flex items-center justify-between w-full px-3 py-3 text-sm font-medium rounded-lg hover:bg-accent transition-colors">
                       <span>Portals</span>
-                      <ChevronRight className={`h-4 w-4 transition-transform ${portalsOpen ? "rotate-90" : ""}`} />
+                      <ChevronRight
+                        className={`h-4 w-4 transition-transform ${portalsOpen ? "rotate-90" : ""}`}
+                      />
                     </CollapsibleTrigger>
                     <CollapsibleContent className="pl-4 space-y-1 mt-1">
                       {portalLinks.map((item) => (
@@ -304,7 +309,10 @@ export function Header() {
 
                 {/* Mobile Footer Actions */}
                 <div className="p-4 mt-auto border-t border-border space-y-3">
-                  <Button asChild className="w-full gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90">
+                  <Button
+                    asChild
+                    className="w-full gap-2 bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                  >
                     <Link to="/donate">
                       <Heart className="h-4 w-4" />
                       Donate Now

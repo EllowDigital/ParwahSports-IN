@@ -1,12 +1,17 @@
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, Youtube, Mail, Phone, MapPin, Heart, ExternalLink } from "lucide-react";
+import {
+  Facebook,
+  Instagram,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin,
+  Heart,
+  ExternalLink,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const mainLinks = [
   { name: "About", href: "/about" },
@@ -60,9 +65,7 @@ export function WebsiteCredit() {
     <Tooltip>
       <TooltipTrigger asChild>
         <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
-          Designed & developed with{" "}
-          <Heart className="h-3 w-3 text-red-500 fill-red-500" />{" "}
-          by{" "}
+          Designed & developed with <Heart className="h-3 w-3 text-red-500 fill-red-500" /> by{" "}
           <a
             href="https://ellowdigital.space"
             target="_blank"
@@ -96,16 +99,17 @@ export function Footer() {
               </p>
             </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2">
+              <Button
+                asChild
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 gap-2"
+              >
                 <Link to="/donate">
                   <Heart className="h-4 w-4" />
                   Donate Now
                 </Link>
               </Button>
               <Button asChild variant="outline" className="gap-2">
-                <Link to="/volunteer">
-                  Get Involved
-                </Link>
+                <Link to="/volunteer">Get Involved</Link>
               </Button>
             </div>
           </div>
@@ -133,9 +137,10 @@ export function Footer() {
                 <span className="text-xs text-muted-foreground">Charitable Trust</span>
               </div>
             </Link>
-            
+
             <p className="text-sm text-muted-foreground leading-relaxed mb-5 max-w-xs">
-              Empowering young athletes across India with training, resources, and opportunities since 2015.
+              Empowering young athletes across India with training, resources, and opportunities
+              since 2015.
             </p>
 
             {/* Contact Info */}
@@ -240,7 +245,7 @@ export function Footer() {
             <p className="text-xs text-muted-foreground text-center sm:text-left">
               © {new Date().getFullYear()} Parwah Sports Charitable Trust. All rights reserved.
             </p>
-            
+
             <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
               {policies.map((link) => (
                 <Link

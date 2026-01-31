@@ -7,12 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FileText, ArrowRight, Calendar, User, Filter, Search, X, Grid, List } from "lucide-react";
 import { format } from "date-fns";
 import DOMPurify from "dompurify";
@@ -47,12 +42,13 @@ export default function Blogs() {
 
   // Get unique authors for filter
   const authors = blogs
-    ? [...new Set(blogs.map((blog) => blog.author).filter(Boolean))] as string[]
+    ? ([...new Set(blogs.map((blog) => blog.author).filter(Boolean))] as string[])
     : [];
 
   // Filter blogs
   const filteredBlogs = blogs?.filter((blog) => {
-    const matchesSearch = !searchQuery || 
+    const matchesSearch =
+      !searchQuery ||
       blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       blog.content?.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesAuthor = !selectedAuthor || blog.author === selectedAuthor;
@@ -94,7 +90,7 @@ export default function Blogs() {
               <Filter className="h-4 w-4" />
               <span>Filter Blogs</span>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
               {/* Search */}
               <div className="relative flex-1 sm:flex-none sm:w-64">
@@ -173,7 +169,11 @@ export default function Blogs() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4 lg:px-8">
           {isLoading ? (
-            <div className={viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"}>
+            <div
+              className={
+                viewMode === "grid" ? "grid md:grid-cols-2 lg:grid-cols-3 gap-8" : "space-y-6"
+              }
+            >
               {[...Array(6)].map((_, i) => (
                 <Card key={i} className="overflow-hidden">
                   <Skeleton className="h-48 w-full" />
@@ -188,10 +188,11 @@ export default function Blogs() {
             <>
               <div className="flex items-center justify-between mb-8">
                 <p className="text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredBlogs.length}</span> blogs
+                  Showing{" "}
+                  <span className="font-medium text-foreground">{filteredBlogs.length}</span> blogs
                 </p>
               </div>
-              
+
               {viewMode === "grid" ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {filteredBlogs.map((blog) => (
@@ -237,10 +238,13 @@ export default function Blogs() {
                           {blog.title}
                         </h3>
                         <p className="text-muted-foreground line-clamp-3 text-sm leading-relaxed">
-                          {blog.content?.replace(/<[^>]*>/g, "").substring(0, 150) || "No content available."}...
+                          {blog.content?.replace(/<[^>]*>/g, "").substring(0, 150) ||
+                            "No content available."}
+                          ...
                         </p>
                         <div className="mt-4 flex items-center gap-2 text-sm font-medium text-primary">
-                          Read More <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                          Read More{" "}
+                          <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </div>
                       </CardContent>
                     </Card>
@@ -285,10 +289,13 @@ export default function Blogs() {
                             {blog.title}
                           </h3>
                           <p className="text-muted-foreground line-clamp-2 leading-relaxed mb-4">
-                            {blog.content?.replace(/<[^>]*>/g, "").substring(0, 250) || "No content available."}...
+                            {blog.content?.replace(/<[^>]*>/g, "").substring(0, 250) ||
+                              "No content available."}
+                            ...
                           </p>
                           <Button variant="link" className="px-0 gap-1 text-primary">
-                            Read More <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                            Read More{" "}
+                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
                           </Button>
                         </CardContent>
                       </div>

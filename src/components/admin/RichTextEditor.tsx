@@ -25,11 +25,7 @@ import {
   Code,
   Minus,
 } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 interface RichTextEditorProps {
   content: string;
@@ -68,8 +64,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     },
     editorProps: {
       attributes: {
-        class:
-          "prose prose-sm max-w-none min-h-[200px] p-4 focus:outline-none dark:prose-invert",
+        class: "prose prose-sm max-w-none min-h-[200px] p-4 focus:outline-none dark:prose-invert",
       },
     },
   });
@@ -97,7 +92,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-      
+
       const { error: uploadError } = await supabase.storage
         .from("blog-images")
         .upload(fileName, file);
@@ -105,7 +100,7 @@ export function RichTextEditor({ content, onChange, placeholder }: RichTextEdito
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from("blog-images").getPublicUrl(fileName);
-      
+
       editor.chain().focus().setImage({ src: data.publicUrl }).run();
       toast({ title: "Image uploaded successfully" });
     } catch (error) {

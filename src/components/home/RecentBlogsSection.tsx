@@ -5,12 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { FileText, ArrowRight, Calendar, User } from "lucide-react";
 import { format } from "date-fns";
 import { Link } from "react-router-dom";
@@ -131,7 +126,9 @@ export function RecentBlogsSection() {
                     {blog.title}
                   </h3>
                   <p className="text-sm text-muted-foreground line-clamp-2">
-                    {blog.content?.replace(/<[^>]*>/g, "").substring(0, 100) || "No content available."}...
+                    {blog.content?.replace(/<[^>]*>/g, "").substring(0, 100) ||
+                      "No content available."}
+                    ...
                   </p>
                   <div className="mt-3 flex items-center gap-1 text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
                     Read More <ArrowRight className="h-4 w-4" />

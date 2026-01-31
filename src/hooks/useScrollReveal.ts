@@ -7,7 +7,7 @@ interface UseScrollRevealOptions {
 }
 
 export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
-  options: UseScrollRevealOptions = {}
+  options: UseScrollRevealOptions = {},
 ) {
   const { threshold = 0.1, rootMargin = "0px 0px -50px 0px", once = true } = options;
   const ref = useRef<T>(null);
@@ -28,7 +28,7 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
           setIsVisible(false);
         }
       },
-      { threshold, rootMargin }
+      { threshold, rootMargin },
     );
 
     observer.observe(element);
@@ -42,7 +42,7 @@ export function useScrollReveal<T extends HTMLElement = HTMLDivElement>(
 // Stagger children animation hook
 export function useStaggerReveal(itemCount: number, baseDelay = 100) {
   const { ref, isVisible } = useScrollReveal();
-  
+
   const getItemDelay = (index: number) => ({
     transitionDelay: isVisible ? `${index * baseDelay}ms` : "0ms",
   });

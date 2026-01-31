@@ -487,13 +487,17 @@ export default function StudentsManager() {
         </div>
       </div>
 
-      <AlertDialog open={!!linkingStudent} onOpenChange={(open) => !open && setLinkingStudent(null)}>
+      <AlertDialog
+        open={!!linkingStudent}
+        onOpenChange={(open) => !open && setLinkingStudent(null)}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Activate + Link Account</AlertDialogTitle>
             <AlertDialogDescription>
-              This will create a login for <span className="font-medium">{linkingStudent?.email}</span> and
-              activate their profile.
+              This will create a login for{" "}
+              <span className="font-medium">{linkingStudent?.email}</span> and activate their
+              profile.
               <br />
               Set a temporary password and share it securely.
             </AlertDialogDescription>

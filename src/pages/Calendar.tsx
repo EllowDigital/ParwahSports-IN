@@ -37,16 +37,17 @@ const Calendar = () => {
     },
   });
 
-  const filteredEvents = events?.filter((event) => {
-    const eventDate = new Date(event.event_date);
-    if (selectedType === "Upcoming") {
-      return isFuture(eventDate) || isToday(eventDate);
-    }
-    if (selectedType === "Past") {
-      return isPast(eventDate) && !isToday(eventDate);
-    }
-    return true;
-  }) || [];
+  const filteredEvents =
+    events?.filter((event) => {
+      const eventDate = new Date(event.event_date);
+      if (selectedType === "Upcoming") {
+        return isFuture(eventDate) || isToday(eventDate);
+      }
+      if (selectedType === "Past") {
+        return isPast(eventDate) && !isToday(eventDate);
+      }
+      return true;
+    }) || [];
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -137,8 +138,8 @@ const Calendar = () => {
                   {selectedType === "Upcoming"
                     ? "Stay tuned for upcoming events!"
                     : selectedType === "Past"
-                    ? "No past events to show."
-                    : "No events available yet."}
+                      ? "No past events to show."
+                      : "No events available yet."}
                 </p>
               </div>
             ) : (

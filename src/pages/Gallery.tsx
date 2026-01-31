@@ -3,7 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
 import { ScrollReveal, StaggerReveal } from "@/components/ui/scroll-reveal";
-import { X, Image as ImageIcon, Search, Grid3X3, LayoutList, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  X,
+  Image as ImageIcon,
+  Search,
+  Grid3X3,
+  LayoutList,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -39,28 +47,31 @@ const Gallery = () => {
 
   // Get unique categories from database
   const categories = useMemo(() => {
-    const cats = ["All", ...new Set(images?.map((img) => img.category).filter(Boolean) as string[])];
+    const cats = [
+      "All",
+      ...new Set(images?.map((img) => img.category).filter(Boolean) as string[]),
+    ];
     return cats;
   }, [images]);
 
   // Filter images
   const filteredImages = useMemo(() => {
     let result = images || [];
-    
+
     if (selectedCategory !== "All") {
       result = result.filter((img) => img.category === selectedCategory);
     }
-    
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (img) =>
           img.title.toLowerCase().includes(query) ||
           img.description?.toLowerCase().includes(query) ||
-          img.category?.toLowerCase().includes(query)
+          img.category?.toLowerCase().includes(query),
       );
     }
-    
+
     return result;
   }, [images, selectedCategory, searchQuery]);
 
@@ -72,9 +83,10 @@ const Gallery = () => {
 
   const navigateLightbox = (direction: "prev" | "next") => {
     if (!filteredImages) return;
-    const newIndex = direction === "next" 
-      ? (lightboxIndex + 1) % filteredImages.length
-      : (lightboxIndex - 1 + filteredImages.length) % filteredImages.length;
+    const newIndex =
+      direction === "next"
+        ? (lightboxIndex + 1) % filteredImages.length
+        : (lightboxIndex - 1 + filteredImages.length) % filteredImages.length;
     setLightboxIndex(newIndex);
     setLightboxImage(filteredImages[newIndex]);
   };
@@ -157,9 +169,15 @@ const Gallery = () => {
               {/* Results Count */}
               <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
                 <p className="text-sm text-muted-foreground">
-                  Showing <span className="font-medium text-foreground">{filteredImages?.length || 0}</span> images
+                  Showing{" "}
+                  <span className="font-medium text-foreground">{filteredImages?.length || 0}</span>{" "}
+                  images
                   {(selectedCategory !== "All" || searchQuery) && (
-                    <Button variant="link" className="text-primary p-0 ml-2 h-auto" onClick={clearFilters}>
+                    <Button
+                      variant="link"
+                      className="text-primary p-0 ml-2 h-auto"
+                      onClick={clearFilters}
+                    >
                       Clear filters
                     </Button>
                   )}
@@ -174,7 +192,9 @@ const Gallery = () => {
       <section className="py-12 lg:py-16">
         <div className="container mx-auto px-4 lg:px-8">
           {isLoading ? (
-            <div className={`grid gap-4 ${viewMode === "grid" ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "columns-2 md:columns-3 lg:columns-4"}`}>
+            <div
+              className={`grid gap-4 ${viewMode === "grid" ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4" : "columns-2 md:columns-3 lg:columns-4"}`}
+            >
               {[...Array(8)].map((_, i) => (
                 <Skeleton key={i} className="aspect-square rounded-xl" />
               ))}
@@ -187,8 +207,8 @@ const Gallery = () => {
                   {images?.length === 0 ? "Gallery Coming Soon" : "No Images Found"}
                 </h3>
                 <p className="text-muted-foreground mb-4">
-                  {images?.length === 0 
-                    ? "Check back soon for photos from our events!" 
+                  {images?.length === 0
+                    ? "Check back soon for photos from our events!"
                     : "Try adjusting your search or filter criteria"}
                 </p>
                 {(selectedCategory !== "All" || searchQuery) && (
@@ -207,7 +227,11 @@ const Gallery = () => {
               }
             >
               {filteredImages?.map((image, index) => (
-                <ScrollReveal key={image.id} delay={index * 50} className={viewMode === "masonry" ? "break-inside-avoid" : ""}>
+                <ScrollReveal
+                  key={image.id}
+                  delay={index * 50}
+                  className={viewMode === "masonry" ? "break-inside-avoid" : ""}
+                >
                   <div
                     onClick={() => openLightbox(image, index)}
                     className="relative overflow-hidden rounded-xl cursor-pointer group"
@@ -288,7 +312,9 @@ const Gallery = () => {
             <div className="text-center mt-4">
               <h3 className="text-background text-xl font-semibold">{lightboxImage.title}</h3>
               {lightboxImage.description && (
-                <p className="text-background/70 mt-2 max-w-2xl mx-auto">{lightboxImage.description}</p>
+                <p className="text-background/70 mt-2 max-w-2xl mx-auto">
+                  {lightboxImage.description}
+                </p>
               )}
               {lightboxImage.category && (
                 <Badge variant="secondary" className="mt-3">

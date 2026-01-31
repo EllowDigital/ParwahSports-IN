@@ -29,11 +29,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth";
 import { useState } from "react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const navigationSections = [
   {
@@ -87,12 +83,12 @@ export function AdminSidebar() {
   const { signOut, user } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openSections, setOpenSections] = useState<string[]>(
-    navigationSections.map((s) => s.title)
+    navigationSections.map((s) => s.title),
   );
 
   const toggleSection = (title: string) => {
     setOpenSections((prev) =>
-      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title]
+      prev.includes(title) ? prev.filter((t) => t !== title) : [...prev, title],
     );
   };
 
@@ -123,7 +119,7 @@ export function AdminSidebar() {
                 <ChevronDown
                   className={cn(
                     "w-3 h-3 transition-transform duration-200",
-                    openSections.includes(section.title) && "rotate-180"
+                    openSections.includes(section.title) && "rotate-180",
                   )}
                 />
               </CollapsibleTrigger>
@@ -143,7 +139,7 @@ export function AdminSidebar() {
                         "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
                         isActive
                           ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                       )}
                     >
                       <item.icon className="w-4 h-4 shrink-0" />
@@ -215,7 +211,7 @@ export function AdminSidebar() {
       <aside
         className={cn(
           "lg:hidden fixed top-14 left-0 bottom-0 z-50 w-72 bg-card border-r border-border/50 flex flex-col transition-transform duration-300 ease-out",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         <SidebarContent />
