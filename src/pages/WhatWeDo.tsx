@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import {
   Wallet,
@@ -144,6 +145,12 @@ const programs = [
 const WhatWeDo = () => {
   return (
     <Layout>
+      <SEOHead
+        title="What We Do - Sports Programs & Training | Parwah Sports"
+        description="Explore Parwah Sports programs: professional sports training, youth development, coaching academies, fitness programs, athletic mentorship, and community sports initiatives across India."
+        path="/what-we-do"
+        keywords="sports programs India, youth sports development, athletic training, coaching academy, fitness programs, community sports"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">

@@ -14,6 +14,7 @@ import {
   Utensils,
 } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -248,6 +249,12 @@ export default function Donate() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Donate to Sports - Support Athletes | Parwah Sports"
+        description="Support underprivileged athletes in India. Your donation funds sports training, equipment, coaching, and scholarships for aspiring young athletes. 80G tax exemption available."
+        path="/donate"
+        keywords="donate to sports, sports charity India, support athletes, 80G donation, sports trust donation, Parwah Sports donate"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-primary/5">
         <div className="container mx-auto px-4 lg:px-8">

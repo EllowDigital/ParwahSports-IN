@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Crown, Check, Loader2, ArrowRight } from "lucide-react";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -99,6 +100,12 @@ export default function Membership() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Membership Plans - Join Parwah Sports"
+        description="Join Parwah Sports Charitable Trust as a member. Access exclusive sports training, events, coaching, and community benefits. Choose monthly, yearly or lifetime membership."
+        path="/membership"
+        keywords="sports membership India, join sports academy, membership plans, Parwah Sports membership"
+      />
       <div className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           {/* Header */}

@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Mail, Linkedin, Phone, Twitter, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -84,6 +85,12 @@ const Team = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="Our Team - Coaches & Staff | Parwah Sports"
+        description="Meet the dedicated team of coaches, trainers, and professionals behind Parwah Sports Charitable Trust. Expert sports coaching and mentorship in India."
+        path="/team"
+        keywords="sports coaches India, athletic trainers, Parwah Sports team, sports mentors, coaching staff"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -79,6 +80,12 @@ export default function Competitions() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Sports Competitions & Tournaments - Parwah Sports"
+        description="Participate in sports competitions, athletic tournaments, and championship events organized by Parwah Sports. Open registrations for cricket, football, athletics and more."
+        path="/competitions"
+        keywords="sports competitions India, athletic tournaments, cricket tournament, football competition, youth championship, Parwah Sports competitions"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="container mx-auto px-4 lg:px-8">
