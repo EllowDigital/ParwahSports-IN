@@ -1,4 +1,5 @@
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { MapPin, Phone, Mail, Clock, Send, Code } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,12 +12,14 @@ const Contact = () => {
   const phoneHref = "+919557960056";
   const email = "ParwahSports@gmail.com";
 
-  useEffect(() => {
-    document.title = "Contact | Parwah Sports";
-  }, []);
-
   return (
     <Layout>
+      <SEOHead
+        title="Contact Us - Parwah Sports Charitable Trust"
+        description="Get in touch with Parwah Sports Charitable Trust in Saharanpur, UP. Contact us for sports training, events, donations, volunteering and membership queries."
+        path="/contact"
+        keywords="contact Parwah Sports, sports academy contact, Saharanpur sports, sports trust contact"
+      />
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto text-center mb-12">

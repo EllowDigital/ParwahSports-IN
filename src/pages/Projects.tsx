@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Calendar, MapPin, Users, Trophy, ArrowRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -42,6 +43,12 @@ const Projects = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="Sports Projects & Initiatives - Parwah Sports"
+        description="Discover sports development projects and community initiatives by Parwah Sports. From grassroots sports to professional athletic programs across India."
+        path="/projects"
+        keywords="sports projects India, community sports initiatives, athletic programs, grassroots sports, Parwah Sports projects"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">

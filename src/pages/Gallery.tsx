@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { ScrollReveal, StaggerReveal } from "@/components/ui/scroll-reveal";
 import {
   X,
@@ -98,6 +99,12 @@ const Gallery = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="Sports Gallery - Photos & Moments | Parwah Sports"
+        description="Explore our gallery of sports events, training sessions, tournaments, and community moments captured by Parwah Sports Charitable Trust."
+        path="/gallery"
+        keywords="sports gallery, sports photos, training pictures, tournament images, Parwah Sports gallery"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-muted/30">
         <div className="container mx-auto px-4 lg:px-8">

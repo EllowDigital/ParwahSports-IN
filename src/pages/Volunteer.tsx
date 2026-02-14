@@ -5,6 +5,7 @@ import { z } from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -152,6 +153,12 @@ export default function Volunteer() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Volunteer With Us - Join Parwah Sports"
+        description="Volunteer with Parwah Sports Charitable Trust. Help empower athletes, coach youth sports, organize events, and make a difference in sports development across India."
+        path="/volunteer"
+        keywords="sports volunteer India, volunteer opportunities, sports NGO volunteer, youth coaching volunteer, Parwah Sports volunteer"
+      />
       {/* Hero Section */}
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 z-0">

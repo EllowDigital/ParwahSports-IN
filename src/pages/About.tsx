@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import {
   Target,
@@ -124,6 +125,12 @@ const About = () => {
 
   return (
     <Layout>
+      <SEOHead
+        title="About Us - Parwah Sports Charitable Trust"
+        description="Learn about Parwah Sports Charitable Trust's mission to empower athletes across India. Meet our team, explore our vision, and discover our impact in sports development."
+        path="/about"
+        keywords="about Parwah Sports, sports NGO India, sports charitable trust, athlete empowerment, sports mission India"
+      />
       {/* Hero Section */}
       <section className="py-20 lg:py-28 bg-gradient-to-br from-primary/5 via-background to-secondary/5 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />

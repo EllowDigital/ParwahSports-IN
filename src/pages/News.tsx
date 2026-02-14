@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -58,6 +59,12 @@ export default function News() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Latest Sports News & Updates - Parwah Sports"
+        description="Stay updated with the latest sports news, tournament results, athlete achievements, and community updates from Parwah Sports Charitable Trust."
+        path="/news"
+        keywords="sports news India, athlete achievements, tournament results, sports updates, Parwah Sports news"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="container mx-auto px-4 lg:px-8">

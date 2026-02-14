@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -64,6 +65,12 @@ export default function Blogs() {
 
   return (
     <Layout>
+      <SEOHead
+        title="Sports Blog - Training Tips & News | Parwah Sports"
+        description="Read expert sports articles, training tips, coaching insights, and athletic news from Parwah Sports. Stay updated with latest sports trends and stories from India."
+        path="/blogs"
+        keywords="sports blog, training tips, athletic coaching articles, sports news India, fitness blog, Parwah Sports blog"
+      />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5">
         <div className="container mx-auto px-4 lg:px-8">
