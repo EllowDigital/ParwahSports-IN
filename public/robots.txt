@@ -9,6 +9,7 @@ Disallow: /member/
 Disallow: /student/
 
 # Sitemaps
+Sitemap: https://parwahsports.netlify.app/sitemap-index.xml
 Sitemap: https://parwahsports.com/sitemap-index.xml
 
 # Crawl-delay (optional, for less aggressive bots)

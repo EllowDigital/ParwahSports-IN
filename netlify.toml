@@ -2,12 +2,12 @@
   command = "npm run build"
   publish = "dist"
 
-# 301 redirect Netlify subdomain to canonical domain
-[[redirects]]
-  from = "https://parwahsports.netlify.app/*"
-  to = "https://parwahsports.com/:splat"
-  status = 301
-  force = true
+# 301 redirect Netlify subdomain to canonical domain (commented out for now)
+# [[redirects]]
+#   from = "https://parwahsports.netlify.app/*"
+#   to = "https://parwahsports.com/:splat"
+#   status = 301
+#   force = true
 
 # SPA fallback
 [[redirects]]

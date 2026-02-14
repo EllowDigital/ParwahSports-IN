@@ -1,5 +1,6 @@
 # 301 redirect Netlify subdomain to canonical domain
-https://parwahsports.netlify.app/* https://parwahsports.com/:splat 301!
+# i will redirect my website to.com in future for now i dont want it to redirect
+# https://parwahsports.netlify.app/* https://parwahsports.com/:splat 301!
 
 # SPA fallback
 /* /index.html 200
