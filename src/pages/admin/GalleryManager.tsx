@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState, useRef } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PageHeader } from "@/components/admin/PageHeader";
+import { ConfirmDialog } from "@/components/admin/ConfirmDialog";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,8 +21,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Pencil, Trash2, Loader2, Image as ImageIcon, Upload, X } from "lucide-react";
@@ -46,11 +48,12 @@ export default function GalleryManager() {
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState<GalleryImage | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const multiFileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  // Form state
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -60,7 +63,6 @@ export default function GalleryManager() {
     display_order: 0,
   });
 
-  // Preview state for uploaded file
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
@@ -70,7 +72,6 @@ export default function GalleryManager() {
         .from("gallery_images")
         .select("*")
         .order("display_order", { ascending: true });
-
       if (error) throw error;
       setImages(data || []);
     } catch (error) {
@@ -85,15 +86,14 @@ export default function GalleryManager() {
     void fetchImages();
   }, [fetchImages]);
 
+  const filteredImages = images.filter(
+    (img) =>
+      img.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (img.category || "").toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
   const resetForm = () => {
-    setFormData({
-      title: "",
-      description: "",
-      image_url: "",
-      category: "general",
-      is_featured: false,
-      display_order: 0,
-    });
+    setFormData({ title: "", description: "", image_url: "", category: "general", is_featured: false, display_order: 0 });
     setEditingImage(null);
     setPreviewUrl(null);
     setSelectedFile(null);
@@ -116,23 +116,16 @@ export default function GalleryManager() {
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-
-    // Validate file type
     if (!file.type.startsWith("image/")) {
       toast({ title: "Error", description: "Please select an image file", variant: "destructive" });
       return;
     }
-
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast({ title: "Error", description: "Image must be less than 5MB", variant: "destructive" });
       return;
     }
-
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
-
-    // Auto-fill title from filename if empty
     if (!formData.title) {
       const nameWithoutExt = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
       setFormData((prev) => ({ ...prev, title: nameWithoutExt }));
@@ -143,16 +136,8 @@ export default function GalleryManager() {
     const fileExt = file.name.split(".").pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = `gallery/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("gallery-images")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
-
+    const { error: uploadError } = await supabase.storage.from("gallery-images").upload(filePath, file, { cacheControl: "3600", upsert: false });
     if (uploadError) throw uploadError;
-
     const { data } = supabase.storage.from("gallery-images").getPublicUrl(filePath);
     return data.publicUrl;
   };
@@ -160,34 +145,23 @@ export default function GalleryManager() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-
     try {
       let imageUrl = formData.image_url;
-
-      // Upload new file if selected
       if (selectedFile) {
         setIsUploading(true);
         imageUrl = await uploadToStorage(selectedFile);
         setIsUploading(false);
       }
-
       const dataToSave = { ...formData, image_url: imageUrl };
-
       if (editingImage) {
-        const { error } = await supabase
-          .from("gallery_images")
-          .update(dataToSave)
-          .eq("id", editingImage.id);
-
+        const { error } = await supabase.from("gallery_images").update(dataToSave).eq("id", editingImage.id);
         if (error) throw error;
         toast({ title: "Success", description: "Image updated successfully" });
       } else {
         const { error } = await supabase.from("gallery_images").insert([dataToSave]);
-
         if (error) throw error;
         toast({ title: "Success", description: "Image added successfully" });
       }
-
       setIsDialogOpen(false);
       resetForm();
       fetchImages();
@@ -203,24 +177,15 @@ export default function GalleryManager() {
   const handleMultipleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
-
-    const validFiles = Array.from(files).filter((file) => {
-      if (!file.type.startsWith("image/")) return false;
-      if (file.size > 5 * 1024 * 1024) return false;
-      return true;
-    });
-
+    const validFiles = Array.from(files).filter((file) => file.type.startsWith("image/") && file.size <= 5 * 1024 * 1024);
     if (validFiles.length === 0) {
       toast({ title: "Error", description: "No valid images selected", variant: "destructive" });
       return;
     }
-
     setIsUploading(true);
     setUploadProgress(0);
-
     try {
       const uploaded: { title: string; image_url: string; category: string }[] = [];
-
       for (let i = 0; i < validFiles.length; i++) {
         const file = validFiles[i];
         const imageUrl = await uploadToStorage(file);
@@ -228,298 +193,81 @@ export default function GalleryManager() {
         uploaded.push({ title, image_url: imageUrl, category: "general" });
         setUploadProgress(Math.round(((i + 1) / validFiles.length) * 100));
       }
-
-      // Insert all images
       const { error } = await supabase.from("gallery_images").insert(uploaded);
       if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: `${uploaded.length} images uploaded successfully`,
-      });
+      toast({ title: "Success", description: `${uploaded.length} images uploaded successfully` });
       fetchImages();
     } catch (error) {
       console.error("Error uploading images:", error);
-      toast({
-        title: "Error",
-        description: "Failed to upload some images",
-        variant: "destructive",
-      });
+      toast({ title: "Error", description: "Failed to upload some images", variant: "destructive" });
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
-      if (multiFileInputRef.current) {
-        multiFileInputRef.current.value = "";
-      }
+      if (multiFileInputRef.current) multiFileInputRef.current.value = "";
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this image?")) return;
-
+  const handleDelete = async () => {
+    if (!deleteTarget) return;
     try {
-      const { error } = await supabase.from("gallery_images").delete().eq("id", id);
-
+      const { error } = await supabase.from("gallery_images").delete().eq("id", deleteTarget.id);
       if (error) throw error;
       toast({ title: "Success", description: "Image deleted successfully" });
       fetchImages();
     } catch (error) {
       console.error("Error deleting image:", error);
       toast({ title: "Error", description: "Failed to delete image", variant: "destructive" });
+    } finally {
+      setDeleteTarget(null);
     }
   };
 
   return (
     <AdminLayout>
       <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-foreground">Gallery Manager</h1>
-            <p className="text-muted-foreground mt-1">Manage your gallery images</p>
-          </div>
-          <div className="flex gap-2">
-            {/* Bulk Upload */}
-            <input
-              ref={multiFileInputRef}
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleMultipleUpload}
-              className="hidden"
-            />
-            <Button
-              variant="outline"
-              onClick={() => multiFileInputRef.current?.click()}
-              disabled={isUploading}
-            >
-              {isUploading ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {uploadProgress}%
-                </>
-              ) : (
-                <>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Bulk Upload
-                </>
-              )}
+        <input ref={multiFileInputRef} type="file" accept="image/*" multiple onChange={handleMultipleUpload} className="hidden" />
+
+        <PageHeader
+          title="Gallery Manager"
+          description={`${images.length} images total`}
+          searchPlaceholder="Search images..."
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          onAdd={() => { resetForm(); setIsDialogOpen(true); }}
+          addLabel="Add Image"
+          onRefresh={() => { setIsLoading(true); fetchImages(); }}
+          isRefreshing={isLoading}
+          actions={
+            <Button variant="outline" size="sm" onClick={() => multiFileInputRef.current?.click()} disabled={isUploading}>
+              {isUploading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{uploadProgress}%</> : <><Upload className="w-4 h-4 mr-2" />Bulk Upload</>}
             </Button>
+          }
+        />
 
-            {/* Single Add */}
-            <Dialog
-              open={isDialogOpen}
-              onOpenChange={(open) => {
-                setIsDialogOpen(open);
-                if (!open) resetForm();
-              }}
-            >
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Image
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-lg">
-                <DialogHeader>
-                  <DialogTitle>{editingImage ? "Edit Image" : "Add New Image"}</DialogTitle>
-                  <DialogDescription>
-                    {editingImage
-                      ? "Update the image details below"
-                      : "Upload an image or enter a URL"}
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  {/* Image Upload/Preview */}
-                  <div className="space-y-2">
-                    <Label>Image</Label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-4">
-                      {previewUrl ? (
-                        <div className="relative">
-                          <img
-                            src={previewUrl}
-                            alt="Preview"
-                            className="w-full h-48 object-cover rounded-lg"
-                          />
-                          <Button
-                            type="button"
-                            size="sm"
-                            variant="destructive"
-                            className="absolute top-2 right-2"
-                            onClick={() => {
-                              setPreviewUrl(null);
-                              setSelectedFile(null);
-                              setFormData((prev) => ({ ...prev, image_url: "" }));
-                            }}
-                          >
-                            <X className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <div
-                          className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors"
-                          onClick={() => fileInputRef.current?.click()}
-                        >
-                          <Upload className="w-8 h-8 text-muted-foreground mb-2" />
-                          <p className="text-sm text-muted-foreground">Click to upload image</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            Max 5MB • JPG, PNG, GIF
-                          </p>
-                        </div>
-                      )}
-                      <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileSelect}
-                        className="hidden"
-                      />
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">or</span>
-                      <Input
-                        placeholder="Enter image URL"
-                        value={selectedFile ? "" : formData.image_url}
-                        onChange={(e) => {
-                          setFormData({ ...formData, image_url: e.target.value });
-                          setPreviewUrl(e.target.value);
-                          setSelectedFile(null);
-                        }}
-                        disabled={!!selectedFile}
-                        className="flex-1"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Title *</Label>
-                    <Input
-                      id="title"
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="description">Description</Label>
-                    <Textarea
-                      id="description"
-                      value={formData.description}
-                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      rows={3}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="category">Category</Label>
-                      <Select
-                        value={formData.category}
-                        onValueChange={(value) => setFormData({ ...formData, category: value })}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {categories.map((cat) => (
-                            <SelectItem key={cat} value={cat}>
-                              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="display_order">Display Order</Label>
-                      <Input
-                        id="display_order"
-                        type="number"
-                        value={formData.display_order}
-                        onChange={(e) =>
-                          setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      id="is_featured"
-                      checked={formData.is_featured}
-                      onCheckedChange={(checked) =>
-                        setFormData({ ...formData, is_featured: checked })
-                      }
-                    />
-                    <Label htmlFor="is_featured">Featured Image</Label>
-                  </div>
-                  <div className="flex gap-2 pt-4">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => setIsDialogOpen(false)}
-                      className="flex-1"
-                    >
-                      Cancel
-                    </Button>
-                    <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
-                      {(isSaving || isUploading) && (
-                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      )}
-                      {isUploading ? "Uploading..." : editingImage ? "Update" : "Add"}
-                    </Button>
-                  </div>
-                </form>
-              </DialogContent>
-            </Dialog>
-          </div>
-        </div>
-
-        {/* Images Grid */}
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <Card key={i}><Skeleton className="aspect-video" /><CardHeader className="p-3"><Skeleton className="h-4 w-3/4" /></CardHeader></Card>
+            ))}
           </div>
-        ) : images.length === 0 ? (
+        ) : filteredImages.length === 0 ? (
           <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12">
+            <div className="flex flex-col items-center justify-center py-12">
               <ImageIcon className="w-12 h-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-1">No images yet</h3>
-              <p className="text-muted-foreground text-sm mb-4">Add your first gallery image</p>
-              <div className="flex gap-2">
-                <Button variant="outline" onClick={() => multiFileInputRef.current?.click()}>
-                  <Upload className="w-4 h-4 mr-2" />
-                  Bulk Upload
-                </Button>
-                <Button onClick={() => setIsDialogOpen(true)}>
-                  <Plus className="w-4 h-4 mr-2" />
-                  Add Image
-                </Button>
-              </div>
-            </CardContent>
+              <h3 className="text-lg font-medium text-foreground mb-1">{searchTerm ? "No matching images" : "No images yet"}</h3>
+              <p className="text-muted-foreground text-sm mb-4">{searchTerm ? "Try a different search" : "Add your first gallery image"}</p>
+            </div>
           </Card>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {images.map((image) => (
+            {filteredImages.map((image) => (
               <Card key={image.id} className="overflow-hidden group">
                 <div className="aspect-video relative bg-muted">
-                  <img
-                    src={image.image_url}
-                    alt={image.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/placeholder.svg";
-                    }}
-                  />
-                  {image.is_featured && (
-                    <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
-                      Featured
-                    </span>
-                  )}
+                  <img src={image.image_url} alt={image.title} className="w-full h-full object-cover" onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg"; }} />
+                  {image.is_featured && <span className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">Featured</span>}
                   <div className="absolute inset-0 bg-background/80 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <Button size="sm" variant="secondary" onClick={() => openEditDialog(image)}>
-                      <Pencil className="w-4 h-4" />
-                    </Button>
-                    <Button size="sm" variant="destructive" onClick={() => handleDelete(image.id)}>
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <Button size="sm" variant="secondary" onClick={() => openEditDialog(image)}><Pencil className="w-4 h-4" /></Button>
+                    <Button size="sm" variant="destructive" onClick={() => setDeleteTarget(image)}><Trash2 className="w-4 h-4" /></Button>
                   </div>
                 </div>
                 <CardHeader className="p-3">
@@ -531,6 +279,82 @@ export default function GalleryManager() {
           </div>
         )}
       </div>
+
+      {/* Add/Edit Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={(open) => { setIsDialogOpen(open); if (!open) resetForm(); }}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{editingImage ? "Edit Image" : "Add New Image"}</DialogTitle>
+            <DialogDescription>{editingImage ? "Update the image details below" : "Upload an image or enter a URL"}</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label>Image</Label>
+              <div className="border-2 border-dashed border-border rounded-lg p-4">
+                {previewUrl ? (
+                  <div className="relative">
+                    <img src={previewUrl} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                    <Button type="button" size="sm" variant="destructive" className="absolute top-2 right-2" onClick={() => { setPreviewUrl(null); setSelectedFile(null); setFormData((prev) => ({ ...prev, image_url: "" })); }}>
+                      <X className="w-4 h-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-32 cursor-pointer hover:bg-muted/50 rounded-lg transition-colors" onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="w-8 h-8 text-muted-foreground mb-2" />
+                    <p className="text-sm text-muted-foreground">Click to upload image</p>
+                    <p className="text-xs text-muted-foreground mt-1">Max 5MB • JPG, PNG, GIF</p>
+                  </div>
+                )}
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground">or</span>
+                <Input placeholder="Enter image URL" value={selectedFile ? "" : formData.image_url} onChange={(e) => { setFormData({ ...formData, image_url: e.target.value }); setPreviewUrl(e.target.value); setSelectedFile(null); }} disabled={!!selectedFile} className="flex-1" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input id="title" value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} required />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea id="description" value={formData.description} onChange={(e) => setFormData({ ...formData, description: e.target.value })} rows={3} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="category">Category</Label>
+                <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>{categories.map((cat) => (<SelectItem key={cat} value={cat}>{cat.charAt(0).toUpperCase() + cat.slice(1)}</SelectItem>))}</SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="display_order">Display Order</Label>
+                <Input id="display_order" type="number" value={formData.display_order} onChange={(e) => setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })} />
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch id="is_featured" checked={formData.is_featured} onCheckedChange={(checked) => setFormData({ ...formData, is_featured: checked })} />
+              <Label htmlFor="is_featured">Featured Image</Label>
+            </div>
+            <div className="flex gap-2 pt-4">
+              <Button type="button" variant="outline" onClick={() => setIsDialogOpen(false)} className="flex-1">Cancel</Button>
+              <Button type="submit" disabled={isSaving || isUploading} className="flex-1">
+                {(isSaving || isUploading) && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
+                {isUploading ? "Uploading..." : editingImage ? "Update" : "Add"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onOpenChange={() => setDeleteTarget(null)}
+        title="Delete Image"
+        description={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
+        onConfirm={handleDelete}
+      />
     </AdminLayout>
   );
 }
