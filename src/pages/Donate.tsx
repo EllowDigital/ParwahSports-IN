@@ -13,6 +13,7 @@ import {
   Trophy,
   Utensils,
 } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Layout } from "@/components/layout/Layout";
 import { SEOHead } from "@/components/SEOHead";
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,49 @@ import { supabase } from "@/integrations/supabase/client";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { getErrorMessage } from "@/lib/errors";
 import { useLocation } from "react-router-dom";
+
+const donateFaqs = [
+  {
+    question: "Is my donation to Parwah Sports tax-deductible?",
+    answer:
+      "Yes. Parwah Sports Charitable Trust is registered under Section 80G of the Indian Income Tax Act. Your donation qualifies for a tax deduction. You will receive an official receipt and 80G certificate for all donations made through our platform.",
+  },
+  {
+    question: "How is my donation utilized?",
+    answer:
+      "100% of your donation goes directly towards athlete development — covering coaching fees, sports equipment, travel for competitions, nutritional support, and emergency financial assistance for underprivileged athletes. We maintain complete financial transparency.",
+  },
+  {
+    question: "What payment methods are accepted?",
+    answer:
+      "We accept all major payment methods through Razorpay, including credit/debit cards, UPI (Google Pay, PhonePe, Paytm), net banking, and mobile wallets. All transactions are encrypted and fully secure.",
+  },
+  {
+    question: "Can I donate a specific amount or sponsor a specific athlete?",
+    answer:
+      "Yes, you can choose any custom donation amount. For athlete-specific sponsorships or larger contributions, please contact us directly at info@parwahsports.com and we will set up a tailored sponsorship arrangement.",
+  },
+  {
+    question: "Will I receive a donation receipt?",
+    answer:
+      "Yes. Once your donation is successfully processed, you will receive an email confirmation with your payment reference and an official receipt for your records and tax filing purposes.",
+  },
+  {
+    question: "Can organizations or companies donate?",
+    answer:
+      "Absolutely. Corporate donations and CSR contributions are welcome. Partnering companies receive recognition on our website and publications, and may qualify for additional CSR benefits. Contact us to discuss a corporate partnership.",
+  },
+];
+
+const donateFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: donateFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
 
 const presetAmounts = [500, 1000, 2500, 5000, 10000];
 
@@ -254,6 +298,7 @@ export default function Donate() {
         description="Support underprivileged athletes in India. Your donation funds sports training, equipment, coaching, and scholarships for aspiring young athletes. 80G tax exemption available."
         path="/donate"
         keywords="donate to sports, sports charity India, support athletes, 80G donation, sports trust donation, Parwah Sports donate"
+        jsonLd={donateFaqJsonLd}
       />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-primary/5">
@@ -544,6 +589,32 @@ export default function Donate() {
                 <p className="text-sm opacity-80">Your support today shapes tomorrow's champions</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-24 bg-background">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-4">
+                FAQs
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Donation FAQs
+              </h2>
+              <p className="text-muted-foreground">
+                Common questions about donating to Parwah Sports.
+              </p>
+            </div>
+            <Accordion type="single" collapsible className="w-full">
+              {donateFaqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger className="text-left font-medium">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </section>
