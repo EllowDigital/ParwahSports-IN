@@ -18,6 +18,7 @@ import {
   CheckCircle,
   Code,
 } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -106,6 +107,49 @@ const milestones = [
   },
 ];
 
+const faqs = [
+  {
+    question: "What is Parwah Sports Charitable Trust?",
+    answer:
+      "Parwah Sports Charitable Trust is a registered non-profit organization founded in 2015, dedicated to empowering young and underprivileged athletes across India through financial assistance, professional coaching, mentorship, and comprehensive sports development programs.",
+  },
+  {
+    question: "How does Parwah Sports support athletes financially?",
+    answer:
+      "We provide scholarships, equipment funding, travel and accommodation support for competitions, nutrition assistance, and emergency financial aid to athletes who demonstrate talent and commitment but lack the resources to pursue their sporting careers.",
+  },
+  {
+    question: "Which sports does Parwah Sports cover?",
+    answer:
+      "Parwah Sports supports athletes across multiple disciplines including athletics (track & field), football, cricket, wrestling, boxing, and other Olympic and traditional Indian sports. We assess talent across disciplines and tailor support accordingly.",
+  },
+  {
+    question: "Is Parwah Sports Trust registered and tax-exempt?",
+    answer:
+      "Yes. Parwah Sports Charitable Trust is a legally registered trust under the Indian Trusts Act (2015). Donations are eligible for tax deduction under Section 80G of the Income Tax Act, making your contribution both impactful and tax-efficient.",
+  },
+  {
+    question: "How can I get involved with Parwah Sports?",
+    answer:
+      "You can support us in multiple ways: donate financially, volunteer your time and skills, partner as a corporate sponsor, refer talented athletes from your community, or collaborate as a school or sports academy. Visit our Get Involved or Contact page to start the conversation.",
+  },
+  {
+    question: "Where does Parwah Sports operate?",
+    answer:
+      "We primarily operate across Uttarakhand and neighboring northern Indian states, with programs active in 10+ districts. Our digital mentorship and training resources extend support nationally to athletes who cannot access physical programs.",
+  },
+];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
+
 const About = () => {
   const { data: teamMembers, isLoading: isTeamLoading } = useQuery({
     queryKey: ["featured-team-members"],
@@ -130,6 +174,7 @@ const About = () => {
         description="Learn about Parwah Sports Charitable Trust's mission to empower athletes across India. Meet our team, explore our vision, and discover our impact in sports development."
         path="/about"
         keywords="about Parwah Sports, sports NGO India, sports charitable trust, athlete empowerment, sports mission India"
+        jsonLd={faqJsonLd}
       />
       {/* Hero Section */}
       <section className="py-20 lg:py-28 bg-gradient-to-br from-primary/5 via-background to-secondary/5 relative overflow-hidden">
@@ -470,8 +515,35 @@ const About = () => {
         </div>
       </section>
 
-      {/* Trust Section */}
+      {/* FAQ Section */}
       <section className="py-20 lg:py-28 bg-muted/30">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center mb-12">
+              <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-4">
+                FAQs
+              </span>
+              <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                Frequently Asked Questions
+              </h2>
+              <p className="text-muted-foreground">
+                Everything you need to know about Parwah Sports Charitable Trust.
+              </p>
+            </div>
+            <Accordion type="single" collapsible className="w-full">
+              {faqs.map((faq, index) => (
+                <AccordionItem key={index} value={`item-${index}`}>
+                  <AccordionTrigger className="text-left font-medium">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed">{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* Trust Section */}
+      <section className="py-20 lg:py-28 bg-background">
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
