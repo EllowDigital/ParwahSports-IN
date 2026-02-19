@@ -98,18 +98,16 @@ export default function StudentsManager() {
         if (createErr) throw createErr;
         user_id = created?.user_id ?? null;
       }
-      const { error } = await supabase
-        .from("students")
-        .insert([
-          {
-            name: data.name,
-            email: data.email,
-            student_id: data.student_id || null,
-            phone: data.phone || null,
-            is_active: data.is_active,
-            user_id,
-          },
-        ]);
+      const { error } = await supabase.from("students").insert([
+        {
+          name: data.name,
+          email: data.email,
+          student_id: data.student_id || null,
+          phone: data.phone || null,
+          is_active: data.is_active,
+          user_id,
+        },
+      ]);
       if (error) throw error;
     },
     onSuccess: () => {

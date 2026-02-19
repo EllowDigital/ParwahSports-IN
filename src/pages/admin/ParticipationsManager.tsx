@@ -117,17 +117,15 @@ export default function ParticipationsManager() {
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof formData) => {
-      const { error } = await supabase
-        .from("participations")
-        .insert([
-          {
-            student_id: data.student_id,
-            competition_id: data.competition_id,
-            position: data.position || null,
-            status: data.status,
-            notes: data.notes || null,
-          },
-        ]);
+      const { error } = await supabase.from("participations").insert([
+        {
+          student_id: data.student_id,
+          competition_id: data.competition_id,
+          position: data.position || null,
+          status: data.status,
+          notes: data.notes || null,
+        },
+      ]);
       if (error) throw error;
     },
     onSuccess: () => {

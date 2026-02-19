@@ -209,13 +209,11 @@ export default function TeamManager() {
           .update(payload)
           .eq("id", editingMember.id);
         if (error) throw error;
-        const { error: privateError } = await supabase
-          .from("team_member_private_contacts")
-          .upsert({
-            team_member_id: editingMember.id,
-            email: formData.email || null,
-            phone: formData.phone || null,
-          });
+        const { error: privateError } = await supabase.from("team_member_private_contacts").upsert({
+          team_member_id: editingMember.id,
+          email: formData.email || null,
+          phone: formData.phone || null,
+        });
         if (privateError) throw privateError;
         toast({ title: "Success", description: "Team member updated successfully" });
       } else {

@@ -123,18 +123,16 @@ export default function CertificatesManager() {
     mutationFn: async (data: typeof formData) => {
       if (!certificateFile) throw new Error("Please select a certificate file");
       const certificate_url = await uploadCertificate(certificateFile, data.student_id);
-      const { error } = await supabase
-        .from("certificates")
-        .insert([
-          {
-            student_id: data.student_id,
-            competition_id: data.competition_id || null,
-            title: data.title,
-            description: data.description || null,
-            certificate_url,
-            issue_date: data.issue_date,
-          },
-        ]);
+      const { error } = await supabase.from("certificates").insert([
+        {
+          student_id: data.student_id,
+          competition_id: data.competition_id || null,
+          title: data.title,
+          description: data.description || null,
+          certificate_url,
+          issue_date: data.issue_date,
+        },
+      ]);
       if (error) throw error;
     },
     onSuccess: () => {

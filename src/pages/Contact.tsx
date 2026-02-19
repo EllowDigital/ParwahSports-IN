@@ -126,6 +126,7 @@ const Contact = () => {
 
               <div className="rounded-xl overflow-hidden h-64 bg-muted">
                 <iframe
+                  title="Parwah Sports Club headquarters on Google Maps"
                   src={`https://www.google.com/maps?q=${encodeURIComponent(headquartersAddress)}&output=embed`}
                   width="100%"
                   height="100%"
