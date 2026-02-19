@@ -38,7 +38,9 @@ serve(async (req) => {
 
       if (events) {
         for (const event of events) {
-          const lastmod = event.updated_at ? new Date(event.updated_at).toISOString().split("T")[0] : "";
+          const lastmod = event.updated_at
+            ? new Date(event.updated_at).toISOString().split("T")[0]
+            : "";
           xml += `  <url>\n    <loc>${CANONICAL_DOMAIN}/events</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
         }
       }
@@ -52,7 +54,9 @@ serve(async (req) => {
 
       if (competitions) {
         for (const comp of competitions) {
-          const lastmod = comp.updated_at ? new Date(comp.updated_at).toISOString().split("T")[0] : "";
+          const lastmod = comp.updated_at
+            ? new Date(comp.updated_at).toISOString().split("T")[0]
+            : "";
           xml += `  <url>\n    <loc>${CANONICAL_DOMAIN}/competitions</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
         }
       }
@@ -72,7 +76,9 @@ serve(async (req) => {
 
       if (blogs) {
         for (const blog of blogs) {
-          const lastmod = blog.updated_at ? new Date(blog.updated_at).toISOString().split("T")[0] : "";
+          const lastmod = blog.updated_at
+            ? new Date(blog.updated_at).toISOString().split("T")[0]
+            : "";
           xml += `  <url>\n    <loc>${CANONICAL_DOMAIN}/blogs</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
         }
       }
@@ -87,7 +93,9 @@ serve(async (req) => {
 
       if (news) {
         for (const item of news) {
-          const lastmod = item.updated_at ? new Date(item.updated_at).toISOString().split("T")[0] : "";
+          const lastmod = item.updated_at
+            ? new Date(item.updated_at).toISOString().split("T")[0]
+            : "";
           xml += `  <url>\n    <loc>${CANONICAL_DOMAIN}/news</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>\n`;
         }
       }
@@ -104,9 +112,9 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Sitemap generation error:", error);
-    return new Response(
-      JSON.stringify({ error: "Failed to generate sitemap" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: "Failed to generate sitemap" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });

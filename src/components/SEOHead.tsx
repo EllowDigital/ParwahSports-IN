@@ -69,15 +69,15 @@ export function SEOHead({
 
       <script type="application/ld+json">{JSON.stringify(breadcrumbLd)}</script>
       {jsonLd &&
-        (Array.isArray(jsonLd)
-          ? jsonLd.map((ld, i) => (
-              <script key={i} type="application/ld+json">
-                {JSON.stringify(ld)}
-              </script>
-            ))
-          : (
-              <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-            ))}
+        (Array.isArray(jsonLd) ? (
+          jsonLd.map((ld, i) => (
+            <script key={i} type="application/ld+json">
+              {JSON.stringify(ld)}
+            </script>
+          ))
+        ) : (
+          <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+        ))}
     </Helmet>
   );
 }
