@@ -14,9 +14,28 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { useMemberAuth } from "@/contexts/memberAuth";
 import { supabase } from "@/integrations/supabase/client";
+
+const membershipFaqs = [
+  { question: "What benefits do I get as a member?", answer: "Members get access to exclusive sports training sessions, priority event registration, coaching workshops, community networking, and certificates of membership." },
+  { question: "Can I upgrade or change my plan later?", answer: "Yes, you can upgrade from monthly to yearly or lifetime at any time. The price difference will be adjusted accordingly." },
+  { question: "Is there a refund policy for memberships?", answer: "Monthly and yearly subscriptions can be cancelled anytime. Refunds are processed as per our refund policy. Lifetime memberships are non-refundable after 30 days." },
+  { question: "How do I access member-only content?", answer: "After subscribing, log in to your member dashboard where you'll find exclusive resources, training schedules, and event registrations." },
+  { question: "Can organizations get bulk memberships?", answer: "Yes! We offer special rates for schools, academies, and organizations. Contact us for group membership pricing." },
+];
+
+const membershipFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: membershipFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
 
 interface MembershipPlan {
   id: string;
@@ -105,6 +124,7 @@ export default function Membership() {
         description="Join Parwah Sports Charitable Trust as a member. Access exclusive sports training, events, coaching, and community benefits. Choose monthly, yearly or lifetime membership."
         path="/membership"
         keywords="sports membership India, join sports academy, membership plans, Parwah Sports membership"
+        jsonLd={membershipFaqJsonLd}
       />
       <div className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
@@ -179,6 +199,24 @@ export default function Membership() {
                 Login to your dashboard
               </Link>
             </p>
+          </div>
+
+          {/* FAQ Section */}
+          <div className="max-w-3xl mx-auto mt-16">
+            <div className="text-center mb-10">
+              <h2 className="font-serif text-3xl font-bold text-foreground mb-4">
+                Membership FAQs
+              </h2>
+              <p className="text-muted-foreground">Everything you need to know about our membership plans.</p>
+            </div>
+            <Accordion type="single" collapsible className="w-full">
+              {membershipFaqs.map((faq, index) => (
+                <AccordionItem key={index} value={`faq-${index}`}>
+                  <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </div>
         </div>
       </div>

@@ -1,9 +1,11 @@
 import { Layout } from "@/components/layout/Layout";
+import { SEOHead } from "@/components/SEOHead";
 import { Link } from "react-router-dom";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Heart, Clock, Handshake, Share2, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import victoryImage from "@/assets/victory-moment.jpg";
 
 const waysToHelp = [
@@ -65,10 +67,34 @@ const waysToHelp = [
   },
 ];
 
+const getInvolvedFaqs = [
+  { question: "How can I get involved with Parwah Sports?", answer: "You can get involved by volunteering at events, donating to support athlete training, partnering with us as an organization, or simply spreading the word on social media." },
+  { question: "Do I need sports experience to volunteer?", answer: "No! We welcome volunteers from all backgrounds. Whether you can help with administration, event management, mentoring, or coaching, there's a role for you." },
+  { question: "Can my company partner with Parwah Sports?", answer: "Absolutely! We offer corporate sponsorship, school partnership programs, equipment support, and event sponsorship opportunities. Contact us to discuss how we can collaborate." },
+  { question: "How does my donation help athletes?", answer: "Your donations fund training equipment, coaching fees, competition travel, scholarships, and facility improvements for underprivileged young athletes across India." },
+  { question: "Is there a minimum time commitment for volunteering?", answer: "No minimum commitment required. You can volunteer for a single event or become a regular contributor — whatever fits your schedule." },
+];
+
+const getInvolvedFaqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: getInvolvedFaqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.question,
+    acceptedAnswer: { "@type": "Answer", text: faq.answer },
+  })),
+};
+
 const GetInvolved = () => {
   return (
     <Layout>
-      {/* Hero Section */}
+      <SEOHead
+        title="Get Involved - Support Parwah Sports"
+        description="Get involved with Parwah Sports Charitable Trust. Volunteer, donate, partner, or spread the word to support young athletes and sports development in India."
+        path="/get-involved"
+        keywords="get involved sports India, support athletes, volunteer sports NGO, donate sports charity, Parwah Sports"
+        jsonLd={getInvolvedFaqJsonLd}
+      />
       <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img src={victoryImage} alt="Victory moment" className="w-full h-full object-cover" />
@@ -212,6 +238,29 @@ const GetInvolved = () => {
                   <Link to="/team">Meet Our Team</Link>
                 </Button>
               </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+      {/* FAQ Section */}
+      <section className="py-16 lg:py-24 bg-muted/30">
+        <div className="container mx-auto px-4 lg:px-8">
+          <ScrollReveal>
+            <div className="max-w-3xl mx-auto">
+              <div className="text-center mb-10">
+                <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
+                  Frequently Asked Questions
+                </h2>
+                <p className="text-muted-foreground">Common questions about getting involved with Parwah Sports.</p>
+              </div>
+              <Accordion type="single" collapsible className="w-full">
+                {getInvolvedFaqs.map((faq, index) => (
+                  <AccordionItem key={index} value={`faq-${index}`}>
+                    <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
+                    <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
             </div>
           </ScrollReveal>
         </div>
