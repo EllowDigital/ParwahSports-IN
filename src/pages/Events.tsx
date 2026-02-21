@@ -80,29 +80,33 @@ export default function Events() {
   };
 
   // Generate Event JSON-LD for rich results
-  const eventsJsonLd = events?.filter(e => isFuture(new Date(e.event_date)) || isToday(new Date(e.event_date))).map((event) => ({
-    "@context": "https://schema.org",
-    "@type": "Event",
-    name: event.title,
-    description: event.description || `Sports event organized by Parwah Sports Charitable Trust`,
-    startDate: event.event_date,
-    ...(event.end_time && { endDate: event.event_date }),
-    ...(event.location && {
-      location: {
-        "@type": "Place",
-        name: event.location,
-        address: { "@type": "PostalAddress", addressCountry: "IN" },
-      },
-    }),
-    organizer: {
-      "@type": "Organization",
-      name: "Parwah Sports Charitable Trust",
-      url: "https://parwahsports.com",
-    },
-    ...(event.image_url && { image: event.image_url }),
-    eventStatus: "https://schema.org/EventScheduled",
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
-  })) || [];
+  const eventsJsonLd =
+    events
+      ?.filter((e) => isFuture(new Date(e.event_date)) || isToday(new Date(e.event_date)))
+      .map((event) => ({
+        "@context": "https://schema.org",
+        "@type": "Event",
+        name: event.title,
+        description:
+          event.description || `Sports event organized by Parwah Sports Charitable Trust`,
+        startDate: event.event_date,
+        ...(event.end_time && { endDate: event.event_date }),
+        ...(event.location && {
+          location: {
+            "@type": "Place",
+            name: event.location,
+            address: { "@type": "PostalAddress", addressCountry: "IN" },
+          },
+        }),
+        organizer: {
+          "@type": "Organization",
+          name: "Parwah Sports Charitable Trust",
+          url: "https://parwahsports.com",
+        },
+        ...(event.image_url && { image: event.image_url }),
+        eventStatus: "https://schema.org/EventScheduled",
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      })) || [];
 
   return (
     <Layout>

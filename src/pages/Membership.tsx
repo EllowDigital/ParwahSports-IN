@@ -14,17 +14,42 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { useMemberAuth } from "@/contexts/memberAuth";
 import { supabase } from "@/integrations/supabase/client";
 
 const membershipFaqs = [
-  { question: "What benefits do I get as a member?", answer: "Members get access to exclusive sports training sessions, priority event registration, coaching workshops, community networking, and certificates of membership." },
-  { question: "Can I upgrade or change my plan later?", answer: "Yes, you can upgrade from monthly to yearly or lifetime at any time. The price difference will be adjusted accordingly." },
-  { question: "Is there a refund policy for memberships?", answer: "Monthly and yearly subscriptions can be cancelled anytime. Refunds are processed as per our refund policy. Lifetime memberships are non-refundable after 30 days." },
-  { question: "How do I access member-only content?", answer: "After subscribing, log in to your member dashboard where you'll find exclusive resources, training schedules, and event registrations." },
-  { question: "Can organizations get bulk memberships?", answer: "Yes! We offer special rates for schools, academies, and organizations. Contact us for group membership pricing." },
+  {
+    question: "What benefits do I get as a member?",
+    answer:
+      "Members get access to exclusive sports training sessions, priority event registration, coaching workshops, community networking, and certificates of membership.",
+  },
+  {
+    question: "Can I upgrade or change my plan later?",
+    answer:
+      "Yes, you can upgrade from monthly to yearly or lifetime at any time. The price difference will be adjusted accordingly.",
+  },
+  {
+    question: "Is there a refund policy for memberships?",
+    answer:
+      "Monthly and yearly subscriptions can be cancelled anytime. Refunds are processed as per our refund policy. Lifetime memberships are non-refundable after 30 days.",
+  },
+  {
+    question: "How do I access member-only content?",
+    answer:
+      "After subscribing, log in to your member dashboard where you'll find exclusive resources, training schedules, and event registrations.",
+  },
+  {
+    question: "Can organizations get bulk memberships?",
+    answer:
+      "Yes! We offer special rates for schools, academies, and organizations. Contact us for group membership pricing.",
+  },
 ];
 
 const membershipFaqJsonLd = {
@@ -207,13 +232,17 @@ export default function Membership() {
               <h2 className="font-serif text-3xl font-bold text-foreground mb-4">
                 Membership FAQs
               </h2>
-              <p className="text-muted-foreground">Everything you need to know about our membership plans.</p>
+              <p className="text-muted-foreground">
+                Everything you need to know about our membership plans.
+              </p>
             </div>
             <Accordion type="single" collapsible className="w-full">
               {membershipFaqs.map((faq, index) => (
                 <AccordionItem key={index} value={`faq-${index}`}>
                   <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                  <AccordionContent className="text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>

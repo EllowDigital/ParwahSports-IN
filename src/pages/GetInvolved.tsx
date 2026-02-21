@@ -5,7 +5,12 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Heart, Clock, Handshake, Share2, Users, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import victoryImage from "@/assets/victory-moment.jpg";
 
 const waysToHelp = [
@@ -68,11 +73,31 @@ const waysToHelp = [
 ];
 
 const getInvolvedFaqs = [
-  { question: "How can I get involved with Parwah Sports?", answer: "You can get involved by volunteering at events, donating to support athlete training, partnering with us as an organization, or simply spreading the word on social media." },
-  { question: "Do I need sports experience to volunteer?", answer: "No! We welcome volunteers from all backgrounds. Whether you can help with administration, event management, mentoring, or coaching, there's a role for you." },
-  { question: "Can my company partner with Parwah Sports?", answer: "Absolutely! We offer corporate sponsorship, school partnership programs, equipment support, and event sponsorship opportunities. Contact us to discuss how we can collaborate." },
-  { question: "How does my donation help athletes?", answer: "Your donations fund training equipment, coaching fees, competition travel, scholarships, and facility improvements for underprivileged young athletes across India." },
-  { question: "Is there a minimum time commitment for volunteering?", answer: "No minimum commitment required. You can volunteer for a single event or become a regular contributor — whatever fits your schedule." },
+  {
+    question: "How can I get involved with Parwah Sports?",
+    answer:
+      "You can get involved by volunteering at events, donating to support athlete training, partnering with us as an organization, or simply spreading the word on social media.",
+  },
+  {
+    question: "Do I need sports experience to volunteer?",
+    answer:
+      "No! We welcome volunteers from all backgrounds. Whether you can help with administration, event management, mentoring, or coaching, there's a role for you.",
+  },
+  {
+    question: "Can my company partner with Parwah Sports?",
+    answer:
+      "Absolutely! We offer corporate sponsorship, school partnership programs, equipment support, and event sponsorship opportunities. Contact us to discuss how we can collaborate.",
+  },
+  {
+    question: "How does my donation help athletes?",
+    answer:
+      "Your donations fund training equipment, coaching fees, competition travel, scholarships, and facility improvements for underprivileged young athletes across India.",
+  },
+  {
+    question: "Is there a minimum time commitment for volunteering?",
+    answer:
+      "No minimum commitment required. You can volunteer for a single event or become a regular contributor — whatever fits your schedule.",
+  },
 ];
 
 const getInvolvedFaqJsonLd = {
@@ -251,13 +276,17 @@ const GetInvolved = () => {
                 <h2 className="font-serif text-3xl md:text-4xl font-bold text-foreground mb-4">
                   Frequently Asked Questions
                 </h2>
-                <p className="text-muted-foreground">Common questions about getting involved with Parwah Sports.</p>
+                <p className="text-muted-foreground">
+                  Common questions about getting involved with Parwah Sports.
+                </p>
               </div>
               <Accordion type="single" collapsible className="w-full">
                 {getInvolvedFaqs.map((faq, index) => (
                   <AccordionItem key={index} value={`faq-${index}`}>
                     <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-                    <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                    <AccordionContent className="text-muted-foreground">
+                      {faq.answer}
+                    </AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion>

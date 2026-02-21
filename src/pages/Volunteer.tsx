@@ -25,7 +25,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useToast } from "@/hooks/use-toast";
 import { Heart, Users, Award, Clock, Check, Loader2 } from "lucide-react";
 import victoryImage from "@/assets/victory-moment.jpg";
@@ -72,11 +77,31 @@ const benefits = [
 ];
 
 const volunteerFaqs = [
-  { question: "What kind of volunteer roles are available?", answer: "We offer roles in coaching, mentoring, event management, administrative support, and social media outreach. Choose what matches your skills and interests." },
-  { question: "How much time do I need to commit?", answer: "There's no fixed time commitment. You can help at a single event or volunteer regularly — it's completely flexible based on your availability." },
-  { question: "Do I need any qualifications to volunteer?", answer: "No formal qualifications required. A passion for sports and helping young athletes is all you need. We provide any necessary training." },
-  { question: "Will I receive a certificate for volunteering?", answer: "Yes, all volunteers receive a certificate of appreciation. Regular volunteers may also receive recommendation letters and references." },
-  { question: "Can I volunteer remotely?", answer: "Yes! We have remote opportunities in social media management, content creation, fundraising support, and administrative tasks." },
+  {
+    question: "What kind of volunteer roles are available?",
+    answer:
+      "We offer roles in coaching, mentoring, event management, administrative support, and social media outreach. Choose what matches your skills and interests.",
+  },
+  {
+    question: "How much time do I need to commit?",
+    answer:
+      "There's no fixed time commitment. You can help at a single event or volunteer regularly — it's completely flexible based on your availability.",
+  },
+  {
+    question: "Do I need any qualifications to volunteer?",
+    answer:
+      "No formal qualifications required. A passion for sports and helping young athletes is all you need. We provide any necessary training.",
+  },
+  {
+    question: "Will I receive a certificate for volunteering?",
+    answer:
+      "Yes, all volunteers receive a certificate of appreciation. Regular volunteers may also receive recommendation letters and references.",
+  },
+  {
+    question: "Can I volunteer remotely?",
+    answer:
+      "Yes! We have remote opportunities in social media management, content creation, fundraising support, and administrative tasks.",
+  },
 ];
 
 const volunteerFaqJsonLd = {
@@ -375,16 +400,18 @@ export default function Volunteer() {
         <div className="container mx-auto px-4 lg:px-8">
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-10">
-              <h2 className="font-serif text-3xl font-bold text-foreground mb-4">
-                Volunteer FAQs
-              </h2>
-              <p className="text-muted-foreground">Have questions about volunteering? We've got answers.</p>
+              <h2 className="font-serif text-3xl font-bold text-foreground mb-4">Volunteer FAQs</h2>
+              <p className="text-muted-foreground">
+                Have questions about volunteering? We've got answers.
+              </p>
             </div>
             <Accordion type="single" collapsible className="w-full">
               {volunteerFaqs.map((faq, index) => (
                 <AccordionItem key={index} value={`faq-${index}`}>
                   <AccordionTrigger className="text-left">{faq.question}</AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground">{faq.answer}</AccordionContent>
+                  <AccordionContent className="text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
