@@ -79,6 +79,31 @@ export default function Events() {
     return { label: "Past", variant: "outline" as const };
   };
 
+  // Generate Event JSON-LD for rich results
+  const eventsJsonLd = events?.filter(e => isFuture(new Date(e.event_date)) || isToday(new Date(e.event_date))).map((event) => ({
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    description: event.description || `Sports event organized by Parwah Sports Charitable Trust`,
+    startDate: event.event_date,
+    ...(event.end_time && { endDate: event.event_date }),
+    ...(event.location && {
+      location: {
+        "@type": "Place",
+        name: event.location,
+        address: { "@type": "PostalAddress", addressCountry: "IN" },
+      },
+    }),
+    organizer: {
+      "@type": "Organization",
+      name: "Parwah Sports Charitable Trust",
+      url: "https://parwahsports.com",
+    },
+    ...(event.image_url && { image: event.image_url }),
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  })) || [];
+
   return (
     <Layout>
       <SEOHead
@@ -86,6 +111,7 @@ export default function Events() {
         description="Discover upcoming sports events, tournaments, athletic meets, and training camps organized by Parwah Sports Charitable Trust. Register and participate today."
         path="/events"
         keywords="sports events India, tournaments, athletic meets, training camps, youth sports events, Parwah Sports events"
+        jsonLd={eventsJsonLd.length > 0 ? eventsJsonLd : undefined}
       />
       {/* Hero Section */}
       <section className="py-16 lg:py-24 bg-gradient-to-br from-primary/5 via-background to-secondary/5">

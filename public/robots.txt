@@ -11,6 +11,8 @@ Disallow: /student/
 # Sitemaps
 Sitemap: https://parwahsports.netlify.app/sitemap-index.xml
 Sitemap: https://parwahsports.com/sitemap-index.xml
+Sitemap: https://vmuyjqwpnqtvrlceqmwx.supabase.co/functions/v1/dynamic-sitemap?type=events
+Sitemap: https://vmuyjqwpnqtvrlceqmwx.supabase.co/functions/v1/dynamic-sitemap?type=blog
 
 # Crawl-delay (optional, for less aggressive bots)
 # Crawl-delay: 1
