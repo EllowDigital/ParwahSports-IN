@@ -467,7 +467,7 @@ export default function CertificatesManager() {
       />
 
       {/* Certificate Viewer Dialog */}
-      <Dialog open={!!viewingCert} onOpenChange={() => { if (viewingCert?.url) URL.revokeObjectURL(viewingCert.url); setViewingCert(null); }}>
+      <Dialog open={!!viewingCert} onOpenChange={() => setViewingCert(null)}>
         <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -482,6 +482,9 @@ export default function CertificatesManager() {
           ) : viewingCert?.url ? (
             <div className="flex-1 flex flex-col gap-2 min-h-0">
               <div className="flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => window.open(viewingCert.url, "_blank")}>
+                  <ExternalLink className="w-4 h-4 mr-1" /> Open in Tab
+                </Button>
                 <a href={viewingCert.url} download={`${viewingCert.title}.${viewingCert.isPdf ? 'pdf' : 'jpg'}`}>
                   <Button variant="outline" size="sm">
                     <Download className="w-4 h-4 mr-1" /> Download
@@ -489,18 +492,11 @@ export default function CertificatesManager() {
                 </a>
               </div>
               {viewingCert.isPdf ? (
-                <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-muted/50 rounded-md border border-border p-8">
-                  <Award className="w-16 h-16 text-muted-foreground" />
-                  <p className="text-lg font-medium text-foreground">PDF Certificate</p>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Click download to save this certificate.
-                  </p>
-                  <a href={viewingCert.url} download={`${viewingCert.title}.pdf`}>
-                    <Button>
-                      <Download className="w-4 h-4 mr-2" /> Download PDF
-                    </Button>
-                  </a>
-                </div>
+                <iframe
+                  src={viewingCert.url}
+                  className="flex-1 w-full rounded-md border border-border"
+                  title={viewingCert.title}
+                />
               ) : (
                 <div className="flex-1 flex items-center justify-center overflow-auto">
                   <img
