@@ -137,16 +137,8 @@ export default function CertificatesManager() {
     setViewingCert({ url: "", title, loading: true, isPdf });
     try {
       const signedUrl = await getSignedUrl(certificateUrl);
-      if (isPdf) {
-        // PDFs can't reliably render in iframes with signed/blob URLs — use signed URL directly for download
-        setViewingCert({ url: signedUrl, title, loading: false, isPdf });
-      } else {
-        // Images: fetch as blob to bypass Chrome blocking
-        const response = await fetch(signedUrl);
-        const blob = await response.blob();
-        const blobUrl = URL.createObjectURL(blob);
-        setViewingCert({ url: blobUrl, title, loading: false, isPdf });
-      }
+      // Use signed URL directly — works for both PDFs (iframe) and images
+      setViewingCert({ url: signedUrl, title, loading: false, isPdf });
     } catch {
       toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
       setViewingCert(null);
