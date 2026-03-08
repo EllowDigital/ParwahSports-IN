@@ -134,11 +134,7 @@ export function Header() {
 
             {/* More Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger className={`px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-1 outline-none ${
-                scrolled || !isHome
-                  ? "text-muted-foreground hover:text-foreground hover:bg-accent"
-                  : "text-background/80 hover:text-background hover:bg-background/10"
-              }`}>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-1 outline-none text-muted-foreground hover:text-foreground hover:bg-accent">
                 More <ChevronDown className="h-3.5 w-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
