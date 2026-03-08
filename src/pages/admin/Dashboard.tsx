@@ -290,9 +290,6 @@ export default function AdminDashboard() {
           <RecentDonationsCard donations={recentDonationsList} isLoading={isLoading} />
           <RecentVolunteersCard volunteers={recentVolunteersList} isLoading={isLoading} />
         </div>
-
-        {/* Fourth Row: Volunteers */}
-        <RecentVolunteersCard volunteers={recentVolunteersList} isLoading={isLoading} />
       </div>
     </AdminLayout>
   );
