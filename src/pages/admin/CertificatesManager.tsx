@@ -133,15 +133,20 @@ export default function CertificatesManager() {
   };
 
   const handleViewCertificate = async (certificateUrl: string, title: string) => {
-    setViewingCert({ url: "", title, loading: true, isPdf: false });
+    const isPdf = certificateUrl.toLowerCase().includes(".pdf");
+    setViewingCert({ url: "", title, loading: true, isPdf });
     try {
       const signedUrl = await getSignedUrl(certificateUrl);
-      const isPdf = certificateUrl.toLowerCase().includes(".pdf");
-      // Fetch as blob to avoid Chrome blocking Supabase URLs in iframes
-      const response = await fetch(signedUrl);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      setViewingCert({ url: blobUrl, title, loading: false, isPdf });
+      if (isPdf) {
+        // PDFs can't reliably render in iframes with signed/blob URLs — use signed URL directly for download
+        setViewingCert({ url: signedUrl, title, loading: false, isPdf });
+      } else {
+        // Images: fetch as blob to bypass Chrome blocking
+        const response = await fetch(signedUrl);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+        setViewingCert({ url: blobUrl, title, loading: false, isPdf });
+      }
     } catch {
       toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
       setViewingCert(null);
@@ -495,11 +500,23 @@ export default function CertificatesManager() {
                 </a>
               </div>
               {viewingCert.isPdf ? (
-                <iframe
-                  src={viewingCert.url}
-                  className="flex-1 w-full rounded-md border border-border"
-                  title="Certificate Preview"
-                />
+                <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-muted/50 rounded-md border border-border p-8">
+                  <Award className="w-16 h-16 text-muted-foreground" />
+                  <p className="text-lg font-medium text-foreground">PDF Certificate</p>
+                  <p className="text-sm text-muted-foreground text-center">
+                    PDF preview is not supported in embedded view. Use the buttons above to open or download.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button onClick={() => window.open(viewingCert.url, "_blank")}>
+                      <ExternalLink className="w-4 h-4 mr-2" /> Open PDF
+                    </Button>
+                    <a href={viewingCert.url} download>
+                      <Button variant="outline">
+                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                      </Button>
+                    </a>
+                  </div>
+                </div>
               ) : (
                 <div className="flex-1 flex items-center justify-center overflow-auto">
                   <img
