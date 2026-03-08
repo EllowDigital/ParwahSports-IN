@@ -157,9 +157,7 @@ export function Header() {
             {/* Support Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant={scrolled || !isHome ? "outline" : "ghost"} size="sm" className={`gap-1.5 ${
-                  !scrolled && isHome ? "text-background border-background/30 hover:bg-background/10" : ""
-                }`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
                   <Users className="h-4 w-4" />
                   <span className="hidden xl:inline">Support</span>
                   <ChevronDown className="h-3.5 w-3.5" />
