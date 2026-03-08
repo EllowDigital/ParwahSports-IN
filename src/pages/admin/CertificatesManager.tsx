@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Award, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, Award, ExternalLink, Eye, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface Certificate {
