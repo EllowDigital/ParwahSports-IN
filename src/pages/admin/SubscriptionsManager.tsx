@@ -91,8 +91,8 @@ export default function SubscriptionsManager() {
 
   const filteredSubscriptions = subscriptions?.filter(
     (s) =>
-      s.members.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      s.members.email.toLowerCase().includes(searchTerm.toLowerCase()),
+      s.members?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      s.members?.email?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const activeCount = subscriptions?.filter((s) => s.status === "active").length || 0;
