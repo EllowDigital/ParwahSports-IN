@@ -133,10 +133,15 @@ export default function CertificatesManager() {
   };
 
   const handleViewCertificate = async (certificateUrl: string, title: string) => {
-    setViewingCert({ url: "", title, loading: true });
+    setViewingCert({ url: "", title, loading: true, isPdf: false });
     try {
-      const url = await getSignedUrl(certificateUrl);
-      setViewingCert({ url, title, loading: false });
+      const signedUrl = await getSignedUrl(certificateUrl);
+      const isPdf = certificateUrl.toLowerCase().includes(".pdf");
+      // Fetch as blob to avoid Chrome blocking Supabase URLs in iframes
+      const response = await fetch(signedUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      setViewingCert({ url: blobUrl, title, loading: false, isPdf });
     } catch {
       toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
       setViewingCert(null);
