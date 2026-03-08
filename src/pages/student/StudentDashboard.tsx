@@ -13,6 +13,22 @@ export default function StudentDashboard() {
   const { user, signOut, client } = useStudentAuth();
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleDownloadCertificate = useCallback(async (certificateUrl: string) => {
+    try {
+      const path = certificateUrl.includes("/storage/v1/object/public/certificates/")
+        ? certificateUrl.split("/storage/v1/object/public/certificates/")[1]
+        : certificateUrl;
+      const { data, error } = await client.storage
+        .from("certificates")
+        .createSignedUrl(path, 3600);
+      if (error) throw error;
+      window.open(data.signedUrl, "_blank");
+    } catch {
+      toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
+    }
+  }, [client, toast]);
 
   useEffect(() => {
     if (!user) navigate("/student/login");
