@@ -289,8 +289,9 @@ export default function AdminDashboard() {
         <div className="grid lg:grid-cols-2 gap-6">
           <RecentDonationsCard donations={recentDonationsList} isLoading={isLoading} />
         </div>
+        </div>
 
-        {/* Third Row: Volunteers */}
+        {/* Fourth Row: Volunteers */}
         <RecentVolunteersCard volunteers={recentVolunteersList} isLoading={isLoading} />
       </div>
     </AdminLayout>

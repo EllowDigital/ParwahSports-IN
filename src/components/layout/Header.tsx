@@ -226,9 +226,7 @@ export function Header() {
 
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={`h-9 w-9 ${
-                  !scrolled && isHome ? "text-background hover:bg-background/10" : ""
-                }`}>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
                   {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
               </SheetTrigger>
