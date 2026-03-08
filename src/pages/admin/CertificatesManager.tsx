@@ -328,7 +328,17 @@ export default function CertificatesManager() {
                     <TableCell>{item.competitions?.name || "-"}</TableCell>
                     <TableCell>{format(new Date(item.issue_date), "MMM d, yyyy")}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => handleViewCertificate(item.certificate_url)}>
+                      <Button variant="ghost" size="icon" onClick={() => handleViewCertificate(item.certificate_url, item.title)}>
+                          <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={async () => {
+                        try {
+                          const url = await getSignedUrl(item.certificate_url);
+                          window.open(url, "_blank");
+                        } catch {
+                          toast({ title: "Error", description: "Could not open certificate", variant: "destructive" });
+                        }
+                      }}>
                           <ExternalLink className="w-4 h-4" />
                       </Button>
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
