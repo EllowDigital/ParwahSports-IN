@@ -30,6 +30,7 @@ import { RecentActivityCard } from "@/components/admin/dashboard/RecentActivityC
 import { UpcomingEventsCard } from "@/components/admin/dashboard/UpcomingEventsCard";
 import { RecentDonationsCard } from "@/components/admin/dashboard/RecentDonationsCard";
 import { RecentVolunteersCard } from "@/components/admin/dashboard/RecentVolunteersCard";
+import { DonationTrendChart } from "@/components/admin/dashboard/DonationTrendChart";
 
 interface Stats {
   gallery: number;
