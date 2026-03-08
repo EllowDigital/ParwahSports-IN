@@ -494,7 +494,7 @@ export default function CertificatesManager() {
                   </Button>
                 </a>
               </div>
-              {viewingCert.url.includes(".pdf") ? (
+              {viewingCert.isPdf ? (
                 <iframe
                   src={viewingCert.url}
                   className="flex-1 w-full rounded-md border border-border"
