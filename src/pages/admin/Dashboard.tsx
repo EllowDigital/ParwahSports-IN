@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth";
 import {
@@ -16,22 +13,23 @@ import {
   Trophy,
   GraduationCap,
   Heart,
-  CreditCard,
   UserCheck,
-  ArrowUpRight,
-  TrendingUp,
   Activity,
   Plus,
   Eye,
   IndianRupee,
-  Clock,
   Award,
   Megaphone,
-  BarChart3,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
-import { format, formatDistanceToNow } from "date-fns";
+
+import { MetricCard } from "@/components/admin/dashboard/MetricCard";
+import { QuickActionsCard } from "@/components/admin/dashboard/QuickActionsCard";
+import { ContentOverviewCard } from "@/components/admin/dashboard/ContentOverviewCard";
+import { RecentActivityCard } from "@/components/admin/dashboard/RecentActivityCard";
+import { UpcomingEventsCard } from "@/components/admin/dashboard/UpcomingEventsCard";
+import { RecentDonationsCard } from "@/components/admin/dashboard/RecentDonationsCard";
+import { RecentVolunteersCard } from "@/components/admin/dashboard/RecentVolunteersCard";
 
 interface Stats {
   gallery: number;
@@ -67,15 +65,21 @@ export default function AdminDashboard() {
     donations: 0, donationAmount: 0, members: 0, volunteers: 0,
   });
   const [recentActivity, setRecentActivity] = useState<RecentItem[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
+  const [recentDonationsList, setRecentDonationsList] = useState<any[]>([]);
+  const [recentVolunteersList, setRecentVolunteersList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const today = new Date().toISOString().split("T")[0];
+
         const [
           gallery, events, team, news, blogs, announcements,
           competitions, students, donations, members, volunteers,
           recentDonations, recentVolunteers, recentMembers,
+          upcomingEventsData, donationsTableData, volunteersTableData,
         ] = await Promise.all([
           supabase.from("gallery_images").select("id", { count: "exact", head: true }),
           supabase.from("events").select("id", { count: "exact", head: true }),
@@ -88,10 +92,14 @@ export default function AdminDashboard() {
           supabase.from("donations").select("id, amount", { count: "exact" }).eq("payment_status", "success"),
           supabase.from("members").select("id", { count: "exact", head: true }).eq("is_active", true),
           supabase.from("volunteers").select("id", { count: "exact", head: true }),
-          // Recent items
+          // Activity feed items
           supabase.from("donations").select("id, donor_name, amount, created_at").eq("payment_status", "success").order("created_at", { ascending: false }).limit(3),
           supabase.from("volunteers").select("id, full_name, area_of_interest, created_at").order("created_at", { ascending: false }).limit(3),
           supabase.from("members").select("id, full_name, created_at").order("created_at", { ascending: false }).limit(2),
+          // New data for extra widgets
+          supabase.from("events").select("id, title, event_date, location, status, is_featured").gte("event_date", today).order("event_date", { ascending: true }).limit(5),
+          supabase.from("donations").select("id, donor_name, donor_email, amount, payment_status, created_at").order("created_at", { ascending: false }).limit(5),
+          supabase.from("volunteers").select("id, full_name, email, phone, area_of_interest, status, created_at").order("created_at", { ascending: false }).limit(4),
         ]);
 
         const totalDonationAmount = (donations.data || []).reduce((sum, d) => sum + Number(d.amount), 0);
@@ -110,6 +118,10 @@ export default function AdminDashboard() {
           members: members.count ?? 0,
           volunteers: volunteers.count ?? 0,
         });
+
+        setUpcomingEvents(upcomingEventsData.data || []);
+        setRecentDonationsList(donationsTableData.data || []);
+        setRecentVolunteersList(volunteersTableData.data || []);
 
         // Build activity feed
         const activity: RecentItem[] = [
@@ -248,25 +260,7 @@ export default function AdminDashboard() {
         {/* Key Metrics */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {highlightCards.map((card) => (
-            <Link key={card.title} to={card.href} className="group">
-              <Card className="border-border/50 hover:border-primary/30 hover:shadow-md transition-all duration-200 h-full">
-                <CardContent className="p-4 lg:p-5">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className={`p-2 rounded-lg ${card.bg}`}>
-                      <card.icon className={`w-4 h-4 ${card.color}`} />
-                    </div>
-                    <ArrowUpRight className="w-3.5 h-3.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </div>
-                  {isLoading ? (
-                    <Skeleton className="h-7 w-20 mb-1" />
-                  ) : (
-                    <div className="text-xl lg:text-2xl font-bold text-foreground">{card.value}</div>
-                  )}
-                  <p className="text-xs text-muted-foreground mt-0.5">{card.title}</p>
-                  <p className="text-[10px] text-muted-foreground/70 mt-0.5">{card.description}</p>
-                </CardContent>
-              </Card>
-            </Link>
+            <MetricCard key={card.title} {...card} isLoading={isLoading} />
           ))}
         </div>
 
@@ -274,121 +268,24 @@ export default function AdminDashboard() {
         <div className="grid lg:grid-cols-3 gap-6">
           {/* Left: Quick Actions + Content Stats */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Quick Actions */}
-            <Card className="border-border/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Plus className="w-4 h-4 text-primary" />
-                  Quick Actions
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-4 sm:grid-cols-4 gap-2">
-                  {quickActions.map((action) => (
-                    <Link
-                      key={action.title}
-                      to={action.href}
-                      target={action.title === "View Site" ? "_blank" : undefined}
-                      className="group flex flex-col items-center justify-center p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-accent/50 transition-all text-center"
-                    >
-                      <div className={`p-2 rounded-lg ${action.bg} group-hover:scale-110 transition-transform mb-1.5`}>
-                        <action.icon className={`w-4 h-4 ${action.color}`} />
-                      </div>
-                      <span className="text-[11px] font-medium text-muted-foreground group-hover:text-foreground transition-colors leading-tight">
-                        {action.title}
-                      </span>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Content Overview */}
-            <Card className="border-border/50">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <BarChart3 className="w-4 h-4 text-primary" />
-                  Content Overview
-                </CardTitle>
-                <CardDescription className="text-xs">All your managed content at a glance</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {contentCards.map((stat) => (
-                    <Link key={stat.title} to={stat.href} className="group">
-                      <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-accent/30 transition-all">
-                        <div className={`p-1.5 rounded-lg ${stat.bg} shrink-0`}>
-                          <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
-                        </div>
-                        <div className="min-w-0">
-                          {isLoading ? (
-                            <Skeleton className="h-5 w-8" />
-                          ) : (
-                            <div className="text-lg font-bold text-foreground leading-none">{stat.value}</div>
-                          )}
-                          <p className="text-[10px] text-muted-foreground truncate">{stat.title}</p>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <QuickActionsCard actions={quickActions} />
+            <ContentOverviewCard contentCards={contentCards} isLoading={isLoading} />
           </div>
 
           {/* Right: Recent Activity */}
           <div>
-            <Card className="border-border/50 h-full">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-primary" />
-                  Recent Activity
-                </CardTitle>
-                <CardDescription className="text-xs">Latest actions across the platform</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {isLoading ? (
-                  <div className="space-y-4">
-                    {[...Array(5)].map((_, i) => (
-                      <div key={i} className="flex gap-3">
-                        <Skeleton className="w-8 h-8 rounded-lg shrink-0" />
-                        <div className="flex-1">
-                          <Skeleton className="h-4 w-24 mb-1" />
-                          <Skeleton className="h-3 w-32" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : recentActivity.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No recent activity</p>
-                  </div>
-                ) : (
-                  <div className="space-y-1">
-                    {recentActivity.map((item, i) => (
-                      <div key={item.id + item.type}>
-                        <div className="flex items-start gap-3 py-2.5">
-                          <div className={`p-1.5 rounded-lg ${item.bg} shrink-0 mt-0.5`}>
-                            <item.icon className={`w-3.5 h-3.5 ${item.color}`} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-foreground truncate">{item.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">{item.subtitle}</p>
-                          </div>
-                          <span className="text-[10px] text-muted-foreground shrink-0 mt-0.5">
-                            {formatDistanceToNow(new Date(item.time), { addSuffix: true })}
-                          </span>
-                        </div>
-                        {i < recentActivity.length - 1 && <Separator className="ml-9" />}
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <RecentActivityCard activity={recentActivity} isLoading={isLoading} />
           </div>
         </div>
+
+        {/* Second Row: Events + Donations */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <UpcomingEventsCard events={upcomingEvents} isLoading={isLoading} />
+          <RecentDonationsCard donations={recentDonationsList} isLoading={isLoading} />
+        </div>
+
+        {/* Third Row: Volunteers */}
+        <RecentVolunteersCard volunteers={recentVolunteersList} isLoading={isLoading} />
       </div>
     </AdminLayout>
   );
