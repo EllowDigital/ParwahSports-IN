@@ -104,14 +104,10 @@ export function Header() {
               />
             </div>
             <div className="leading-tight">
-              <span className={`font-serif font-bold text-sm sm:text-base lg:text-lg block transition-colors ${
-                scrolled || !isHome ? "text-foreground" : "text-background"
-              }`}>
+              <span className="font-serif font-bold text-sm sm:text-base lg:text-lg block text-foreground">
                 Parwah Sports
               </span>
-              <span className={`text-[10px] sm:text-xs hidden xs:block transition-colors ${
-                scrolled || !isHome ? "text-muted-foreground" : "text-background/70"
-              }`}>
+              <span className="text-[10px] sm:text-xs hidden xs:block text-muted-foreground">
                 Charitable Trust
               </span>
             </div>
