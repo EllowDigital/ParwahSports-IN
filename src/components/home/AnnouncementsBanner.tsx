@@ -28,7 +28,6 @@ export function AnnouncementsBanner() {
 
       if (error) throw error;
 
-      // Filter by date range in JavaScript for more reliable handling
       const filtered = (data || []).filter((announcement) => {
         const startOk =
           !announcement.start_date || new Date(announcement.start_date) <= new Date(now);
@@ -57,13 +56,13 @@ export function AnnouncementsBanner() {
   };
 
   return (
-    <div className="relative z-40">
+    <div className="fixed top-16 lg:top-20 left-0 right-0 z-40">
       {visibleAnnouncements.map((announcement) => {
         const Icon = priorityIcons[announcement.priority];
         return (
           <div
             key={announcement.id}
-            className={`${priorityStyles[announcement.priority]} py-2.5 px-4`}
+            className={`${priorityStyles[announcement.priority]} py-2 px-4 shadow-sm`}
           >
             <div className="container mx-auto flex items-center justify-between gap-4">
               <Link
