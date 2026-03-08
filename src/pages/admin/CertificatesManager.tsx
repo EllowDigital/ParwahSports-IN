@@ -463,6 +463,51 @@ export default function CertificatesManager() {
         description={`Are you sure you want to delete "${deleteTarget?.title}"?`}
         onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
       />
+
+      {/* Certificate Viewer Dialog */}
+      <Dialog open={!!viewingCert} onOpenChange={() => setViewingCert(null)}>
+        <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-secondary" />
+              {viewingCert?.title}
+            </DialogTitle>
+          </DialogHeader>
+          {viewingCert?.loading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : viewingCert?.url ? (
+            <div className="flex-1 flex flex-col gap-2 min-h-0">
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => window.open(viewingCert.url, "_blank")}>
+                  <ExternalLink className="w-4 h-4 mr-1" /> Open in Tab
+                </Button>
+                <a href={viewingCert.url} download>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-1" /> Download
+                  </Button>
+                </a>
+              </div>
+              {viewingCert.url.includes(".pdf") ? (
+                <iframe
+                  src={viewingCert.url}
+                  className="flex-1 w-full rounded-md border border-border"
+                  title="Certificate Preview"
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center overflow-auto">
+                  <img
+                    src={viewingCert.url}
+                    alt={viewingCert.title}
+                    className="max-w-full max-h-full object-contain rounded-md"
+                  />
+                </div>
+              )}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
