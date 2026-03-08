@@ -5,7 +5,7 @@ import { WhatWeDoSection } from "@/components/home/WhatWeDoSection";
 import { ImpactSection } from "@/components/home/ImpactSection";
 import { PartnersSection } from "@/components/home/PartnersSection";
 import { CTASection } from "@/components/home/CTASection";
-import { AnnouncementsBanner } from "@/components/home/AnnouncementsBanner";
+
 import { FeaturedEventsSection } from "@/components/home/FeaturedEventsSection";
 import { LatestNewsSection } from "@/components/home/LatestNewsSection";
 import { RecentBlogsSection } from "@/components/home/RecentBlogsSection";
