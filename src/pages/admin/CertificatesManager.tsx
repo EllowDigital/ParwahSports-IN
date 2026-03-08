@@ -57,7 +57,7 @@ export default function CertificatesManager() {
   const [editingItem, setEditingItem] = useState<Certificate | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Certificate | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [viewingCert, setViewingCert] = useState<{ url: string; title: string; loading: boolean } | null>(null);
+  const [viewingCert, setViewingCert] = useState<{ url: string; title: string; loading: boolean; isPdf: boolean } | null>(null);
   const [formData, setFormData] = useState({
     student_id: "",
     competition_id: "",
@@ -133,10 +133,15 @@ export default function CertificatesManager() {
   };
 
   const handleViewCertificate = async (certificateUrl: string, title: string) => {
-    setViewingCert({ url: "", title, loading: true });
+    setViewingCert({ url: "", title, loading: true, isPdf: false });
     try {
-      const url = await getSignedUrl(certificateUrl);
-      setViewingCert({ url, title, loading: false });
+      const signedUrl = await getSignedUrl(certificateUrl);
+      const isPdf = certificateUrl.toLowerCase().includes(".pdf");
+      // Fetch as blob to avoid Chrome blocking Supabase URLs in iframes
+      const response = await fetch(signedUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      setViewingCert({ url: blobUrl, title, loading: false, isPdf });
     } catch {
       toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
       setViewingCert(null);
@@ -465,7 +470,7 @@ export default function CertificatesManager() {
       />
 
       {/* Certificate Viewer Dialog */}
-      <Dialog open={!!viewingCert} onOpenChange={() => setViewingCert(null)}>
+      <Dialog open={!!viewingCert} onOpenChange={() => { if (viewingCert?.url) URL.revokeObjectURL(viewingCert.url); setViewingCert(null); }}>
         <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
@@ -489,7 +494,7 @@ export default function CertificatesManager() {
                   </Button>
                 </a>
               </div>
-              {viewingCert.url.includes(".pdf") ? (
+              {viewingCert.isPdf ? (
                 <iframe
                   src={viewingCert.url}
                   className="flex-1 w-full rounded-md border border-border"
