@@ -26,7 +26,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Pencil, Trash2, Award, ExternalLink } from "lucide-react";
+import { Pencil, Trash2, Award, ExternalLink, Eye, Download, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface Certificate {
@@ -57,6 +57,7 @@ export default function CertificatesManager() {
   const [editingItem, setEditingItem] = useState<Certificate | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Certificate | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewingCert, setViewingCert] = useState<{ url: string; title: string; loading: boolean } | null>(null);
   const [formData, setFormData] = useState({
     student_id: "",
     competition_id: "",
@@ -131,12 +132,14 @@ export default function CertificatesManager() {
     return data.signedUrl;
   };
 
-  const handleViewCertificate = async (certificateUrl: string) => {
+  const handleViewCertificate = async (certificateUrl: string, title: string) => {
+    setViewingCert({ url: "", title, loading: true });
     try {
       const url = await getSignedUrl(certificateUrl);
-      window.open(url, "_blank");
+      setViewingCert({ url, title, loading: false });
     } catch {
       toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
+      setViewingCert(null);
     }
   };
 
@@ -325,7 +328,17 @@ export default function CertificatesManager() {
                     <TableCell>{item.competitions?.name || "-"}</TableCell>
                     <TableCell>{format(new Date(item.issue_date), "MMM d, yyyy")}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => handleViewCertificate(item.certificate_url)}>
+                      <Button variant="ghost" size="icon" onClick={() => handleViewCertificate(item.certificate_url, item.title)}>
+                          <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={async () => {
+                        try {
+                          const url = await getSignedUrl(item.certificate_url);
+                          window.open(url, "_blank");
+                        } catch {
+                          toast({ title: "Error", description: "Could not open certificate", variant: "destructive" });
+                        }
+                      }}>
                           <ExternalLink className="w-4 h-4" />
                       </Button>
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
@@ -450,6 +463,51 @@ export default function CertificatesManager() {
         description={`Are you sure you want to delete "${deleteTarget?.title}"?`}
         onConfirm={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
       />
+
+      {/* Certificate Viewer Dialog */}
+      <Dialog open={!!viewingCert} onOpenChange={() => setViewingCert(null)}>
+        <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Award className="w-5 h-5 text-secondary" />
+              {viewingCert?.title}
+            </DialogTitle>
+          </DialogHeader>
+          {viewingCert?.loading ? (
+            <div className="flex-1 flex items-center justify-center">
+              <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            </div>
+          ) : viewingCert?.url ? (
+            <div className="flex-1 flex flex-col gap-2 min-h-0">
+              <div className="flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => window.open(viewingCert.url, "_blank")}>
+                  <ExternalLink className="w-4 h-4 mr-1" /> Open in Tab
+                </Button>
+                <a href={viewingCert.url} download>
+                  <Button variant="outline" size="sm">
+                    <Download className="w-4 h-4 mr-1" /> Download
+                  </Button>
+                </a>
+              </div>
+              {viewingCert.url.includes(".pdf") ? (
+                <iframe
+                  src={viewingCert.url}
+                  className="flex-1 w-full rounded-md border border-border"
+                  title="Certificate Preview"
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center overflow-auto">
+                  <img
+                    src={viewingCert.url}
+                    alt={viewingCert.title}
+                    className="max-w-full max-h-full object-contain rounded-md"
+                  />
+                </div>
+              )}
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
