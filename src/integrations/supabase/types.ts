@@ -965,6 +965,7 @@ export type Database = {
     }
     Functions: {
       generate_payment_reference: { Args: never; Returns: string }
+      get_member_is_active: { Args: { _member_id: string }; Returns: boolean }
       get_public_team_members: {
         Args: never
         Returns: {
