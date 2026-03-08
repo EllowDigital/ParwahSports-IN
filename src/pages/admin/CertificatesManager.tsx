@@ -500,11 +500,23 @@ export default function CertificatesManager() {
                 </a>
               </div>
               {viewingCert.isPdf ? (
-                <iframe
-                  src={viewingCert.url}
-                  className="flex-1 w-full rounded-md border border-border"
-                  title="Certificate Preview"
-                />
+                <div className="flex-1 flex flex-col items-center justify-center gap-4 bg-muted/50 rounded-md border border-border p-8">
+                  <Award className="w-16 h-16 text-muted-foreground" />
+                  <p className="text-lg font-medium text-foreground">PDF Certificate</p>
+                  <p className="text-sm text-muted-foreground text-center">
+                    PDF preview is not supported in embedded view. Use the buttons above to open or download.
+                  </p>
+                  <div className="flex gap-3">
+                    <Button onClick={() => window.open(viewingCert.url, "_blank")}>
+                      <ExternalLink className="w-4 h-4 mr-2" /> Open PDF
+                    </Button>
+                    <a href={viewingCert.url} download>
+                      <Button variant="outline">
+                        <Download className="w-4 h-4 mr-2" /> Download PDF
+                      </Button>
+                    </a>
+                  </div>
+                </div>
               ) : (
                 <div className="flex-1 flex items-center justify-center overflow-auto">
                   <img
