@@ -20,7 +20,6 @@ const Index = () => {
         keywords="sports academy India, cricket academy, football training, athletic coaching, youth sports, fitness training, sports events, Parwah Sports, Saharanpur sports"
       />
       <HeroSection />
-      <AnnouncementsBanner />
       <WhatWeDoSection />
       <FeaturedEventsSection />
       <LatestNewsSection />
