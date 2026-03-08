@@ -325,10 +325,8 @@ export default function CertificatesManager() {
                     <TableCell>{item.competitions?.name || "-"}</TableCell>
                     <TableCell>{format(new Date(item.issue_date), "MMM d, yyyy")}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" asChild>
-                        <a href={item.certificate_url} target="_blank" rel="noopener noreferrer">
+                      <Button variant="ghost" size="icon" onClick={() => handleViewCertificate(item.certificate_url)}>
                           <ExternalLink className="w-4 h-4" />
-                        </a>
                       </Button>
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
                         <Pencil className="w-4 h-4" />
