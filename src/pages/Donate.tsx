@@ -306,18 +306,19 @@ export default function Donate() {
         jsonLd={donateFaqJsonLd}
       />
       {/* Hero Section */}
-      <section className="py-16 lg:py-24 bg-primary/5">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="pt-24 pb-16 lg:pt-32 lg:pb-24 bg-primary/5 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <span className="inline-flex items-center gap-2 bg-secondary/10 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <span className="inline-flex items-center gap-2 bg-secondary/15 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 border border-secondary/20">
               <Heart className="h-4 w-4" />
               Transform Lives
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
               Support a Dream — <br className="hidden md:block" />
               <span className="text-primary">Donate Today</span>
             </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
               Every contribution, no matter how small, creates ripples of change. Your donation
               empowers young athletes to pursue their dreams and overcome barriers.
             </p>
