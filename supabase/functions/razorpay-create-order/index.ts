@@ -15,11 +15,32 @@ serve(async (req) => {
     const { amount, type, donor_name, donor_email, donor_phone, donor_address, plan_id, notes } =
       await req.json();
 
+    // Input validation
     if (typeof amount !== "number" || Number.isNaN(amount) || amount < 1) {
       return new Response(JSON.stringify({ error: "Minimum donation is ₹1" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+    if (amount > 1000000) {
+      return new Response(JSON.stringify({ error: "Maximum amount is ₹10,00,000" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (type === "donation") {
+      if (!donor_name || typeof donor_name !== "string" || donor_name.trim().length < 2) {
+        return new Response(JSON.stringify({ error: "Valid donor name is required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (!donor_email || typeof donor_email !== "string" || !donor_email.includes("@")) {
+        return new Response(JSON.stringify({ error: "Valid email is required" }), {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
 
     const razorpayKeyId = Deno.env.get("RAZORPAY_KEY_ID");
