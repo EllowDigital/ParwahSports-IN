@@ -95,11 +95,7 @@ export function Header() {
         <div className="flex h-16 md:h-18 lg:h-20 items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0 group">
-            <div className={`w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border shadow-sm transition-all group-hover:shadow-md group-hover:scale-105 ${
-              scrolled || !isHome
-                ? "bg-card border-border group-hover:border-primary/30"
-                : "bg-background/15 backdrop-blur-md border-background/20"
-            }`}>
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border shadow-sm transition-all group-hover:shadow-md group-hover:scale-105 bg-card border-border group-hover:border-primary/30`}>
               <img
                 src="/logo.png"
                 alt="Parwah Sports"
