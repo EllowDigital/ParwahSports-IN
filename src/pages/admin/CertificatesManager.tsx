@@ -368,7 +368,7 @@ export default function CertificatesManager() {
                   <SelectValue placeholder="Select a competition" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {competitions?.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.name}
