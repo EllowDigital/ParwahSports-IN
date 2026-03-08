@@ -2,9 +2,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Calendar, MapPin, ArrowRight } from "lucide-react";
+import { Calendar, MapPin, ArrowRight, LayoutGrid, List } from "lucide-react";
 import { Link } from "react-router-dom";
 import { format } from "date-fns";
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface UpcomingEvent {
   id: string;
@@ -21,6 +30,8 @@ interface UpcomingEventsCardProps {
 }
 
 export function UpcomingEventsCard({ events, isLoading }: UpcomingEventsCardProps) {
+  const [viewMode, setViewMode] = useState<"card" | "table">("card");
+
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-3">
@@ -32,9 +43,29 @@ export function UpcomingEventsCard({ events, isLoading }: UpcomingEventsCardProp
             </CardTitle>
             <CardDescription className="text-xs mt-1">Next scheduled events</CardDescription>
           </div>
-          <Button asChild variant="ghost" size="sm" className="text-xs gap-1">
-            <Link to="/admin/events">View all <ArrowRight className="w-3 h-3" /></Link>
-          </Button>
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5 bg-muted rounded-lg p-0.5 mr-1">
+              <Button
+                variant={viewMode === "card" ? "default" : "ghost"}
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => setViewMode("card")}
+              >
+                <LayoutGrid className="w-3 h-3" />
+              </Button>
+              <Button
+                variant={viewMode === "table" ? "default" : "ghost"}
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => setViewMode("table")}
+              >
+                <List className="w-3 h-3" />
+              </Button>
+            </div>
+            <Button asChild variant="ghost" size="sm" className="text-xs gap-1">
+              <Link to="/admin/events">View all <ArrowRight className="w-3 h-3" /></Link>
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -49,7 +80,7 @@ export function UpcomingEventsCard({ events, isLoading }: UpcomingEventsCardProp
             <Calendar className="w-7 h-7 mx-auto mb-2 opacity-50" />
             <p className="text-sm">No upcoming events</p>
           </div>
-        ) : (
+        ) : viewMode === "card" ? (
           <div className="space-y-2">
             {events.map((event) => (
               <Link
@@ -87,6 +118,51 @@ export function UpcomingEventsCard({ events, isLoading }: UpcomingEventsCardProp
                 </Badge>
               </Link>
             ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-xs font-medium">Event</TableHead>
+                  <TableHead className="text-xs font-medium">Date</TableHead>
+                  <TableHead className="text-xs font-medium">Location</TableHead>
+                  <TableHead className="text-xs font-medium text-center">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {events.map((event) => (
+                  <TableRow key={event.id} className="hover:bg-accent/30">
+                    <TableCell className="py-2.5">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-medium text-foreground truncate">{event.title}</p>
+                        {event.is_featured && (
+                          <Badge variant="secondary" className="text-[9px] px-1.5 py-0 h-4 shrink-0">★</Badge>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <span className="text-xs text-muted-foreground">
+                        {format(new Date(event.event_date), "MMM d, yyyy")}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <span className="text-xs text-muted-foreground truncate">
+                        {event.location || "—"}
+                      </span>
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      <Badge
+                        variant={event.status === "upcoming" ? "outline" : "secondary"}
+                        className="text-[10px]"
+                      >
+                        {event.status || "upcoming"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </CardContent>

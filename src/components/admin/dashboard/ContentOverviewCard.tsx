@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BarChart3, LayoutGrid, List } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { BarChart3, LayoutGrid, List, Rows3 } from "lucide-react";
 import { useState } from "react";
 import {
   Table,
@@ -28,7 +29,9 @@ interface ContentOverviewCardProps {
 }
 
 export function ContentOverviewCard({ contentCards, isLoading }: ContentOverviewCardProps) {
-  const [viewMode, setViewMode] = useState<"card" | "table">("card");
+  const [viewMode, setViewMode] = useState<"card" | "compact" | "table">("card");
+
+  const total = contentCards.reduce((sum, c) => sum + c.value, 0);
 
   return (
     <Card className="border-border/50">
@@ -38,6 +41,9 @@ export function ContentOverviewCard({ contentCards, isLoading }: ContentOverview
             <CardTitle className="text-base flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-primary" />
               Content Overview
+              {!isLoading && (
+                <Badge variant="secondary" className="text-[10px] ml-1">{total} total</Badge>
+              )}
             </CardTitle>
             <CardDescription className="text-xs mt-1">All your managed content at a glance</CardDescription>
           </div>
@@ -47,14 +53,25 @@ export function ContentOverviewCard({ contentCards, isLoading }: ContentOverview
               size="icon"
               className="h-7 w-7"
               onClick={() => setViewMode("card")}
+              title="Grid view"
             >
               <LayoutGrid className="w-3.5 h-3.5" />
+            </Button>
+            <Button
+              variant={viewMode === "compact" ? "default" : "ghost"}
+              size="icon"
+              className="h-7 w-7"
+              onClick={() => setViewMode("compact")}
+              title="Compact view"
+            >
+              <Rows3 className="w-3.5 h-3.5" />
             </Button>
             <Button
               variant={viewMode === "table" ? "default" : "ghost"}
               size="icon"
               className="h-7 w-7"
               onClick={() => setViewMode("table")}
+              title="Table view"
             >
               <List className="w-3.5 h-3.5" />
             </Button>
@@ -66,18 +83,37 @@ export function ContentOverviewCard({ contentCards, isLoading }: ContentOverview
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {contentCards.map((stat) => (
               <Link key={stat.title} to={stat.href} className="group">
+                <div className="relative flex flex-col items-center gap-2 p-4 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-accent/30 hover:shadow-sm transition-all text-center overflow-hidden">
+                  <div className={`absolute top-0 left-0 right-0 h-0.5 ${stat.bg}`} />
+                  <div className={`p-2 rounded-xl ${stat.bg} group-hover:scale-110 transition-transform`}>
+                    <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                  </div>
+                  {isLoading ? (
+                    <Skeleton className="h-6 w-10" />
+                  ) : (
+                    <div className="text-xl font-bold text-foreground">{stat.value}</div>
+                  )}
+                  <p className="text-[11px] text-muted-foreground font-medium">{stat.title}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : viewMode === "compact" ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {contentCards.map((stat) => (
+              <Link key={stat.title} to={stat.href} className="group">
                 <div className="flex items-center gap-3 p-3 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-accent/30 transition-all">
                   <div className={`p-1.5 rounded-lg ${stat.bg} shrink-0`}>
                     <stat.icon className={`w-3.5 h-3.5 ${stat.color}`} />
                   </div>
-                  <div className="min-w-0">
-                    {isLoading ? (
-                      <Skeleton className="h-5 w-8" />
-                    ) : (
-                      <div className="text-lg font-bold text-foreground leading-none">{stat.value}</div>
-                    )}
-                    <p className="text-[10px] text-muted-foreground truncate">{stat.title}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-foreground">{stat.title}</p>
                   </div>
+                  {isLoading ? (
+                    <Skeleton className="h-5 w-8" />
+                  ) : (
+                    <div className="text-lg font-bold text-foreground">{stat.value}</div>
+                  )}
                 </div>
               </Link>
             ))}
