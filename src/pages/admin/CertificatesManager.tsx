@@ -115,8 +115,29 @@ export default function CertificatesManager() {
       .from("certificates")
       .upload(fileName, file);
     if (uploadError) throw uploadError;
-    const { data } = supabase.storage.from("certificates").getPublicUrl(fileName);
-    return data.publicUrl;
+    // Store the path, not a public URL (bucket is private)
+    return fileName;
+  };
+
+  const getSignedUrl = async (storagePath: string): Promise<string> => {
+    // If it's already a full URL (legacy data), extract the path
+    const path = storagePath.includes("/storage/v1/object/public/certificates/")
+      ? storagePath.split("/storage/v1/object/public/certificates/")[1]
+      : storagePath;
+    const { data, error } = await supabase.storage
+      .from("certificates")
+      .createSignedUrl(path, 3600);
+    if (error) throw error;
+    return data.signedUrl;
+  };
+
+  const handleViewCertificate = async (certificateUrl: string) => {
+    try {
+      const url = await getSignedUrl(certificateUrl);
+      window.open(url, "_blank");
+    } catch {
+      toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
+    }
   };
 
   const createMutation = useMutation({
@@ -304,10 +325,8 @@ export default function CertificatesManager() {
                     <TableCell>{item.competitions?.name || "-"}</TableCell>
                     <TableCell>{format(new Date(item.issue_date), "MMM d, yyyy")}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" asChild>
-                        <a href={item.certificate_url} target="_blank" rel="noopener noreferrer">
+                      <Button variant="ghost" size="icon" onClick={() => handleViewCertificate(item.certificate_url)}>
                           <ExternalLink className="w-4 h-4" />
-                        </a>
                       </Button>
                       <Button variant="ghost" size="icon" onClick={() => handleEdit(item)}>
                         <Pencil className="w-4 h-4" />

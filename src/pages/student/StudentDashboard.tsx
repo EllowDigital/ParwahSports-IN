@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useStudentAuth } from "@/contexts/studentAuth";
@@ -7,11 +7,28 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Award, Download, Trophy, LogOut } from "lucide-react";
 import { format } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
 
 export default function StudentDashboard() {
   const { user, signOut, client } = useStudentAuth();
   const navigate = useNavigate();
   const [studentId, setStudentId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const handleDownloadCertificate = useCallback(async (certificateUrl: string) => {
+    try {
+      const path = certificateUrl.includes("/storage/v1/object/public/certificates/")
+        ? certificateUrl.split("/storage/v1/object/public/certificates/")[1]
+        : certificateUrl;
+      const { data, error } = await client.storage
+        .from("certificates")
+        .createSignedUrl(path, 3600);
+      if (error) throw error;
+      window.open(data.signedUrl, "_blank");
+    } catch {
+      toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
+    }
+  }, [client, toast]);
 
   useEffect(() => {
     if (!user) navigate("/student/login");
@@ -152,10 +169,8 @@ export default function StudentDashboard() {
                         Issued: {format(new Date(cert.issue_date), "MMM d, yyyy")}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={cert.certificate_url} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" onClick={() => handleDownloadCertificate(cert.certificate_url)}>
                         <Download className="w-4 h-4 mr-2" /> Download
-                      </a>
                     </Button>
                   </div>
                 ))}
