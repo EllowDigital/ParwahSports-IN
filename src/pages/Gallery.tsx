@@ -106,17 +106,18 @@ const Gallery = () => {
         keywords="sports gallery, sports photos, training pictures, tournament images, Parwah Sports gallery"
       />
       {/* Hero Section */}
-      <section className="py-16 lg:py-24 bg-muted/30">
-        <div className="container mx-auto px-4 lg:px-8">
+      <section className="pt-24 pb-16 lg:pt-32 lg:pb-20 bg-muted/30 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <ScrollReveal>
             <div className="max-w-4xl mx-auto text-center mb-12">
-              <span className="inline-block text-sm font-semibold text-secondary uppercase tracking-wider mb-4">
+              <span className="inline-flex items-center gap-2 bg-secondary/15 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6 border border-secondary/20">
                 Gallery
               </span>
-              <h1 className="font-serif text-4xl md:text-5xl font-bold text-foreground mb-6">
+              <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
                 Our Journey in Pictures
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-base sm:text-lg text-muted-foreground">
                 Explore moments from our events, training sessions, and community programs
               </p>
             </div>

@@ -205,21 +205,21 @@ export default function Volunteer() {
         jsonLd={volunteerFaqJsonLd}
       />
       {/* Hero Section */}
-      <section className="relative py-24 lg:py-32 overflow-hidden">
+      <section className="relative pt-24 pb-16 lg:pt-32 lg:pb-24 overflow-hidden">
         <div className="absolute inset-0 z-0">
-          <img src={victoryImage} alt="Volunteers" className="w-full h-full object-cover" />
+          <img src={victoryImage} alt="Volunteers" className="w-full h-full object-cover" loading="lazy" />
           <div className="absolute inset-0 bg-gradient-to-r from-foreground/95 via-foreground/80 to-foreground/60" />
         </div>
-        <div className="container mx-auto px-4 lg:px-8 relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="max-w-3xl">
             <span className="inline-flex items-center gap-2 bg-secondary/20 text-secondary px-4 py-2 rounded-full text-sm font-medium mb-6">
               <Users className="h-4 w-4" />
               Join Our Team
             </span>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold text-background mb-6">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-background mb-6 leading-tight">
               Become a <span className="text-secondary">Volunteer</span>
             </h1>
-            <p className="text-xl text-background/80 leading-relaxed">
+            <p className="text-base sm:text-lg lg:text-xl text-background/80 leading-relaxed max-w-2xl">
               Share your skills, time, and passion to make a difference in the lives of young
               athletes. Join our volunteer network today.
             </p>
