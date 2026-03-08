@@ -202,6 +202,7 @@ export type Database = {
           refunded_at: string | null
           retry_of_donation_id: string | null
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           amount: number
@@ -224,6 +225,7 @@ export type Database = {
           refunded_at?: string | null
           retry_of_donation_id?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           amount?: number
@@ -246,6 +248,7 @@ export type Database = {
           refunded_at?: string | null
           retry_of_donation_id?: string | null
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -962,6 +965,25 @@ export type Database = {
     }
     Functions: {
       generate_payment_reference: { Args: never; Returns: string }
+      get_member_is_active: { Args: { _member_id: string }; Returns: boolean }
+      get_public_team_members: {
+        Args: never
+        Returns: {
+          bio: string
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          is_active: boolean
+          linkedin_url: string
+          name: string
+          public_email: string
+          public_phone: string
+          role: string
+          twitter_url: string
+          updated_at: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

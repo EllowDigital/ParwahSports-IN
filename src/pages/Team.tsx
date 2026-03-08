@@ -23,13 +23,7 @@ const Team = () => {
   const { data: teamMembers, isLoading } = useQuery({
     queryKey: ["team-members"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("team_members")
-        .select(
-          "id,name,role,bio,image_url,public_email,public_phone,linkedin_url,twitter_url,display_order,is_active",
-        )
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
+      const { data, error } = await supabase.rpc("get_public_team_members");
       if (error) throw error;
       return data as TeamMember[];
     },

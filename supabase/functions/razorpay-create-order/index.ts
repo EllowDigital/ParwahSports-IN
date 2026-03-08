@@ -69,6 +69,17 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+    // Try to extract user_id from auth header
+    let userId: string | null = null;
+    const authHeader = req.headers.get("authorization");
+    if (authHeader) {
+      const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: { user } } = await anonClient.auth.getUser();
+      userId = user?.id || null;
+    }
+
     if (type === "donation") {
       const { error: donationError } = await supabase.from("donations").insert({
         donor_name,
@@ -80,6 +91,7 @@ serve(async (req) => {
         payment_reference: paymentReference,
         payment_status: "pending",
         notes,
+        ...(userId && { user_id: userId }),
       });
 
       if (donationError) {
