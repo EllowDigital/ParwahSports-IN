@@ -121,12 +121,8 @@ export function Header() {
                 to={item.href}
                 className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                   isActive(item.href)
-                    ? scrolled || !isHome
-                      ? "text-primary bg-primary/10"
-                      : "text-secondary bg-secondary/15"
-                    : scrolled || !isHome
-                      ? "text-muted-foreground hover:text-foreground hover:bg-accent"
-                      : "text-background/80 hover:text-background hover:bg-background/10"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
                 {item.name}
