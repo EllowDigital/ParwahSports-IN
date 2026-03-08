@@ -30,6 +30,7 @@ import { RecentActivityCard } from "@/components/admin/dashboard/RecentActivityC
 import { UpcomingEventsCard } from "@/components/admin/dashboard/UpcomingEventsCard";
 import { RecentDonationsCard } from "@/components/admin/dashboard/RecentDonationsCard";
 import { RecentVolunteersCard } from "@/components/admin/dashboard/RecentVolunteersCard";
+import { DonationTrendChart } from "@/components/admin/dashboard/DonationTrendChart";
 
 interface Stats {
   gallery: number;
@@ -278,14 +279,17 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Second Row: Events + Donations */}
+        {/* Second Row: Chart + Events */}
         <div className="grid lg:grid-cols-2 gap-6">
+          <DonationTrendChart />
           <UpcomingEventsCard events={upcomingEvents} isLoading={isLoading} />
-          <RecentDonationsCard donations={recentDonationsList} isLoading={isLoading} />
         </div>
 
-        {/* Third Row: Volunteers */}
-        <RecentVolunteersCard volunteers={recentVolunteersList} isLoading={isLoading} />
+        {/* Third Row: Donations + Volunteers */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          <RecentDonationsCard donations={recentDonationsList} isLoading={isLoading} />
+          <RecentVolunteersCard volunteers={recentVolunteersList} isLoading={isLoading} />
+        </div>
       </div>
     </AdminLayout>
   );

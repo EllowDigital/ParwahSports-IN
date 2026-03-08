@@ -87,21 +87,15 @@ export function Header() {
         hidden && !mobileMenuOpen ? "-translate-y-full" : "translate-y-0"
       } ${
         scrolled
-          ? "bg-background/95 backdrop-blur-xl shadow-md border-b border-border/80"
-          : isHome
-            ? "bg-transparent"
-            : "bg-background/80 backdrop-blur-sm"
+          ? "bg-background shadow-md border-b border-border/80"
+          : "bg-background border-b border-border/50"
       }`}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 md:h-18 lg:h-20 items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0 group">
-            <div className={`w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border shadow-sm transition-all group-hover:shadow-md group-hover:scale-105 ${
-              scrolled || !isHome
-                ? "bg-card border-border group-hover:border-primary/30"
-                : "bg-background/15 backdrop-blur-md border-background/20"
-            }`}>
+            <div className={`w-9 h-9 sm:w-10 sm:h-10 lg:w-12 lg:h-12 rounded-xl flex items-center justify-center overflow-hidden border shadow-sm transition-all group-hover:shadow-md group-hover:scale-105 bg-card border-border group-hover:border-primary/30`}>
               <img
                 src="/logo.png"
                 alt="Parwah Sports"
@@ -110,14 +104,10 @@ export function Header() {
               />
             </div>
             <div className="leading-tight">
-              <span className={`font-serif font-bold text-sm sm:text-base lg:text-lg block transition-colors ${
-                scrolled || !isHome ? "text-foreground" : "text-background"
-              }`}>
+              <span className="font-serif font-bold text-sm sm:text-base lg:text-lg block text-foreground">
                 Parwah Sports
               </span>
-              <span className={`text-[10px] sm:text-xs hidden xs:block transition-colors ${
-                scrolled || !isHome ? "text-muted-foreground" : "text-background/70"
-              }`}>
+              <span className="text-[10px] sm:text-xs hidden xs:block text-muted-foreground">
                 Charitable Trust
               </span>
             </div>
@@ -131,12 +121,8 @@ export function Header() {
                 to={item.href}
                 className={`relative px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200 ${
                   isActive(item.href)
-                    ? scrolled || !isHome
-                      ? "text-primary bg-primary/10"
-                      : "text-secondary bg-secondary/15"
-                    : scrolled || !isHome
-                      ? "text-muted-foreground hover:text-foreground hover:bg-accent"
-                      : "text-background/80 hover:text-background hover:bg-background/10"
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground hover:bg-accent"
                 }`}
               >
                 {item.name}
@@ -148,11 +134,7 @@ export function Header() {
 
             {/* More Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger className={`px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-1 outline-none ${
-                scrolled || !isHome
-                  ? "text-muted-foreground hover:text-foreground hover:bg-accent"
-                  : "text-background/80 hover:text-background hover:bg-background/10"
-              }`}>
+              <DropdownMenuTrigger className="px-3 py-2 text-sm font-medium rounded-lg transition-all flex items-center gap-1 outline-none text-muted-foreground hover:text-foreground hover:bg-accent">
                 More <ChevronDown className="h-3.5 w-3.5" />
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-44">
@@ -175,9 +157,7 @@ export function Header() {
             {/* Support Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant={scrolled || !isHome ? "outline" : "ghost"} size="sm" className={`gap-1.5 ${
-                  !scrolled && isHome ? "text-background border-background/30 hover:bg-background/10" : ""
-                }`}>
+                <Button variant="outline" size="sm" className="gap-1.5">
                   <Users className="h-4 w-4" />
                   <span className="hidden xl:inline">Support</span>
                   <ChevronDown className="h-3.5 w-3.5" />
@@ -200,9 +180,7 @@ export function Header() {
             {/* Portal Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className={`gap-1.5 ${
-                  !scrolled && isHome ? "text-background hover:bg-background/10" : ""
-                }`}>
+                <Button variant="ghost" size="sm" className="gap-1.5">
                   <LogIn className="h-4 w-4" />
                   <span className="hidden xl:inline">Portal</span>
                   <ChevronDown className="h-3.5 w-3.5" />
@@ -248,9 +226,7 @@ export function Header() {
 
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className={`h-9 w-9 ${
-                  !scrolled && isHome ? "text-background hover:bg-background/10" : ""
-                }`}>
+                <Button variant="ghost" size="icon" className="h-9 w-9">
                   {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
                 </Button>
               </SheetTrigger>

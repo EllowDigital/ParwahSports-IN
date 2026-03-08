@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Heart, Users, Trophy, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,25 +11,51 @@ const stats = [
 
 export function HeroSection() {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [scrollY, setScrollY] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoaded(true), 100);
     return () => clearTimeout(timer);
   }, []);
 
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          setScrollY(window.scrollY);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const parallaxOffset = scrollY * 0.35;
+  const overlayOpacity = Math.min(0.3, scrollY * 0.0003);
+
   return (
-    <section className="relative min-h-[100svh] flex items-center overflow-hidden">
-      {/* Single Background Image */}
+    <section ref={sectionRef} className="relative min-h-[100svh] flex items-center overflow-hidden">
+      {/* Parallax Background Image */}
       <div className="absolute inset-0">
         <img
           src="/images/slider/P1.jpeg"
           alt="Athletes training together"
-          className="absolute inset-0 w-full h-full object-cover scale-105"
+          className="absolute inset-0 w-full h-full object-cover will-change-transform"
+          style={{ transform: `translateY(${parallaxOffset}px) scale(1.1)` }}
           loading="eager"
         />
         {/* Clean gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-foreground/90 via-foreground/70 to-foreground/40" />
         <div className="absolute inset-0 bg-gradient-to-b from-foreground/30 via-transparent to-foreground/60" />
+        {/* Dynamic scroll darkening */}
+        <div
+          className="absolute inset-0 bg-foreground/0 transition-none"
+          style={{ opacity: overlayOpacity }}
+        />
       </div>
 
       {/* Main Content */}
