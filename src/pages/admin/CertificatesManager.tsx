@@ -470,7 +470,7 @@ export default function CertificatesManager() {
       />
 
       {/* Certificate Viewer Dialog */}
-      <Dialog open={!!viewingCert} onOpenChange={() => setViewingCert(null)}>
+      <Dialog open={!!viewingCert} onOpenChange={() => { if (viewingCert?.url) URL.revokeObjectURL(viewingCert.url); setViewingCert(null); }}>
         <DialogContent className="max-w-4xl h-[85vh] flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
