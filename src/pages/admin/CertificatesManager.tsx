@@ -126,7 +126,7 @@ export default function CertificatesManager() {
       const { error } = await supabase.from("certificates").insert([
         {
           student_id: data.student_id,
-          competition_id: data.competition_id || null,
+          competition_id: data.competition_id && data.competition_id !== "none" ? data.competition_id : null,
           title: data.title,
           description: data.description || null,
           certificate_url,
@@ -154,7 +154,7 @@ export default function CertificatesManager() {
         .from("certificates")
         .update({
           student_id: data.student_id,
-          competition_id: data.competition_id || null,
+          competition_id: data.competition_id && data.competition_id !== "none" ? data.competition_id : null,
           title: data.title,
           description: data.description || null,
           certificate_url,
@@ -368,7 +368,7 @@ export default function CertificatesManager() {
                   <SelectValue placeholder="Select a competition" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   {competitions?.map((c) => (
                     <SelectItem key={c.id} value={c.id}>
                       {c.name}
