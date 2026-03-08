@@ -2,9 +2,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Users, ArrowRight, Mail, Phone } from "lucide-react";
+import { Users, ArrowRight, Mail, LayoutGrid, List } from "lucide-react";
 import { Link } from "react-router-dom";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface RecentVolunteer {
   id: string;
@@ -28,6 +37,8 @@ const statusStyle: Record<string, string> = {
 };
 
 export function RecentVolunteersCard({ volunteers, isLoading }: RecentVolunteersCardProps) {
+  const [viewMode, setViewMode] = useState<"card" | "table">("card");
+
   return (
     <Card className="border-border/50">
       <CardHeader className="pb-3">
@@ -39,9 +50,29 @@ export function RecentVolunteersCard({ volunteers, isLoading }: RecentVolunteers
             </CardTitle>
             <CardDescription className="text-xs mt-1">Latest volunteer applications</CardDescription>
           </div>
-          <Button asChild variant="ghost" size="sm" className="text-xs gap-1">
-            <Link to="/admin/volunteers">View all <ArrowRight className="w-3 h-3" /></Link>
-          </Button>
+          <div className="flex items-center gap-1">
+            <div className="flex items-center gap-0.5 bg-muted rounded-lg p-0.5 mr-1">
+              <Button
+                variant={viewMode === "card" ? "default" : "ghost"}
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => setViewMode("card")}
+              >
+                <LayoutGrid className="w-3 h-3" />
+              </Button>
+              <Button
+                variant={viewMode === "table" ? "default" : "ghost"}
+                size="icon"
+                className="h-6 w-6"
+                onClick={() => setViewMode("table")}
+              >
+                <List className="w-3 h-3" />
+              </Button>
+            </div>
+            <Button asChild variant="ghost" size="sm" className="text-xs gap-1">
+              <Link to="/admin/volunteers">View all <ArrowRight className="w-3 h-3" /></Link>
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>
@@ -56,8 +87,8 @@ export function RecentVolunteersCard({ volunteers, isLoading }: RecentVolunteers
             <Users className="w-7 h-7 mx-auto mb-2 opacity-50" />
             <p className="text-sm">No volunteer applications</p>
           </div>
-        ) : (
-          <div className="space-y-2">
+        ) : viewMode === "card" ? (
+          <div className="grid sm:grid-cols-2 gap-2">
             {volunteers.map((v) => (
               <div
                 key={v.id}
@@ -85,6 +116,50 @@ export function RecentVolunteersCard({ volunteers, isLoading }: RecentVolunteers
                 </span>
               </div>
             ))}
+          </div>
+        ) : (
+          <div className="rounded-lg border border-border overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/50">
+                  <TableHead className="text-xs font-medium">Name</TableHead>
+                  <TableHead className="text-xs font-medium">Interest</TableHead>
+                  <TableHead className="text-xs font-medium">Email</TableHead>
+                  <TableHead className="text-xs font-medium text-center">Status</TableHead>
+                  <TableHead className="text-xs font-medium text-right">Applied</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {volunteers.map((v) => (
+                  <TableRow key={v.id} className="hover:bg-accent/30">
+                    <TableCell className="py-2.5">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
+                          {v.full_name.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-sm font-medium text-foreground truncate">{v.full_name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <span className="text-xs text-muted-foreground">{v.area_of_interest}</span>
+                    </TableCell>
+                    <TableCell className="py-2.5">
+                      <span className="text-xs text-muted-foreground truncate">{v.email}</span>
+                    </TableCell>
+                    <TableCell className="py-2.5 text-center">
+                      <Badge variant="outline" className={`text-[9px] ${statusStyle[v.status] || ""}`}>
+                        {v.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="py-2.5 text-right">
+                      <span className="text-[10px] text-muted-foreground">
+                        {formatDistanceToNow(new Date(v.created_at), { addSuffix: true })}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         )}
       </CardContent>
