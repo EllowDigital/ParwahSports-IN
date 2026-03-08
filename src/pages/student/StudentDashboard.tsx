@@ -169,10 +169,8 @@ export default function StudentDashboard() {
                         Issued: {format(new Date(cert.issue_date), "MMM d, yyyy")}
                       </p>
                     </div>
-                    <Button variant="outline" size="sm" asChild>
-                      <a href={cert.certificate_url} target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="sm" onClick={() => handleDownloadCertificate(cert.certificate_url)}>
                         <Download className="w-4 h-4 mr-2" /> Download
-                      </a>
                     </Button>
                   </div>
                 ))}
