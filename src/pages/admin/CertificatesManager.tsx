@@ -132,12 +132,14 @@ export default function CertificatesManager() {
     return data.signedUrl;
   };
 
-  const handleViewCertificate = async (certificateUrl: string) => {
+  const handleViewCertificate = async (certificateUrl: string, title: string) => {
+    setViewingCert({ url: "", title, loading: true });
     try {
       const url = await getSignedUrl(certificateUrl);
-      window.open(url, "_blank");
+      setViewingCert({ url, title, loading: false });
     } catch {
       toast({ title: "Error", description: "Could not load certificate", variant: "destructive" });
+      setViewingCert(null);
     }
   };
 
