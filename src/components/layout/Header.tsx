@@ -180,9 +180,7 @@ export function Header() {
             {/* Portal Dropdown */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className={`gap-1.5 ${
-                  !scrolled && isHome ? "text-background hover:bg-background/10" : ""
-                }`}>
+                <Button variant="ghost" size="sm" className="gap-1.5">
                   <LogIn className="h-4 w-4" />
                   <span className="hidden xl:inline">Portal</span>
                   <ChevronDown className="h-3.5 w-3.5" />
