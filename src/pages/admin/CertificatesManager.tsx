@@ -126,7 +126,7 @@ export default function CertificatesManager() {
       const { error } = await supabase.from("certificates").insert([
         {
           student_id: data.student_id,
-          competition_id: data.competition_id || null,
+          competition_id: data.competition_id && data.competition_id !== "none" ? data.competition_id : null,
           title: data.title,
           description: data.description || null,
           certificate_url,
