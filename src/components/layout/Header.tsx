@@ -87,10 +87,8 @@ export function Header() {
         hidden && !mobileMenuOpen ? "-translate-y-full" : "translate-y-0"
       } ${
         scrolled
-          ? "bg-background/95 backdrop-blur-xl shadow-md border-b border-border/80"
-          : isHome
-            ? "bg-transparent"
-            : "bg-background/80 backdrop-blur-sm"
+          ? "bg-background shadow-md border-b border-border/80"
+          : "bg-background border-b border-border/50"
       }`}
     >
       <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
