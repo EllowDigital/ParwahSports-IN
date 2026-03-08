@@ -57,6 +57,7 @@ export default function CertificatesManager() {
   const [editingItem, setEditingItem] = useState<Certificate | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<Certificate | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [viewingCert, setViewingCert] = useState<{ url: string; title: string; loading: boolean } | null>(null);
   const [formData, setFormData] = useState({
     student_id: "",
     competition_id: "",
